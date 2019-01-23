@@ -22,3 +22,4 @@
   <div>{{this.props.custom}}</div>
   ```
   父组件可以将方法传给子组件，然后子组件去掉用！！！！！！
+* Fragment可以用来包裹组件模板（相当于Angular中的ng-container）。
