@@ -8,15 +8,8 @@
  */
 
 import React, {Component} from 'react';
-import {Button, Platform, StyleSheet, Text, View} from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
 
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
 type Props = {};
 export default class HomePage extends Component<Props> {
@@ -24,15 +17,17 @@ export default class HomePage extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Hey, there!!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
         <Button
           title="前往page1"
           onPress={() => this.props.navigation.navigate({routeName: 'page1', params: {user: 'Lee'}})}
         />
         <Button
           title="前往page3"
-          onPress={() => this.props.navigation.navigate({routeName: 'page3', params: {user: 'Lee', mode: 'save'}})}
+          onPress={() => this.props.navigation.navigate({routeName: 'page3', params: { mode: 'save'}})}
+        />
+        <Button
+          title="前往FlatList Demo"
+          onPress={() => this.props.navigation.navigate({routeName: 'flatList'})}
         />
       </View>
     );
@@ -42,7 +37,7 @@ export default class HomePage extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
