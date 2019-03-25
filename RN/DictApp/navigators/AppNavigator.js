@@ -1,8 +1,9 @@
+import Page1 from "~/page/Page1.js";
 import React from "react";
 import {Button} from "react-native";
 import {createAppContainer, createStackNavigator,createBottomTabNavigator,createMaterialTopTabNavigator} from "react-navigation";
 import HomePage from "~/page/HomePage.js";
-import FlatList from "~/page/FlatList.js";
+import FlatListPage from "~/page/FlatListPage.js";
 import Page3 from "~/page/Page3.js";
 
 const routeConfigs = {}
@@ -24,10 +25,10 @@ const appNavigators = createStackNavigator({
     }),
   },
   flatList: {
-    screen: FlatList,
+    screen: FlatListPage,
     path: 'flatList',
     navigationOptions: { // 在这里定义每个页面的导航属性，静态配置
-      title: "This is Page2.",
+      title: "FlatList的使用",
     }
   },
   page3: {
@@ -48,14 +49,6 @@ const appNavigators = createStackNavigator({
         ),
       }
     }
-  },
-  page4: {
-    screen: FlatList,
-    path: 'page4'
-  },
-  page5: {
-    screen: Page5,
-    path: 'page5'
   }
 }, {
   initialRouteName: 'home'
