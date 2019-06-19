@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {
   ButtonGroup,
   HeaderOptions,
@@ -10,71 +10,68 @@ import {
   SearchInput,
   SearchWrapper
 } from "./style";
-import { CSSTransition } from 'react-transition-group';
+import {CSSTransition} from 'react-transition-group';
+import {connect} from "react-redux";
 
-class Header extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      searchBarFocused:false
-    };
-    this.handleSearchInputFocus = this.handleSearchInputFocus.bind(this);
-    this.handleSearchInputBlur = this.handleSearchInputBlur.bind(this);
+const Header = (props) => {
+  return (
+    <nav style={{'width': '100%', position: 'fixed', 'borderBottom': '1px solid #f0f0f0'}}>
+      <HeaderWrapper>
+        <Logo>镜中之人</Logo>
+        <MenuList>
+          <MenuWrapper>
+            <MenuItem className="active">
+              <i className="lee-icon-home"></i>
+              <span className="text">首页</span>
+            </MenuItem>
+            <MenuItem>目录</MenuItem>
+            <SearchWrapper>
+              <CSSTransition
+                in={props.searchBarFocused}
+                timeout={500}
+                classNames="grow-width">
+                <SearchInput
+                  className={props.searchBarFocused ? "focused" : ""}
+                  placeholder="输入关键字查询"
+                  onFocus={props.handleSearchInputFocus}
+                  onBlur={props.handleSearchInputBlur}>
+                </SearchInput>
+              </CSSTransition>
+            </SearchWrapper>
+          </MenuWrapper>
+          <MenuWrapper>
+            <MenuItem>Aa</MenuItem>
+            <MenuItem>关于博主</MenuItem>
+          </MenuWrapper>
+        </MenuList>
+        <HeaderOptions>
+          <ButtonGroup>
+            <button className="lee-btn" type="button">写文章</button>
+            <button className="lee-btn" type="button">我的作品</button>
+          </ButtonGroup>
+        </HeaderOptions>
+      </HeaderWrapper>
+    </nav>
+  )
+};
+
+const mapStateToProps = (state) => {
+  return {
+    searchBarFocused: state.headerSearchBarFocused
   }
+};
 
-  handleSearchInputFocus() {
-    this.setState({
-      searchBarFocused:true
-    })
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSearchInputFocus() {
+      let action = {type:'header_search_focused'};
+      dispatch(action);
+    },
+    handleSearchInputBlur() {
+      let action = {type:'header_search_blur'};
+      dispatch(action);
+    }
   }
+};
 
-  handleSearchInputBlur() {
-    this.setState({
-      searchBarFocused:false
-    })
-  }
-
-  render() {
-    return (
-      <nav style={{'width': '100%', position: 'fixed', 'borderBottom': '1px solid #f0f0f0'}}>
-        <HeaderWrapper>
-          <Logo>镜中之人</Logo>
-          <MenuList>
-            <MenuWrapper>
-              <MenuItem className="active">
-                <i className="lee-icon-home"></i>
-                <span className="text">首页</span>
-              </MenuItem>
-              <MenuItem>目录</MenuItem>
-              <SearchWrapper>
-                <CSSTransition
-                  in={this.state.searchBarFocused}
-                  timeout={500}
-                  classNames="grow-width">
-                  <SearchInput
-                    className={this.state.searchBarFocused ? "focused": ""}
-                    placeholder="输入关键字查询"
-                    onFocus={this.handleSearchInputFocus}
-                    onBlur={this.handleSearchInputBlur}>
-                  </SearchInput>
-                </CSSTransition>
-              </SearchWrapper>
-            </MenuWrapper>
-            <MenuWrapper>
-              <MenuItem>Aa</MenuItem>
-              <MenuItem>关于博主</MenuItem>
-            </MenuWrapper>
-          </MenuList>
-          <HeaderOptions>
-            <ButtonGroup>
-              <button className="lee-btn" type="button">写文章</button>
-              <button className="lee-btn" type="button">我的作品</button>
-            </ButtonGroup>
-          </HeaderOptions>
-        </HeaderWrapper>
-      </nav>
-    )
-  }
-}
-
-export default Header
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
