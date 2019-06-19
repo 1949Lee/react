@@ -57,7 +57,7 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    searchBarFocused: state.headerSearchBarFocused
+    searchBarFocused: state.header.searchBarFocused
   }
 };
 
