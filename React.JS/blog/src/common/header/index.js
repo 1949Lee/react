@@ -7,12 +7,41 @@ import {
   MenuItem,
   MenuList,
   MenuWrapper,
-  SearchInput,
+  SearchInput, SearchOptions, SearchOptionsChange, SearchOptionsTag, SearchOptionsTagList, SearchOptionsTitle,
   SearchWrapper
 } from "./style";
 import {CSSTransition} from 'react-transition-group';
 import {connect} from "react-redux";
 import {actionCreators} from './store'
+
+const getSearchOptions = (show) => {
+  if (show) {
+    return (
+      <SearchOptions>
+        <SearchOptionsTitle>
+          热门搜索
+          <SearchOptionsChange>
+            换一批
+          </SearchOptionsChange>
+        </SearchOptionsTitle>
+        <SearchOptionsTagList>
+          <SearchOptionsTag>Go</SearchOptionsTag>
+          <SearchOptionsTag>计算机基础</SearchOptionsTag>
+          <SearchOptionsTag>Flutter</SearchOptionsTag>
+          <SearchOptionsTag>HTTPS</SearchOptionsTag>
+          <SearchOptionsTag>MySQL</SearchOptionsTag>
+          <SearchOptionsTag>Vue</SearchOptionsTag>
+          <SearchOptionsTag>React/RN</SearchOptionsTag>
+          <SearchOptionsTag>Angular</SearchOptionsTag>
+          <SearchOptionsTag>JS</SearchOptionsTag>
+          <SearchOptionsTag>Webpack</SearchOptionsTag>
+        </SearchOptionsTagList>
+      </SearchOptions>
+    )
+  } else {
+    return null;
+  }
+};
 
 const Header = (props) => {
   return (
@@ -33,11 +62,12 @@ const Header = (props) => {
                 classNames="grow-width">
                 <SearchInput
                   className={props.searchBarFocused ? "focused" : ""}
-                  placeholder="输入关键字查询"
+                  placeholder="搜索"
                   onFocus={props.handleSearchInputFocus}
                   onBlur={props.handleSearchInputBlur}>
                 </SearchInput>
               </CSSTransition>
+              {getSearchOptions(props.searchBarFocused)}
             </SearchWrapper>
           </MenuWrapper>
           <MenuWrapper>
@@ -58,8 +88,8 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    searchBarFocused: state.getIn(['header','searchBarFocused'])
-      // state.get('header').get('searchBarFocused')
+    searchBarFocused: state.getIn(['header', 'searchBarFocused'])
+    // state.get('header').get('searchBarFocused')
   }
 };
 

@@ -49,6 +49,7 @@ export const SearchWrapper = styled.div`
 display: inline-block;
 font-size: 17px;
 line-height: 26px;
+position: relative;
 `;
 
 export const SearchInput = styled.input.attrs({
@@ -72,6 +73,55 @@ outline:medium;
   transition: all .5s ease;
 }
 `;
+
+export const SearchOptions = styled.div`
+width:240px;
+margin-top: 10px;
+position: absolute;
+background-color: #fff;
+box-shadow: 0 0 8px rgba(0,0,0,.2);
+color: #969696;
+font-size: 14px;
+padding: 20px;
+box-sizing: border-box;
+border-radius: 5px;
+`;
+
+export const SearchOptionsTitle = styled.div`
+width:100%;
+height: 20px;
+line-height: 20px;
+cursor: default;
+`;
+export const SearchOptionsChange = styled.span`
+float: right;
+cursor: pointer;
+`;
+
+export const SearchOptionsTagList = styled.div`
+width:100%;
+margin-top: 10px;
+display: flex;
+flex-wrap: wrap;
+justify-content: flex-start;
+`;
+
+export const SearchOptionsTag = styled.span`
+display: inline-block;
+margin-right: 10px;
+margin-top: 10px;
+border-radius: 3px;
+padding: 2px 6px;
+border: 1px solid #ddd;
+font-size: 12px;
+color: #787878;
+cursor: pointer;
+&:hover{
+    color: #333;
+    border-color: #b4b4b4;
+}
+`;
+
 
 export const HeaderOptions = styled.div`
 display: inline-block;
