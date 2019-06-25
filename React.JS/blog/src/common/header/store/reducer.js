@@ -1,17 +1,17 @@
-const defaultSate = {
+import * as actionType from "./actionType";
+import {fromJS} from "immutable";
+
+const defaultSate = fromJS({
   searchBarFocused:false
-};
+});
 
 const reducer = (state = defaultSate, action) => {
-  let newState = Object.assign({},state);
   // let newState = state;
-  if(action.type === 'header_search_focused') {
-    newState.searchBarFocused = true;
-    return newState;
+  if(action.type === actionType.SEARCH_FOCUSED) {
+    return state.set('searchBarFocused',true);
   }
-  if(action.type === 'header_search_blur') {
-    newState.searchBarFocused = false;
-    return newState;
+  if(action.type === actionType.SEARCH_BLUR) {
+    return state.set('searchBarFocused',false);
   }
   return state
 };

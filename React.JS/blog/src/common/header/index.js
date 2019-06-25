@@ -12,6 +12,7 @@ import {
 } from "./style";
 import {CSSTransition} from 'react-transition-group';
 import {connect} from "react-redux";
+import {actionCreators} from './store'
 
 const Header = (props) => {
   return (
@@ -21,7 +22,7 @@ const Header = (props) => {
         <MenuList>
           <MenuWrapper>
             <MenuItem className="active">
-              <i className="lee-icon-home"></i>
+              <i className="menu-icon lee-icon-home"></i>
               <span className="text">首页</span>
             </MenuItem>
             <MenuItem>目录</MenuItem>
@@ -57,19 +58,18 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    searchBarFocused: state.header.searchBarFocused
+    searchBarFocused: state.getIn(['header','searchBarFocused'])
+      // state.get('header').get('searchBarFocused')
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     handleSearchInputFocus() {
-      let action = {type:'header_search_focused'};
-      dispatch(action);
+      dispatch(actionCreators.searchFocused());
     },
     handleSearchInputBlur() {
-      let action = {type:'header_search_blur'};
-      dispatch(action);
+      dispatch(actionCreators.searchBlur());
     }
   }
 };

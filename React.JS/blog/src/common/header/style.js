@@ -40,6 +40,9 @@ cursor: pointer;
 &.active{
   color: #79c1df;
 }
+.menu-icon {
+  margin-right: 5px;
+}
 `;
 
 export const SearchWrapper = styled.div`
