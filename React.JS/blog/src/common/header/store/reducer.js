@@ -2,7 +2,8 @@ import * as actionType from "./actionType";
 import {fromJS} from "immutable";
 
 const defaultSate = fromJS({
-  searchBarFocused:false
+  searchBarFocused:false,
+  searchOptionsTag:[]
 });
 
 const reducer = (state = defaultSate, action) => {
@@ -12,6 +13,9 @@ const reducer = (state = defaultSate, action) => {
   }
   if(action.type === actionType.SEARCH_BLUR) {
     return state.set('searchBarFocused',false);
+  }
+  if(action.type === actionType.CHANGE_SEARCH_OPTIONS_TAG) {
+    return state.set('searchOptionsTag',action.data);
   }
   return state
 };
