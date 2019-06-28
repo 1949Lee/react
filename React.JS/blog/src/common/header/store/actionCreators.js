@@ -2,6 +2,13 @@ import * as actionType from "./actionType";
 import axios from 'axios';
 import {fromJS} from "immutable";
 
+const changeSearchOptionsTag = (data) => {
+  return {
+    type: actionType.CHANGE_SEARCH_OPTIONS_TAG,
+    data: fromJS(data)
+  };
+};
+
 export const searchFocused = () => {
   return {
     type: actionType.SEARCH_FOCUSED
@@ -11,13 +18,6 @@ export const searchFocused = () => {
 export const searchBlur = () => {
   return {
     type: actionType.SEARCH_BLUR
-  };
-};
-
-export const changeSearchOptionsTag = (data) => {
-  return {
-    type: actionType.CHANGE_SEARCH_OPTIONS_TAG,
-    data: fromJS(data)
   };
 };
 

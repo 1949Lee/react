@@ -8,14 +8,16 @@ const defaultSate = fromJS({
 
 const reducer = (state = defaultSate, action) => {
   // let newState = state;
-  if(action.type === actionType.SEARCH_FOCUSED) {
-    return state.set('searchBarFocused',true);
-  }
-  if(action.type === actionType.SEARCH_BLUR) {
-    return state.set('searchBarFocused',false);
-  }
-  if(action.type === actionType.CHANGE_SEARCH_OPTIONS_TAG) {
-    return state.set('searchOptionsTag',action.data);
+
+  switch (action.type) {
+    case actionType.SEARCH_FOCUSED:
+      return state.set('searchBarFocused',true);
+    case actionType.SEARCH_BLUR:
+      return state.set('searchBarFocused',false);
+    case actionType.CHANGE_SEARCH_OPTIONS_TAG:
+      return state.set('searchOptionsTag',action.data);
+    default:
+      break;
   }
   return state
 };

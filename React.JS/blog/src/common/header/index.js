@@ -22,7 +22,8 @@ class Header extends Component {
   }
 
   getSearchOptions() {
-    if (this.props.searchBarFocused) {
+    let {searchBarFocused, searchOptionsTag} = this.props;
+    if (searchBarFocused) {
       return (
         <SearchOptions>
           <SearchOptionsTitle>
@@ -33,7 +34,7 @@ class Header extends Component {
           </SearchOptionsTitle>
           <SearchOptionsTagList>
             {
-              this.props.searchOptionsTag.map((tag) => {
+              searchOptionsTag.map((tag) => {
                 return <SearchOptionsTag key={tag}>{tag}</SearchOptionsTag>
               })
             }
@@ -46,6 +47,7 @@ class Header extends Component {
   }
 
   render() {
+    let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur} = this.props;
     return (
       <nav style={{'width': '100%', position: 'fixed', 'borderBottom': '1px solid #f0f0f0'}}>
         <HeaderWrapper>
@@ -59,14 +61,14 @@ class Header extends Component {
               <MenuItem>目录</MenuItem>
               <SearchWrapper>
                 <CSSTransition
-                  in={this.props.searchBarFocused}
+                  in={searchBarFocused}
                   timeout={500}
                   classNames="grow-width">
                   <SearchInput
-                    className={this.props.searchBarFocused ? "focused" : ""}
+                    className={searchBarFocused ? "focused" : ""}
                     placeholder="搜索"
-                    onFocus={this.props.handleSearchInputFocus}
-                    onBlur={this.props.handleSearchInputBlur}>
+                    onFocus={handleSearchInputFocus}
+                    onBlur={handleSearchInputBlur}>
                   </SearchInput>
                 </CSSTransition>
                 {this.getSearchOptions()}
