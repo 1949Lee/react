@@ -21,11 +21,23 @@ export const searchBlur = () => {
   };
 };
 
-export const getSearchOptionsTag =() => {
+export const searchOptionsEnter = () => {
+  return {
+    type: actionType.SEARCH_OPTION_ENTER
+  };
+};
+
+export const searchOptionsLeave = () => {
+  return {
+    type: actionType.SEARCH_OPTION_LEAVE
+  };
+};
+
+export const getSearchOptionsTag = () => {
   return (dispatch) => {
     axios.get('/mock/searchOptionsTag.json').then((r) => {
       let res = r.data;
-      if(res.code === 0){
+      if (res.code === 0) {
         dispatch(changeSearchOptionsTag(res.data));
       } else {
         dispatch(changeSearchOptionsTag([]));

@@ -19,22 +19,26 @@ class Header extends Component {
   constructor(props) {
     super(props);
     this.props = props;
+    this.state = {page: 1};
+    this.handleSearchOptionsChange = this.handleSearchOptionsChange.bind(this);
   }
 
   getSearchOptions() {
-    let {searchBarFocused, searchOptionsTag} = this.props;
-    if (searchBarFocused) {
+    let {searchBarFocused, searchOptionsActive, searchOptionsTag, handleSearchOptionsLeave, handleSearchOptionsEnter} = this.props;
+    let {page} = this.state;
+    const tags = searchOptionsTag.toJS().slice((page -1) * 10, (page -1) * 10 + 9);
+    if (searchBarFocused || searchOptionsActive) {
       return (
-        <SearchOptions>
+        <SearchOptions onMouseEnter={handleSearchOptionsEnter} onMouseLeave={handleSearchOptionsLeave}>
           <SearchOptionsTitle>
             热门搜索
-            <SearchOptionsChange>
+            <SearchOptionsChange onClick={this.handleSearchOptionsChange}>
               换一批
             </SearchOptionsChange>
           </SearchOptionsTitle>
           <SearchOptionsTagList>
             {
-              searchOptionsTag.map((tag) => {
+              tags.map((tag) => {
                 return <SearchOptionsTag key={tag}>{tag}</SearchOptionsTag>
               })
             }
@@ -44,6 +48,14 @@ class Header extends Component {
     } else {
       return null;
     }
+  }
+
+  handleSearchOptionsChange() {
+    if(this.state.page * 10 > this.props.searchOptionsTag.size) {
+      this.setState({page: 1});
+      return;
+    }
+    this.setState({page: this.state.page + 1});
   }
 
   render() {
@@ -94,6 +106,7 @@ class Header extends Component {
 const mapStateToProps = (state) => {
   return {
     searchBarFocused: state.getIn(['header', 'searchBarFocused']),
+    searchOptionsActive: state.getIn(['header', 'searchOptionsActive']),
     searchOptionsTag: state.getIn(['header', 'searchOptionsTag'])
     // state.get('header').get('searchBarFocused')
   }
@@ -107,6 +120,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     handleSearchInputBlur() {
       dispatch(actionCreators.searchBlur());
+    },
+    handleSearchOptionsEnter() {
+      dispatch(actionCreators.searchOptionsEnter());
+    },
+    handleSearchOptionsLeave() {
+      dispatch(actionCreators.searchOptionsLeave());
     }
   }
 };
