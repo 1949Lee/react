@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 
 export const HeaderWrapper = styled.div`
 height: 56px;
@@ -50,10 +50,14 @@ display: inline-block;
 font-size: 17px;
 line-height: 26px;
 position: relative;
+.header-search-icon {
+margin-left: -30px;
+cursor: pointer;
+}
 `;
 
 export const SearchInput = styled.input.attrs({
-  type:"text"
+  type: "text"
 })`
 padding: 0 40px 0 20px;
 width: 160px;
@@ -93,9 +97,33 @@ height: 20px;
 line-height: 20px;
 cursor: default;
 `;
+
+export const rotate = keyframes`  
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
 export const SearchOptionsChange = styled.span`
 float: right;
 cursor: pointer;
+position: relative;
+.icon {
+  position: absolute;
+  left: -12px;
+  top: 3px;
+  font-size: 13px;
+  transition: all 1s ease-in-out;
+  transform-origin: center center;
+  display: inline-block;
+}
+
+.text {
+  margin-left: 5px;
+}
 `;
 
 export const SearchOptionsTagList = styled.div`

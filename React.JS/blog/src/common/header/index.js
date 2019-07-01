@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {
   ButtonGroup,
   HeaderOptions,
@@ -16,6 +16,9 @@ import {actionCreators} from './store'
 
 class Header extends Component {
 
+
+  searchOptionsChangeIcon = null;
+
   constructor(props) {
     super(props);
     this.props = props;
@@ -26,14 +29,17 @@ class Header extends Component {
   getSearchOptions() {
     let {searchBarFocused, searchOptionsActive, searchOptionsTag, handleSearchOptionsLeave, handleSearchOptionsEnter} = this.props;
     let {page} = this.state;
-    const tags = searchOptionsTag.toJS().slice((page -1) * 10, (page -1) * 10 + 9);
-    if (searchBarFocused || searchOptionsActive) {
+    const tags = searchOptionsTag.toJS().slice((page - 1) * 10, (page - 1) * 10 + 9);
+    if ((searchBarFocused || searchOptionsActive) && searchOptionsTag.size > 0) {
       return (
         <SearchOptions onMouseEnter={handleSearchOptionsEnter} onMouseLeave={handleSearchOptionsLeave}>
           <SearchOptionsTitle>
             热门搜索
             <SearchOptionsChange onClick={this.handleSearchOptionsChange}>
-              换一批
+              <i style={{transform: 'rotate(0deg)'}} ref={(icon) => {
+                this.searchOptionsChangeIcon = icon
+              }} className="icon lee-icon-refresh"/>
+              <span className="text">换一批</span>
             </SearchOptionsChange>
           </SearchOptionsTitle>
           <SearchOptionsTagList>
@@ -51,7 +57,9 @@ class Header extends Component {
   }
 
   handleSearchOptionsChange() {
-    if(this.state.page * 10 > this.props.searchOptionsTag.size) {
+    let origin = this.searchOptionsChangeIcon.style.transform.match(/[0-9]+/)[0];
+    this.searchOptionsChangeIcon.style.transform = `rotate(${+origin + 360}deg)`;
+    if (this.state.page * 10 > this.props.searchOptionsTag.size) {
       this.setState({page: 1});
       return;
     }
@@ -76,12 +84,15 @@ class Header extends Component {
                   in={searchBarFocused}
                   timeout={500}
                   classNames="grow-width">
-                  <SearchInput
-                    className={searchBarFocused ? "focused" : ""}
-                    placeholder="搜索"
-                    onFocus={handleSearchInputFocus}
-                    onBlur={handleSearchInputBlur}>
-                  </SearchInput>
+                  <Fragment>
+                    <SearchInput
+                      className={searchBarFocused ? "focused" : ""}
+                      placeholder="搜索"
+                      onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag)}}
+                      onBlur={handleSearchInputBlur}>
+                    </SearchInput>
+                    <i className="header-search-icon lee-icon-search"/>
+                  </Fragment>
                 </CSSTransition>
                 {this.getSearchOptions()}
               </SearchWrapper>
@@ -114,9 +125,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleSearchInputFocus() {
+    handleSearchInputFocus(tags) {
       dispatch(actionCreators.searchFocused());
-      dispatch(actionCreators.getSearchOptionsTag());
+      if (tags.size === 0) {
+        dispatch(actionCreators.getSearchOptionsTag());
+      }
     },
     handleSearchInputBlur() {
       dispatch(actionCreators.searchBlur());
