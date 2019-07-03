@@ -1,11 +1,19 @@
 import React, {Component} from 'react';
+import {Article, ArticleFooter, ArticleHeader, ArticleList, ArticleOptions, ArticlePreview, HomeWrapper} from "./style";
 
 class Home extends Component {
   render() {
     return (
-      <div>
-        这里是主页
-      </div>
+      <HomeWrapper>
+        <ArticleList>
+          <Article>
+            <ArticleHeader></ArticleHeader>
+            <ArticlePreview></ArticlePreview>
+            <ArticleOptions></ArticleOptions>
+            <ArticleFooter></ArticleFooter>
+          </Article>
+        </ArticleList>
+      </HomeWrapper>
     );
   }
 }
