@@ -7,27 +7,48 @@ import {
   ArticleOptions,
   ArticlePreview,
   HomeWrapper,
-  MoreList
+  MoreList, RecentArticle
 } from "./style";
+import {connect} from "react-redux";
+import {actionCreators} from "./store";
 
 class Home extends Component {
   render() {
+    let {articleList} = this.props;
     return (
       <HomeWrapper>
         <ArticleList>
-          <Article>
-            <ArticleHeader>如何使用 Hammerspoon 实现剪贴板历史</ArticleHeader>
-            <ArticlePreview>写在前面 Hammerspoon 是一款 macOS 下的自动化工具，软件本身几乎没有什么功能。所有的功能都需要以 lua 脚本的形式编写，放置在 ~/.hammerspoon 下。Hammerspoon 会通过 lua 脚本直接调用 macOS 本地提供的 API，从而实…</ArticlePreview>
-            <ArticleOptions></ArticleOptions>
-            <ArticleFooter></ArticleFooter>
-          </Article>
+          {articleList.map((article) => {
+            return (
+              <Article key={article.get('id')}>
+                <ArticleHeader>{article.get('title')}</ArticleHeader>
+                <ArticlePreview>{article.get('preview')}</ArticlePreview>
+                <ArticleOptions></ArticleOptions>
+                <ArticleFooter></ArticleFooter>
+              </Article>
+            )
+          })}
         </ArticleList>
         <MoreList>
-          最近更新
+          <RecentArticle>最近更新</RecentArticle>
         </MoreList>
       </HomeWrapper>
     );
   }
+
+  componentDidMount() {
+    this.props.initData();
+  }
 }
 
-export default Home;
+const mapStateToProps = (state) => ({
+  articleList: state.getIn(['home', 'articleList'])
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  initData() {
+    dispatch(actionCreators.initArticleList());
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
