@@ -102,6 +102,7 @@ handleClick(e){
     * store.getState 返回store中state的内容。
     * store.subscribe 订阅store中state的改变。如果不订阅，即使store中的state发生改变，视图也不会更新。
 * 当一个组件只有render函数的时候，可以变为一个无状态组件（纯函数，不继承react组件，所以没有生命周期那些影响）。
+* 组件懒加载（异步组件）可以用异步加载框架来实现：react-loadable等。
                                                     
 
 
