@@ -1,27 +1,31 @@
 import React from 'react';
-import Header from './common/header';
+import About from "./pages/about/about.js";
+import NewArticle from "./pages/write-article/new-article/new-article.js";
+import Header from './common/header/header.js';
 import {Provider} from "react-redux";
 import store from "./store";
 import {BrowserRouter, Route} from "react-router-dom";
-import Home from "./pages/home";
-import Article from "./pages/article";
+import Home from "./pages/home/home.js";
+import Article from "./pages/article/article.js";
 
 function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <Header/>
-        <div style={headerBg}></div>
         <BrowserRouter>
+          <Header/>
+          <div style={headerHeight}></div>
           <Route exact path="/" component={Home} />
           <Route exact path="/article" component={Article} />
+          <Route exact path="/about" component={About} />
+          <Route exact path="/new-article" component={NewArticle} />
         </BrowserRouter>
       </div>
     </Provider>
   );
 }
 
-const headerBg = {
+const headerHeight = {
   height:'56px'
 };
 

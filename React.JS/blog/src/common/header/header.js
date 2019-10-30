@@ -8,11 +8,13 @@ import {
   MenuList,
   MenuWrapper,
   SearchInput, SearchOptions, SearchOptionsChange, SearchOptionsTag, SearchOptionsTagList, SearchOptionsTitle,
-  SearchWrapper
+  SearchWrapper,
+	HeaderContainer
 } from "./style";
 import {CSSTransition} from 'react-transition-group';
 import {connect} from "react-redux";
 import {actionCreators} from './store'
+import {withRouter,NavLink} from 'react-router-dom'
 
 class Header extends Component {
 
@@ -24,6 +26,7 @@ class Header extends Component {
     this.props = props;
     this.state = {page: 1};
     this.handleSearchOptionsChange = this.handleSearchOptionsChange.bind(this);
+    this.handleWriteArticle = this.handleWriteArticle.bind(this);
   }
 
   getSearchOptions() {
@@ -66,19 +69,28 @@ class Header extends Component {
     this.setState({page: this.state.page + 1});
   }
 
+  handleWriteArticle() {
+    this.props.history.push('new-article');
+    console.log(this.props)
+  }
+
   render() {
     let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur} = this.props;
     return (
-      <nav style={{'width': '100%', position: 'fixed', 'borderBottom': '1px solid #f0f0f0'}}>
+      <HeaderContainer>
         <HeaderWrapper>
           <Logo>镜中之人</Logo>
           <MenuList>
             <MenuWrapper>
-              <MenuItem className="active">
-                <i className="menu-icon lee-icon-home"/>
-                <span className="text">首页</span>
-              </MenuItem>
-              <MenuItem>目录</MenuItem>
+              <NavLink exact className="nav-link" to="" activeClassName={'active'}>
+                <MenuItem>
+                  <i className="menu-icon lee-icon-home"/>
+                  <span className="text">首页</span>
+                </MenuItem>
+              </NavLink>
+              <NavLink exact className="nav-link" to="/category" activeClassName={'active'}>
+								<MenuItem>目录</MenuItem>
+              </NavLink>
               <SearchWrapper>
                 <CSSTransition
                   in={searchBarFocused}
@@ -98,18 +110,18 @@ class Header extends Component {
               </SearchWrapper>
             </MenuWrapper>
             <MenuWrapper>
-              <MenuItem>Aa</MenuItem>
+              {/*<MenuItem>Aa</MenuItem>*/}
               <MenuItem>关于博主</MenuItem>
             </MenuWrapper>
           </MenuList>
           <HeaderOptions>
             <ButtonGroup>
-              <button className="lee-btn" type="button">写文章</button>
+              <button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
               <button className="lee-btn" type="button">我的作品</button>
             </ButtonGroup>
           </HeaderOptions>
         </HeaderWrapper>
-      </nav>
+      </HeaderContainer>
     )
   }
 }
@@ -143,4 +155,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

@@ -1,9 +1,23 @@
 import styled, {keyframes} from 'styled-components';
 
+export const HeaderContainer = styled.nav`
+width: 100%;
+position: fixed;
+border-bottom: 1px solid #f0f0f0;
+background-color:#ffffff;
+`;
+
 export const HeaderWrapper = styled.div`
 height: 56px;
 min-width: 768px;
 margin: 0 5%;
+.nav-link {
+  &.active{
+    .text, .menu-icon {
+      color: #79c1df;
+    }
+  }
+}
 `;
 
 export const Logo = styled.span`
@@ -37,9 +51,6 @@ font-size: 17px;
 line-height: 26px;
 margin: 15px;
 cursor: pointer;
-&.active{
-  color: #79c1df;
-}
 .menu-icon {
   margin-right: 5px;
 }
