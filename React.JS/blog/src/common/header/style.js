@@ -6,7 +6,14 @@ position: fixed;
 border-bottom: 1px solid #f0f0f0;
 background-color:#ffffff;
 &.float{
-	top: -100vh;
+	top: -56px;
+}
+.fold-toggle {
+	display: inline-block;
+	font-size: 20px;
+	position: absolute;
+	bottom: -50px;
+	right: 3vw;
 }
 `;
 

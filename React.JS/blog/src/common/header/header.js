@@ -24,9 +24,10 @@ class Header extends Component {
   constructor(props) {
     super(props);
     this.props = props;
-    this.state = {page: 1};
+    this.state = {page: 1,toggle:false};
     this.handleSearchOptionsChange = this.handleSearchOptionsChange.bind(this);
     this.handleWriteArticle = this.handleWriteArticle.bind(this);
+    this.toggleFloat = this.toggleFloat.bind(this);
   }
 
   getSearchOptions() {
@@ -76,6 +77,10 @@ class Header extends Component {
     this.props.history.push('new-article');
   }
 
+  toggleFloat() {
+  	this.setState({toggle:!this.state.toggle});
+	}
+
   render() {
     let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
     return (
@@ -123,6 +128,7 @@ class Header extends Component {
             </ButtonGroup>
           </HeaderOptions>
         </HeaderWrapper>
+				<i className="fold-toggle lee-icon-folded" onClick={this.toggleFloat}/>
       </HeaderContainer>
     )
   }
