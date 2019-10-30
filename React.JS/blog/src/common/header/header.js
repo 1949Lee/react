@@ -70,14 +70,16 @@ class Header extends Component {
   }
 
   handleWriteArticle() {
+  	if (this.props.history.location.pathname === "/new-article"){
+  		return
+		}
     this.props.history.push('new-article');
-    console.log(this.props)
   }
 
   render() {
-    let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur} = this.props;
+    let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
     return (
-      <HeaderContainer>
+      <HeaderContainer className={floatTop?'float':""}>
         <HeaderWrapper>
           <Logo>镜中之人</Logo>
           <MenuList>

@@ -5,6 +5,9 @@ width: 100%;
 position: fixed;
 border-bottom: 1px solid #f0f0f0;
 background-color:#ffffff;
+&.float{
+	top: -100vh;
+}
 `;
 
 export const HeaderWrapper = styled.div`
