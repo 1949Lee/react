@@ -16,12 +16,14 @@ import {
 import {CSSTransition} from 'react-transition-group';
 import {connect} from "react-redux";
 import {actionCreators} from './store'
-import {withRouter, NavLink, BrowserRouter} from 'react-router-dom'
+import {withRouter, NavLink} from 'react-router-dom'
 
 class Header extends Component {
 
 
   searchOptionsChangeIcon = null;
+	toggleTimer = null;
+	hoverShown = false;
 
   constructor(props) {
     super(props);
@@ -30,6 +32,9 @@ class Header extends Component {
     this.handleSearchOptionsChange = this.handleSearchOptionsChange.bind(this);
     this.handleWriteArticle = this.handleWriteArticle.bind(this);
     this.toggleFloat = this.toggleFloat.bind(this);
+    this.debounceShow = this.debounceShow.bind(this);
+    this.clearDebounceShow = this.clearDebounceShow.bind(this);
+    this.hide = this.hide.bind(this);
   }
 
 	getSearchOptions() {
@@ -79,69 +84,114 @@ class Header extends Component {
     this.props.history.push('new-article');
   }
 
-  toggleFloat() {
-  	this.setState({toggle:!this.state.toggle});
+  toggleFloat(action) {
+		if(this.toggleTimer) {
+			clearTimeout(this.toggleTimer)
+			this.toggleTimer = null;
+		}
+  	if (action !== undefined){
+  		if (action){
+				if (!this.state.toggle) {
+					this.setState({toggle:true});
+				}
+			}else {
+				if (this.state.toggle) {
+					this.setState({toggle:false});
+				}
+			}
+		} else {
+			this.setState({toggle:!this.state.toggle});
+		}
+	}
+
+	debounceShow() {
+		if(this.props.floatTop && this.state.toggle) {
+			this.toggleTimer = setTimeout(() => {
+					this.toggleFloat(false);
+					this.hoverShown = true;
+			},1200);
+		}
+	}
+
+	clearDebounceShow() {
+  	if(this.toggleTimer) {
+  		clearTimeout(this.toggleTimer);
+			this.toggleTimer = null;
+			this.hoverShown = false;
+		}
+	}
+
+	hide() {
+  	if(this.hoverShown && !(this.props.floatTop&&this.state.toggle)){
+			this.toggleFloat(true);
+			this.hoverShown = false;
+		}
 	}
 
   render() {
     let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
     return (
-    	<Fragment>
-				<HeaderContainer className={floatTop && this.state.toggle?'float':""}>
-					<HeaderWrapper>
-						<Logo>镜中之人</Logo>
-						<MenuList>
-							<MenuWrapper>
-								<NavLink exact className="nav-link" to="" activeClassName={'active'}>
-									<MenuItem>
-										<i className="menu-icon lee-icon-home"/>
-										<span className="text">首页</span>
-									</MenuItem>
-								</NavLink>
-								<NavLink exact className="nav-link" to="/category" activeClassName={'active'}>
-									<MenuItem>目录</MenuItem>
-								</NavLink>
-								<SearchWrapper>
-									<CSSTransition
-										in={searchBarFocused}
-										timeout={500}
-										classNames="grow-width">
-										<Fragment>
-											<SearchInput
-												className={searchBarFocused ? "focused" : ""}
-												placeholder="搜索"
-												onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag)}}
-												onBlur={handleSearchInputBlur}>
-											</SearchInput>
-											<i className="header-search-icon lee-icon-search"/>
-										</Fragment>
-									</CSSTransition>
-									{this.getSearchOptions()}
-								</SearchWrapper>
-							</MenuWrapper>
-							<MenuWrapper>
-								{/*<MenuItem>Aa</MenuItem>*/}
-								<MenuItem>关于博主</MenuItem>
-							</MenuWrapper>
-						</MenuList>
-						<HeaderOptions>
-							<ButtonGroup>
-								<button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
-								<button className="lee-btn" type="button">我的作品</button>
-							</ButtonGroup>
-						</HeaderOptions>
-					</HeaderWrapper>
-					{floatTop ?
-						<FoldToggleWrapper className="fold-toggle-wrapper" onClick={this.toggleFloat}>
-							<i className="fold-toggle lee-icon-folded" onClick={this.toggleFloat}/>
-						</FoldToggleWrapper>
-						: null}
-				</HeaderContainer>
-				{
-					!(floatTop && this.state.toggle)?<div style={HeaderHeight}></div>:null
+			<CSSTransition
+				in={floatTop && this.state.toggle}
+				timeout={500}
+				classNames="toggle">
+				<Fragment>
+					<HeaderContainer className={floatTop && this.state.toggle?'float':""} onMouseLeave={this.hide}>
+						<HeaderWrapper>
+							<Logo>镜中之人</Logo>
+							<MenuList>
+								<MenuWrapper>
+									<NavLink exact className="nav-link" to="" activeClassName={'active'}>
+										<MenuItem>
+											<i className="menu-icon lee-icon-home"/>
+											<span className="text">首页</span>
+										</MenuItem>
+									</NavLink>
+									<NavLink exact className="nav-link" to="/category" activeClassName={'active'}>
+										<MenuItem>目录</MenuItem>
+									</NavLink>
+									<SearchWrapper>
+										<CSSTransition
+											in={searchBarFocused}
+											timeout={500}
+											classNames="grow-width">
+											<Fragment>
+												<SearchInput
+													className={searchBarFocused ? "focused" : ""}
+													placeholder="搜索"
+													onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag)}}
+													onBlur={handleSearchInputBlur}>
+												</SearchInput>
+												<i className="header-search-icon lee-icon-search"/>
+											</Fragment>
+										</CSSTransition>
+										{this.getSearchOptions()}
+									</SearchWrapper>
+								</MenuWrapper>
+								<MenuWrapper>
+									{/*<MenuItem>Aa</MenuItem>*/}
+									<MenuItem>关于博主</MenuItem>
+								</MenuWrapper>
+							</MenuList>
+							<HeaderOptions>
+								<ButtonGroup>
+									<button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
+									<button className="lee-btn" type="button">我的作品</button>
+								</ButtonGroup>
+							</HeaderOptions>
+						</HeaderWrapper>
+						{floatTop ?
+							<FoldToggleWrapper className="fold-toggle-wrapper" onClick={() => {this.toggleFloat()}} onMouseOver={this.debounceShow} onMouseLeave={this.clearDebounceShow}>
+								<i className="fold-toggle lee-icon-folded"/>
+							</FoldToggleWrapper>
+							: null}
+					</HeaderContainer>
+					{
+						!(floatTop && this.state.toggle)?<div style={HeaderHeight}></div>:null
 
-				}
-			</Fragment>
+					}
+				</Fragment>
+			</CSSTransition>
 
     )
   }

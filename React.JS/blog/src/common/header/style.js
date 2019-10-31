@@ -5,6 +5,7 @@ width: 100%;
 position: fixed;
 border-bottom: 1px solid #f0f0f0;
 background-color:#ffffff;
+top: 0;
 &.float{
 	top: -56px;
 	.fold-toggle-wrapper {
@@ -13,6 +14,12 @@ background-color:#ffffff;
 }
 .fold-toggle-wrapper {
 	//display: none;
+}
+&.toggle-enter {
+	transition: top 0.5s ease;
+}
+&.toggle-exit {
+  transition: top 0.5s ease;
 }
 `;
 
@@ -186,6 +193,9 @@ height: 100%;
 .lee-btn {
 margin:8px 10px;
 font-size: 17px;
+button{
+	line-height: 26px;
+	border: none;
 }
 `;
 
