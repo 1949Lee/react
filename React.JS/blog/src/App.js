@@ -20,10 +20,8 @@ class App extends Component{
 
 	handleRouterChange(history) {
 		if (history.location.pathname === "/new-article") {
-			console.log(1);
 			this.setState({isWriteArticle:true})
 		} else {
-			console.log(2);
 			this.setState({isWriteArticle:false})
 		}
 	}
@@ -34,10 +32,6 @@ class App extends Component{
 				<div className="App">
 					<BrowserRouter>
 						<Header floatTop={this.state.isWriteArticle}/>
-						{
-							!this.state.isWriteArticle?<div style={headerHeight}></div>:null
-
-						}
 						<SwitchWithLocationChange onChange={this.handleRouterChange}>
 							<Route exact path="/" component={Home} />
 							<Route exact path="/article" component={Article} />
@@ -50,9 +44,5 @@ class App extends Component{
 		)
 	}
 }
-
-const headerHeight = {
-  height:'56px'
-};
 
 export default App;

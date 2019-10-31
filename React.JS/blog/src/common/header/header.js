@@ -1,4 +1,5 @@
 import React, {Component, Fragment} from 'react';
+import {HeaderHeight} from "../../config.js";
 import {
   ButtonGroup,
   HeaderOptions,
@@ -9,12 +10,13 @@ import {
   MenuWrapper,
   SearchInput, SearchOptions, SearchOptionsChange, SearchOptionsTag, SearchOptionsTagList, SearchOptionsTitle,
   SearchWrapper,
-	HeaderContainer
+	HeaderContainer,
+	FoldToggleWrapper
 } from "./style";
 import {CSSTransition} from 'react-transition-group';
 import {connect} from "react-redux";
 import {actionCreators} from './store'
-import {withRouter,NavLink} from 'react-router-dom'
+import {withRouter, NavLink, BrowserRouter} from 'react-router-dom'
 
 class Header extends Component {
 
@@ -24,13 +26,13 @@ class Header extends Component {
   constructor(props) {
     super(props);
     this.props = props;
-    this.state = {page: 1,toggle:false};
+    this.state = {page: 1,toggle:true};
     this.handleSearchOptionsChange = this.handleSearchOptionsChange.bind(this);
     this.handleWriteArticle = this.handleWriteArticle.bind(this);
     this.toggleFloat = this.toggleFloat.bind(this);
   }
 
-  getSearchOptions() {
+	getSearchOptions() {
     let {searchBarFocused, searchOptionsActive, searchOptionsTag, handleSearchOptionsLeave, handleSearchOptionsEnter} = this.props;
     let {page} = this.state;
     const tags = searchOptionsTag.toJS().slice((page - 1) * 10, (page - 1) * 10 + 9);
@@ -84,52 +86,63 @@ class Header extends Component {
   render() {
     let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
     return (
-      <HeaderContainer className={floatTop?'float':""}>
-        <HeaderWrapper>
-          <Logo>镜中之人</Logo>
-          <MenuList>
-            <MenuWrapper>
-              <NavLink exact className="nav-link" to="" activeClassName={'active'}>
-                <MenuItem>
-                  <i className="menu-icon lee-icon-home"/>
-                  <span className="text">首页</span>
-                </MenuItem>
-              </NavLink>
-              <NavLink exact className="nav-link" to="/category" activeClassName={'active'}>
-								<MenuItem>目录</MenuItem>
-              </NavLink>
-              <SearchWrapper>
-                <CSSTransition
-                  in={searchBarFocused}
-                  timeout={500}
-                  classNames="grow-width">
-                  <Fragment>
-                    <SearchInput
-                      className={searchBarFocused ? "focused" : ""}
-                      placeholder="搜索"
-                      onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag)}}
-                      onBlur={handleSearchInputBlur}>
-                    </SearchInput>
-                    <i className="header-search-icon lee-icon-search"/>
-                  </Fragment>
-                </CSSTransition>
-                {this.getSearchOptions()}
-              </SearchWrapper>
-            </MenuWrapper>
-            <MenuWrapper>
-              {/*<MenuItem>Aa</MenuItem>*/}
-              <MenuItem>关于博主</MenuItem>
-            </MenuWrapper>
-          </MenuList>
-          <HeaderOptions>
-            <ButtonGroup>
-              <button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
-              <button className="lee-btn" type="button">我的作品</button>
-            </ButtonGroup>
-          </HeaderOptions>
-        </HeaderWrapper>
-				<i className="fold-toggle lee-icon-folded" onClick={this.toggleFloat}/>
-      </HeaderContainer>
+    	<Fragment>
+				<HeaderContainer className={floatTop && this.state.toggle?'float':""}>
+					<HeaderWrapper>
+						<Logo>镜中之人</Logo>
+						<MenuList>
+							<MenuWrapper>
+								<NavLink exact className="nav-link" to="" activeClassName={'active'}>
+									<MenuItem>
+										<i className="menu-icon lee-icon-home"/>
+										<span className="text">首页</span>
+									</MenuItem>
+								</NavLink>
+								<NavLink exact className="nav-link" to="/category" activeClassName={'active'}>
+									<MenuItem>目录</MenuItem>
+								</NavLink>
+								<SearchWrapper>
+									<CSSTransition
+										in={searchBarFocused}
+										timeout={500}
+										classNames="grow-width">
+										<Fragment>
+											<SearchInput
+												className={searchBarFocused ? "focused" : ""}
+												placeholder="搜索"
+												onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag)}}
+												onBlur={handleSearchInputBlur}>
+											</SearchInput>
+											<i className="header-search-icon lee-icon-search"/>
+										</Fragment>
+									</CSSTransition>
+									{this.getSearchOptions()}
+								</SearchWrapper>
+							</MenuWrapper>
+							<MenuWrapper>
+								{/*<MenuItem>Aa</MenuItem>*/}
+								<MenuItem>关于博主</MenuItem>
+							</MenuWrapper>
+						</MenuList>
+						<HeaderOptions>
+							<ButtonGroup>
+								<button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
+								<button className="lee-btn" type="button">我的作品</button>
+							</ButtonGroup>
+						</HeaderOptions>
+					</HeaderWrapper>
+					{floatTop ?
+						<FoldToggleWrapper className="fold-toggle-wrapper" onClick={this.toggleFloat}>
+							<i className="fold-toggle lee-icon-folded" onClick={this.toggleFloat}/>
+						</FoldToggleWrapper>
+						: null}
+				</HeaderContainer>
+				{
+					!(floatTop && this.state.toggle)?<div style={HeaderHeight}></div>:null
+
+				}
+			</Fragment>
+
     )
   }
 }

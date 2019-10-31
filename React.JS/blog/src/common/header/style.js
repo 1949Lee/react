@@ -7,13 +7,12 @@ border-bottom: 1px solid #f0f0f0;
 background-color:#ffffff;
 &.float{
 	top: -56px;
+	.fold-toggle-wrapper {
+		display: inline-block;
+	}
 }
-.fold-toggle {
-	display: inline-block;
-	font-size: 20px;
-	position: absolute;
-	bottom: -50px;
-	right: 3vw;
+.fold-toggle-wrapper {
+	//display: none;
 }
 `;
 
@@ -188,4 +187,28 @@ height: 100%;
 margin:8px 10px;
 font-size: 17px;
 }
+`;
+
+export const FoldToggleWrapper = styled.span`
+	position: absolute;
+	font-size: 20px;
+	bottom: -50px;
+	height: 48px;
+	width: 20px;
+	right: 3vw;
+	.fold-toggle{
+		display: block;
+		margin-top: 28px;
+		width: 100%;
+	}
+	&::after {
+		content: ' ';
+		height: 28px;
+		border-left: 2px rgba(0,0,0,1) dashed;
+		display: inline-block;
+		position: absolute;
+		//top: -28px;
+		left: 50%;
+		top:0;
+	}
 `;
