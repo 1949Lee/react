@@ -7,7 +7,7 @@ border-bottom: 1px solid #f0f0f0;
 background-color:#ffffff;
 top: 0;
 &.float{
-	top: -56px;
+	top: -57px;
 	.fold-toggle-wrapper {
 		display: inline-block;
 	}
@@ -202,19 +202,19 @@ button{
 export const FoldToggleWrapper = styled.span`
 	position: absolute;
 	font-size: 20px;
-	bottom: -50px;
-	height: 48px;
+	bottom: -40px;
+	height: 38px;
 	width: 20px;
-	right: 3vw;
+	right: 2vw;
 	.fold-toggle{
 		display: block;
-		margin-top: 28px;
+		margin-top: 18px;
 		width: 100%;
 	}
 	&::after {
 		content: ' ';
-		height: 28px;
-		border-left: 2px rgba(0,0,0,1) dashed;
+		height: 18px;
+		border-left: 2px rgba(0,0,0,1) dotted;
 		display: inline-block;
 		position: absolute;
 		//top: -28px;
