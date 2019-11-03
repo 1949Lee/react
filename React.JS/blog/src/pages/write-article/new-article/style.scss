@@ -47,13 +47,27 @@
 	.preview-wrapper {
 		display: inline-block;
 		width: calc(20vw - 3px);
+		overflow-x: hidden;
 		overflow-y: auto;
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
+		position: relative;
 		.preview-html {
 			width: 100vw;
 			height: auto;
 			transform: scale(0.2);
+			transform-origin: 0 0;
+			position: absolute;
+			top: 0;
+			z-index: 1;
+		}
+		.preview-options-area {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			cursor: zoom-in;
+			z-index: 2;
+			top: 0;
 		}
 	}
 }
