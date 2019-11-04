@@ -4,27 +4,30 @@ import './style.scss'
 class NewArticle extends Component {
 
 	ws = null;
+
 	constructor(props) {
 		super(props);
 		this.props = props;
 		this.state = {
-			previewFlag:false,
+			previewFlag: false,
 			// previewHtml:'<div class="content"><div class="block"><h3 class="header-h3" ><span class="text" >斜体和粗体和粗斜体</span></h3></div><div class="block"><span class="text" >使用 * 和 ** 和 *** 表示斜体和粗体。</span></div><div class="block"><span class="text" >这是 </span><span class="italic" >斜体</span><span class="text" >，这是 </span><span class="bold" >粗体</span><span class="text" >，这是</span><span class="bold-italic" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >删除线</span></h3></div><div class="block"><span class="text" >使用 ~~ 表示删除线</span></div><div class="block"><span class="text" >这是 </span><span class="deleted-text" >删除线</span><span class="text" >，这是 </span><span class="deleted-text" >删除线+</span><span class="bold-italic deleted-text" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >外链接</span></h3></div><div class="block"><span class="text" >使用 [描述](链接地址) 为文字增加外链接。</span></div><div class="block"><span class="text" >这是一个链接：</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >图像块</span></h3></div><div class="block"><span class="text" >使用![图像描述](图像地址)来添加图像，一个图像一行。</span></div><div class="block image-block"><div class="image-wrapper"><img class="image"  src="./img.jpeg"  alt="" /><div class="image-text-wrapper"><span class="inline-background-strong" ><span class="text" >这里是一个图片，可以使用其他</span><span class="bold-italic" >语法</span></span></div></div></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >行内底色变色强调</span></h3></div><div class="block"><span class="text" >使用`表示行内底色变色强调。</span></div><div class="block"><span class="text" >这是一个</span><span class="inline-background-strong" ><span class="text" >行内底色变色强调。</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></span><span class="text" >。</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >多级标题</span></h3></div><div class="block"><span class="text" >使用一个或多个#然后跟一个空格来表示多级标题</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h1 class="header-h1" ><span class="text" >这是一个一级标题</span></h1></div><div class="block"><h6 class="header-h6" ><span class="text" >这是一个六级标题，标题还可以跟一些简单语法法。</span><span class="inline-background-strong" ><span class="text" >变色强调。</span><span class="bold-italic" >粗斜体</span></span></h6></div></div>',
-			previewHtml:'',
-			previewHeight:'100%',
-			previewPosition:0
+			previewHtml: '',
+			previewHeight: '100%',
+			previewPosition: 0
 		};
 		this.textInput = this.textInput.bind(this);
 		this.textPaste = this.textPaste.bind(this);
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
 		this.hidePreview = this.hidePreview.bind(this);
+		this.fileUpload = this.fileUpload.bind(this);
+		this.imgShow = this.imgShow.bind(this);
 	}
 
 	componentDidMount() {
 		// 打开一个 web socket
 		let ws = new WebSocket("ws://localhost:1314/ws");
-		this.ws =  ws;
+		this.ws = ws;
 
 		// TODO 计算机睡眠后在开启，websocket链接会断开。想办法处理
 		this.ws.onopen = () => {
@@ -51,9 +54,72 @@ class NewArticle extends Component {
 		e.preventDefault();
 		// 粘贴事件有一个clipboardData的属性，提供了对剪贴板的访问
 		// clipboardData的getData(fomat) 从剪贴板获取指定格式的数据
-		let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
-		// 插入
-		document.execCommand("insertText", false, text);
+		let clipboardData = e.clipboardData;
+		let dataTypes = clipboardData.types;
+		console.log(dataTypes);
+		dataTypes.map((type) => {
+			console.log(clipboardData.getData(type));
+			switch (type) {
+				case 'text/plain':
+					let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+					document.execCommand("insertText", false, text);
+					break;
+				case 'Files':
+					this.imgShow(clipboardData.files);
+					// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
+					break;
+				default:
+			}
+			return type;
+		})
+	}
+
+	imgShow(files) {
+		for (let file of files) {
+			if (file.type.indexOf('image') > -1) { // 图片展示处理
+				const img = document.createElement("img");
+				img.src = window.URL.createObjectURL(file);
+				img.height = 60;
+				img.onload = function () {
+					window.URL.revokeObjectURL(this.src);
+				};
+				// TODO 焦点下一行显示图片markdown语法。
+				// document.execCommand("insertText", false, );
+				document.getElementsByClassName('options-wrapper')[0].appendChild(img);
+			}
+		}
+	}
+
+	fileUpload(files) {
+		for (let file of files) {
+			if (file.type.indexOf('image') > -1) { // 图片展示处理
+				// TODO 上传图片的具体实现。参考链接 https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications
+				// var reader = new FileReader();
+				// this.ctrl = createThrobber(img);
+				// var xhr = new XMLHttpRequest();
+				// this.xhr = xhr;
+				//
+				// var self = this;
+				// this.xhr.upload.addEventListener("progress", function(e) {
+				// 	if (e.lengthComputable) {
+				// 		var percentage = Math.round((e.loaded * 100) / e.total);
+				// 		self.ctrl.update(percentage);
+				// 	}
+				// }, false);
+				//
+				// xhr.upload.addEventListener("load", function(e){
+				// 	self.ctrl.update(100);
+				// 	var canvas = self.ctrl.ctx.canvas;
+				// 	canvas.parentNode.removeChild(canvas);
+				// }, false);
+				// xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
+				// xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+				// reader.onload = function(evt) {
+				// 	xhr.send(evt.target.result);
+				// };
+				// reader.readAsBinaryString(file);
+			}
+		}
 	}
 
 	textInput(e) {
@@ -102,22 +168,22 @@ class NewArticle extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		if(prevState.previewHtml !== this.state.previewHtml){
-			this.setState({previewHeight:this.refs.preview.getBoundingClientRect().height + 'px'});
+		if (prevState.previewHtml !== this.state.previewHtml) {
+			this.setState({previewHeight: this.refs.preview.getBoundingClientRect().height + 'px'});
 		}
 	}
 
 	send() {
 		// Web Socket 使用 send() 方法发送数据
-		this.ws.send(JSON.stringify({text:this.refs.editor.innerText}));
+		this.ws.send(JSON.stringify({text: this.refs.editor.innerText}));
 		// this.ws.send("");
 	}
 
-	receive(event){
+	receive(event) {
 		let result = (JSON.parse(event.data));
 		console.log(result);
-		if(result&&+result.code === 0) {
-			this.setState({previewHtml:result.data.html})
+		if (result && +result.code === 0) {
+			this.setState({previewHtml: result.data.html})
 		}
 	}
 
@@ -126,15 +192,16 @@ class NewArticle extends Component {
 		let e = event.nativeEvent;
 		if (this.state.previewHtml) {
 			this.setState({
-				previewPosition:e.offsetY,
-				previewFlag:true
+				previewPosition: e.offsetY,
+				previewFlag: true
 			});
 		}
 		this.refs.previewResult.scrollTop = this.state.previewPosition * 5 - 20
 	}
+
 	hidePreview() {
 		console.log(this.state.previewPosition);
-		this.setState({previewFlag:false})
+		this.setState({previewFlag: false})
 	}
 
 	render() {
@@ -144,15 +211,20 @@ class NewArticle extends Component {
 					{/*<button onClick={this.send}>发送</button>*/}
 				</div>
 				<div className="editor-wrapper">
-					<div className="editor" ref="editor" style={{opacity: this.state.previewFlag?0:1}} onInput={this.send} onKeyDown={this.textInput} contentEditable="true" onPaste={this.textPaste}></div>
-					<div className="preview-result" style={{opacity: this.state.previewFlag?1:0}} ref="previewResult" dangerouslySetInnerHTML={{__html:this.state.previewHtml}}></div>
+					<div className="editor" ref="editor" style={{opacity: this.state.previewFlag ? 0 : 1}} onInput={this.send}
+							 onKeyDown={this.textInput} contentEditable="true" onPaste={this.textPaste}></div>
+					<div className="preview-result" style={{opacity: this.state.previewFlag ? 1 : 0}} ref="previewResult"
+							 dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
 					{/*<div className="preview-result" ref="previewResult" dangerouslySetInnerHTML={{__html:this.state.previewHtml}}></div>*/}
 				</div>
 				<div className="divider"></div>
-				<div className="preview-wrapper" onMouseMove={(event)=>{this.moveToPreview(event)}} onMouseLeave={this.hidePreview}>
-					<div className="preview-html" ref="preview" dangerouslySetInnerHTML={{__html:this.state.previewHtml}}>
+				<div className="preview-wrapper" onMouseMove={(event) => {
+					this.moveToPreview(event)
+				}} onMouseLeave={this.hidePreview}>
+					<div className="preview-html" ref="preview" dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
 					</div>
-					<div className="preview-options-area" style={{height:this.refs.preview?this.refs.preview.getBoundingClientRect().height + 'px':'100%'}}></div>
+					<div className="preview-options-area"
+							 style={{height: this.refs.preview ? this.refs.preview.getBoundingClientRect().height + 'px' : '100%'}}></div>
 				</div>
 			</div>
 		);
