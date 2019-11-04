@@ -15,9 +15,10 @@
 	.editor-wrapper {
 		width: 75vw;
 		display: inline-block;
-		margin: 0 2vw 0 3vw;
+		margin: 0 2.5vw 0 2.5vw;
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
+		position: relative;
 		.editor {
 			height: 100%;
 			outline: none;
@@ -32,6 +33,14 @@
 			}
 
 			box-sizing: border-box;
+		}
+		.preview-result {
+			position: absolute;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			overflow-y: auto;
 		}
 	}
 
