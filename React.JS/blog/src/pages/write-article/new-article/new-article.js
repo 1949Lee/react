@@ -22,6 +22,7 @@ class NewArticle extends Component {
 		this.hidePreview = this.hidePreview.bind(this);
 		this.fileUpload = this.fileUpload.bind(this);
 		this.imgShow = this.imgShow.bind(this);
+		this.imgOnload = this.imgOnload.bind(this);
 	}
 
 	componentDidMount() {
@@ -57,37 +58,39 @@ class NewArticle extends Component {
 		let clipboardData = e.clipboardData;
 		let dataTypes = clipboardData.types;
 		console.log(dataTypes);
-		dataTypes.map((type) => {
-			console.log(clipboardData.getData(type));
-			switch (type) {
-				case 'text/plain':
-					let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
-					document.execCommand("insertText", false, text);
-					break;
-				case 'Files':
-					this.imgShow(clipboardData.files);
-					// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
-					break;
-				default:
-			}
-			return type;
-		})
+		if (dataTypes.filter((type) => type === 'Files').length > 0) {
+			this.imgShow(clipboardData.files);
+			// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
+		} else {
+			dataTypes.map((type) => {
+				console.log(clipboardData.getData(type));
+				switch (type) {
+					case 'text/plain':
+						let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+						document.execCommand("insertText", false, text);
+						break;
+					default:
+				}
+				return type;
+			})
+		}
 	}
 
 	imgShow(files) {
 		for (let file of files) {
 			if (file.type.indexOf('image') > -1) { // 图片展示处理
-				const img = document.createElement("img");
-				img.src = window.URL.createObjectURL(file);
-				img.height = 60;
-				img.onload = function () {
-					window.URL.revokeObjectURL(this.src);
-				};
-				// TODO 焦点下一行显示图片markdown语法。
-				// document.execCommand("insertText", false, );
-				document.getElementsByClassName('options-wrapper')[0].appendChild(img);
+				const src = window.URL.createObjectURL(file);
+				// img.onload = ;
+				// TODO 行首直接插入，行中换行插入。图片onload事件。
+				// document.execCommand("insertText", false, `![${file.name}](${src})`);
+				document.execCommand("insertText", false, `![请输入图片描述](${src})`);
 			}
 		}
+	}
+
+	imgOnload(url) {
+		window.URL.revokeObjectURL(url);
+		this.refs.img.src = url
 	}
 
 	fileUpload(files) {
@@ -209,6 +212,7 @@ class NewArticle extends Component {
 			<div id="new-article">
 				<div className="options-wrapper">
 					{/*<button onClick={this.send}>发送</button>*/}
+					<img ref="img" src="" alt="" height="60"/>
 				</div>
 				<div className="editor-wrapper">
 					<div className="editor" ref="editor" style={{opacity: this.state.previewFlag ? 0 : 1}} onInput={this.send}
