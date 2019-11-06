@@ -4,6 +4,7 @@ import './style.scss'
 class NewArticle extends Component {
 
 	ws = null;
+	fileFragmentSize = 64; // 64kb
 
 	constructor(props) {
 		super(props);
@@ -23,6 +24,7 @@ class NewArticle extends Component {
 		this.fileUpload = this.fileUpload.bind(this);
 		this.imgShow = this.imgShow.bind(this);
 		this.imgOnload = this.imgOnload.bind(this);
+		this.fileFragmentSend = this.fileFragmentSend.bind(this);
 	}
 
 	componentDidMount() {
@@ -43,6 +45,7 @@ class NewArticle extends Component {
 			// 关闭 websocket
 			console.log("连接已关闭...");
 		};
+		// ws.binaryType
 
 	}
 
@@ -61,6 +64,7 @@ class NewArticle extends Component {
 		if (dataTypes.filter((type) => type === 'Files').length > 0) {
 			this.imgShow(clipboardData.files);
 			// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
+			this.fileUpload(clipboardData.files);
 		} else {
 			dataTypes.map((type) => {
 				console.log(clipboardData.getData(type));
@@ -90,39 +94,62 @@ class NewArticle extends Component {
 
 	imgOnload(url) {
 		window.URL.revokeObjectURL(url);
-		this.refs.img.src = url
 	}
 
 	fileUpload(files) {
 		for (let file of files) {
 			if (file.type.indexOf('image') > -1) { // 图片展示处理
 				// TODO 上传图片的具体实现。参考链接 https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications
-				// var reader = new FileReader();
-				// this.ctrl = createThrobber(img);
-				// var xhr = new XMLHttpRequest();
-				// this.xhr = xhr;
-				//
-				// var self = this;
-				// this.xhr.upload.addEventListener("progress", function(e) {
-				// 	if (e.lengthComputable) {
-				// 		var percentage = Math.round((e.loaded * 100) / e.total);
-				// 		self.ctrl.update(percentage);
-				// 	}
-				// }, false);
-				//
-				// xhr.upload.addEventListener("load", function(e){
-				// 	self.ctrl.update(100);
-				// 	var canvas = self.ctrl.ctx.canvas;
-				// 	canvas.parentNode.removeChild(canvas);
-				// }, false);
-				// xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
-				// xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
-				// reader.onload = function(evt) {
-				// 	xhr.send(evt.target.result);
-				// };
-				// reader.readAsBinaryString(file);
+				/*var reader = new FileReader();
+				this.ctrl = createThrobber(img);
+				var xhr = new XMLHttpRequest();
+				this.xhr = xhr;
+
+				var self = this;
+				this.xhr.upload.addEventListener("progress", function(e) {
+					if (e.lengthComputable) {
+						var percentage = Math.round((e.loaded * 100) / e.total);
+						self.ctrl.update(percentage);
+					}
+				}, false);
+
+				xhr.upload.addEventListener("load", function(e){
+					self.ctrl.update(100);
+					var canvas = self.ctrl.ctx.canvas;
+					canvas.parentNode.removeChild(canvas);
+				}, false);
+				xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
+				xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
+				reader.onload = function(evt) {
+					xhr.send(evt.target.result);
+				};
+				reader.readAsBinaryString(file);*/
+				const fileInfo = {
+					file:{
+						name:file.name,
+						size:file.size,
+						lastModified:file.lastModified,
+					}
+				};
+				const reader = new FileReader();
+				reader.readAsArrayBuffer(file);
+				reader.onload = (e) => {
+					this.fileFragmentSend(e.target.result)
+				};
 			}
 		}
+	}
+
+	fileFragmentSend(arrayBuffer) {
+		let buffer = new ArrayBuffer(arrayBuffer.byteLength + 4);
+		let data = new DataView(buffer);
+		let origin = new DataView(arrayBuffer);
+		data.setUint16(0,2);
+		data.setUint16(2,64);
+		for (let i = 4; i<data.byteLength;i+=2){
+			data.setUint16(i,origin.getUint16(i - 4));
+		}
+		this.ws.send(data.buffer);
 	}
 
 	textInput(e) {
@@ -186,7 +213,9 @@ class NewArticle extends Component {
 		let result = (JSON.parse(event.data));
 		console.log(result);
 		if (result && +result.code === 0) {
-			this.setState({previewHtml: result.data.html})
+			if (result.markdown) {
+				this.setState({previewHtml: result.markdown.html})
+			}
 		}
 	}
 
@@ -203,7 +232,6 @@ class NewArticle extends Component {
 	}
 
 	hidePreview() {
-		console.log(this.state.previewPosition);
 		this.setState({previewFlag: false})
 	}
 
