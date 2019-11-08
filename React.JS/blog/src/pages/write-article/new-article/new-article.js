@@ -46,9 +46,6 @@ class NewArticle extends Component {
 
 	componentWillUnmount() {
 		this.ws.close();
-		document.getElementById("new-article").addEventListener('onload',".preview-result .image",() => {
-			console.log(111);
-		})
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
