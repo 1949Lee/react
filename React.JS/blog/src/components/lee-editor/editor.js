@@ -13,6 +13,7 @@ class LeeEditor extends Component {
 		this.fileUpload = this.fileUpload.bind(this);
 		this.fileFragmentSend = this.fileFragmentSend.bind(this);
 		this.textEditor = React.createRef();
+		// TODO 复制粘贴过来的好像多了一行空行
 	}
 
 
