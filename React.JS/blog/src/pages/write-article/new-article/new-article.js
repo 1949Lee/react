@@ -20,6 +20,7 @@ class NewArticle extends Component {
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
 		this.hidePreview = this.hidePreview.bind(this);
+		this.togglePreview = this.togglePreview.bind(this);
 	}
 
 	componentDidMount() {
@@ -85,17 +86,26 @@ class NewArticle extends Component {
 	hidePreview() {
 		this.setState({previewFlag: false})
 	}
+	togglePreview() {
+		this.setState({previewFlag: !this.state.previewFlag})
+	}
 
 	render() {
 		return (
 			<div id="new-article">
 				<div className="options-wrapper">
 					{/*<button onClick={this.send}>发送</button>*/}
-					<img ref="img" src="" alt="" height="60"/>
+					<button onClick={this.togglePreview}>{
+						this.state.previewFlag? '取消预览':'预览'
+					}</button>
 				</div>
 				<div className="editor-wrapper">
 					<LeeEditor className="editor" textChange={(text) => {this.send(text)}} style={{opacity: this.state.previewFlag ? 0 : 1}}></LeeEditor>
-					<div className="preview-result" style={{opacity: this.state.previewFlag ? 1 : 0}} ref="previewResult"
+					<div className="preview-result" style={
+						{
+							opacity: this.state.previewFlag ? 1 : 0,
+							zIndex: this.state.previewFlag ? 1 : -1
+						}} ref="previewResult"
 							 dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
 				</div>
 				<div className="divider"></div>
