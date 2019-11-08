@@ -24,7 +24,7 @@ class NewArticle extends Component {
 
 	componentDidMount() {
 		// 打开一个 web socket
-		let ws = new WebSocket("ws://localhost:1314/ws");
+		let ws = new WebSocket("ws://localhost:1314/ws/parser");
 		this.ws = ws;
 
 		// TODO 计算机睡眠后在开启，websocket链接会断开。想办法处理
