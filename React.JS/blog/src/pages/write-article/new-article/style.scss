@@ -15,18 +15,17 @@
 	.editor-wrapper {
 		width: 75vw;
 		display: inline-block;
-		margin: 0 2.5vw 0 2.5vw;
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
 		position: relative;
 		.editor {
 			height: 100%;
+			padding: 0 2.5vw 0 2.5vw;
 			outline: none;
 			user-select: text;
 			white-space: pre-wrap;
 			overflow-wrap: break-word;
 			overflow-y: auto;
-			padding: 6px;
 
 			&:focus {
 				outline: none;
@@ -36,11 +35,13 @@
 		}
 		.preview-result {
 			position: absolute;
+			box-sizing: border-box;
 			top: 0;
 			width: 100%;
 			height: 100%;
 			z-index: -1;
 			overflow-y: auto;
+			padding: 0 2vw 0 2vw;
 		}
 	}
 
