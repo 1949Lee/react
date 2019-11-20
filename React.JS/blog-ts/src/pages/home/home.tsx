@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {Connect} from "../../utils/decorators";
+import * as style from './style.scss'
 
 import {actionCreators} from "./store";
 
@@ -19,6 +20,12 @@ interface State extends React.ComponentState{
 
 }
 
+console.log();
+
+// type abc = typeof {
+// 	articleList: 1
+// }
+
 interface Props extends React.ComponentProps<any>{
 	// 初始化文章列表
 	initData:() => void,
@@ -29,17 +36,31 @@ interface Props extends React.ComponentProps<any>{
 
 @Connect(mapStateToProps,mapDispatchToProps)
 class Home extends Component<Props,State> {
+
+	constructor(props:Props) {
+		super(props);
+	}
+
   render() {
+
+  	let {articleList} = this.props;
     return (
-      <div>
-				{this.props.articleList.map((article) => {
-					return (
-						<div key={article.get('id')}>
-							<span>{article.get('title')}</span>
-							<span>{article.get('preview')}</span>
-						</div>
-					)
-				})}
+      <div className={style['home-wrapper']}>
+				<div className={style['article-list']}>
+					{articleList.map((article) => {
+						return (
+							<div className={style['article']} key={article.get('id')}>
+								<div className={style['article-header']}>{article.get('title')}</div>
+								<div className={style['article-preview']}>{article.get('preview')}</div>
+								<div className={style['article-options']}></div>
+								<div className={style['article-footer']}></div>
+							</div>
+						)
+					})}
+				</div>
+				<div className={style['recent-article-list']}>
+					<div className={style['recent-article']}>最近更新</div>
+				</div>
       </div>
     );
   }

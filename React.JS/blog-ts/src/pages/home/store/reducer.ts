@@ -1,12 +1,12 @@
 import {fromJS} from 'immutable'
+import {HomeAction} from "./action-creators";
 import * as actionType from "./action-type";
 
 const defaultState = fromJS({
 	articleList:[]
 });
 
-const reducer = (state = defaultState, action:any) => {
-	console.log(action);
+const reducer = (state = defaultState, action:HomeAction) => {
 	switch (action.type) {
 		case actionType.MoreArticleList:
 			return state.set('articleList',action.list);

@@ -1,8 +1,17 @@
+import * as React from "react";
 import * as actionType from "./actionType";
 import axios from 'axios';
 import {fromJS} from "immutable";
 
-const changeSearchOptionsTag = (data) => {
+export interface HeaderAction {
+	// Action类型
+	type:string,
+
+	// 搜索的推荐关键词数据
+	data?:any
+}
+
+const changeSearchOptionsTag = (data:any) => {
   return {
     type: actionType.CHANGE_SEARCH_OPTIONS_TAG,
     data: fromJS(data)
@@ -34,7 +43,7 @@ export const searchOptionsLeave = () => {
 };
 
 export const getSearchOptionsTag = () => {
-  return (dispatch) => {
+  return (dispatch:React.Dispatch<HeaderAction>) => {
     axios.get('/mock/searchOptionsTag.json').then((r) => {
       let res = r.data;
       if (res.code === 0) {

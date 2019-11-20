@@ -1,11 +1,10 @@
 import React from 'react';
 import {Provider} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
-import logo from '../logo.svg';
+import Header from "../layout/header/header";
 import H from "history";
 import About from "../pages/about/about";
 import Home from "../pages/home/home";
-// import Home from "../pages/home/home";
 import SwitchWithLocationChange from "../router/router-guard";
 import store from "../store";
 import * as style from './App.scss';
@@ -39,7 +38,7 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 			<Provider store={store}>
 				<div className={style['app']}>
 					<BrowserRouter>
-						{/*<Header floatTop={this.state.isWriteArticle}/>*/}
+						<Header floatTop={this.state.isWriteArticle}/>
 						<SwitchWithLocationChange onChange={this.handleRouterChange}>
 							<Route exact path="/" component={Home}/>
 							{/*<Route exact path="/article" component={Article} />*/}

@@ -18,7 +18,7 @@ import {connect} from "react-redux";
 import {actionCreators} from './store'
 import {withRouter, NavLink} from 'react-router-dom'
 
-class Header extends Component {
+class HeaderO extends Component {
 
 
   searchOptionsChangeIcon = null;
@@ -226,4 +226,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(HeaderO));

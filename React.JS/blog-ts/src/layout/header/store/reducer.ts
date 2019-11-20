@@ -1,3 +1,4 @@
+import {HeaderAction} from "./actionCreators";
 import * as actionType from "./actionType";
 import {fromJS} from "immutable";
 
@@ -7,7 +8,7 @@ const defaultSate = fromJS({
   searchOptionsTag:[]
 });
 
-const reducer = (state = defaultSate, action) => {
+const reducer = (state = defaultSate, action:HeaderAction) => {
   // let newState = state;
 
   switch (action.type) {
