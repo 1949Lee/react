@@ -1,8 +1,8 @@
 import React from 'react';
 import {Provider} from "react-redux";
 import {BrowserRouter, Route} from "react-router-dom";
-import Header from "../layout/header/header";
 import H from "history";
+import Header from "../layout/header/header";
 import About from "../pages/about/about";
 import Home from "../pages/home/home";
 import SwitchWithLocationChange from "../router/router-guard";
@@ -27,7 +27,6 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 	handleRouterChange = (history: H.History<H.History.LocationState>) => {
 		if (history.location.pathname === "/new-article") {
 			this.setState({isWriteArticle:true});
-			console.log(true);
 		} else {
 			this.setState({isWriteArticle:false});
 		}
@@ -36,9 +35,9 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 	render() {
 		return (
 			<Provider store={store}>
-				<div className={style['app']}>
+				<div>
 					<BrowserRouter>
-						<Header floatTop={this.state.isWriteArticle}/>
+						<Header floatTop={this.state.isWriteArticle} />
 						<SwitchWithLocationChange onChange={this.handleRouterChange}>
 							<Route exact path="/" component={Home}/>
 							{/*<Route exact path="/article" component={Article} />*/}

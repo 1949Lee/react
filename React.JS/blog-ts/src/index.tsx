@@ -1,6 +1,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './styles/leeIcon/style.css'
 import './styles';
 import App from "./app/App";
 import './styles/theme'

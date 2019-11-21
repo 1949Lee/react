@@ -7,7 +7,7 @@ interface HeaderInterface {
 }
 
 // 标题配置项
-export const Header: HeaderInterface = {
+export const HeaderConfig: HeaderInterface = {
 
 	// 标题高度
 	height:'56px'

@@ -1,4 +1,5 @@
 import * as React from "react";
+import {Dispatch} from "redux";
 import * as actionType from "./actionType";
 import axios from 'axios';
 import {fromJS} from "immutable";
@@ -43,7 +44,7 @@ export const searchOptionsLeave = () => {
 };
 
 export const getSearchOptionsTag = () => {
-  return (dispatch:React.Dispatch<HeaderAction>) => {
+  return (dispatch:Dispatch<HeaderAction>) => {
     axios.get('/mock/searchOptionsTag.json').then((r) => {
       let res = r.data;
       if (res.code === 0) {

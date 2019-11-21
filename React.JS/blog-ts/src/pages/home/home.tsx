@@ -50,7 +50,7 @@ class Home extends Component<Props,State> {
 					{articleList.map((article) => {
 						return (
 							<div className={style['article']} key={article.get('id')}>
-								<div className={style['article-header']}>{article.get('title')}</div>
+								<h2 className={style['article-header']}>{article.get('title')}</h2>
 								<div className={style['article-preview']}>{article.get('preview')}</div>
 								<div className={style['article-options']}></div>
 								<div className={style['article-footer']}></div>

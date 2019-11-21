@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import './style.scss'
 import LeeEditor from "../../../components/lee-editor/editor";
 
-class NewArticle extends Component {
+class NewArticleO extends Component {
 
 	ws = null;
 	fileFragmentSize = 64; // 64kb
@@ -122,4 +122,4 @@ class NewArticle extends Component {
 	}
 }
 
-export default NewArticle;
+export default NewArticleO;
