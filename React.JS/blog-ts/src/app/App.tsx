@@ -5,9 +5,10 @@ import H from "history";
 import Header from "../layout/header/header";
 import About from "../pages/about/about";
 import Home from "../pages/home/home";
+import NewArticle from "../pages/write-article/new-article/new-article";
 import SwitchWithLocationChange from "../router/router-guard";
 import store from "../store";
-import * as style from './App.scss';
+// import * as style from './App.scss';
 
 interface AppState {
 
@@ -42,7 +43,7 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 							<Route exact path="/" component={Home}/>
 							{/*<Route exact path="/article" component={Article} />*/}
 							<Route exact path="/about" component={About}/>
-							{/*<Route exact path="/new-article" component={NewArticle} />*/}
+							<Route exact path="/new-article" component={NewArticle} />
 							<Route path="*">
 								404
 							</Route>
