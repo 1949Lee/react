@@ -34,7 +34,7 @@ module.exports = {
 			},
 			{
 				test: /\.scss$/,
-				// loader: ['style-loader','css-loader','sass-loader'],
+				exclude:[resolve('src/styles'),/\.g\.scss$/],
 				use: [
 					{
 						loader: 'style-loader'
@@ -51,6 +51,11 @@ module.exports = {
 						loader: 'sass-loader'
 					}
 				]
+			},
+			{
+				test: /\.scss$/,
+				include:[resolve('src/styles'),/\.g\.scss$/],
+				loader: ['style-loader','css-loader','sass-loader'],
 			},
 			{
 				test: /\.css$/,

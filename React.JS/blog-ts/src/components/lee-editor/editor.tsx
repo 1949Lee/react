@@ -1,23 +1,28 @@
 import React,{Component} from 'react';
-import PropTypes from 'prop-types';
+import FileServer from "../../utils/file-server";
 
-class LeeEditor extends Component {
+
+interface State {
+}
+
+interface Props {
+	// editor的markdown内容改变或者添加文件。返回的数据为EditorData类型
+	textChange:(text:EditorData) => void,
+	className:string,
+	style:{[key:string]:any};
+}
+
+class LeeEditor extends Component<Props,State> {
+
+	textEditor:React.RefObject<HTMLDivElement> = React.createRef();
+
 	constructor(props){
 		super(props);
-		this.props = props
-		this.textPaste = this.textPaste.bind(this);
-		this.textInput = this.textInput.bind(this);
-		this.textChange = this.textChange.bind(this);
-		this.imgShow = this.imgShow.bind(this);
-		this.imgOnload = this.imgOnload.bind(this);
-		this.fileUpload = this.fileUpload.bind(this);
-		this.fileFragmentSend = this.fileFragmentSend.bind(this);
-		this.textEditor = React.createRef();
 		// TODO 复制粘贴过来的好像多了一行空行
 	}
 
 
-	textPaste(e) {
+	textPaste = (e:React.ClipboardEvent) => {
 		// 阻止默认粘贴
 		e.preventDefault();
 		// 粘贴事件有一个clipboardData的属性，提供了对剪贴板的访问
@@ -28,12 +33,12 @@ class LeeEditor extends Component {
 		if (dataTypes.filter((type) => type === 'Files').length > 0) {
 			this.imgShow(clipboardData.files);
 			// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
-			// this.fileUpload(clipboardData.files);
+			this.fileUpload(clipboardData.files);
 		} else {
 			dataTypes.map((type) => {
 				switch (type) {
 					case 'text/plain':
-						let text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+						let text = (e['originalEvent'] || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
 						document.execCommand("insertText", false, text);
 						break;
 					default:
@@ -41,10 +46,10 @@ class LeeEditor extends Component {
 				return type;
 			})
 		}
-	}
+	};
 
-	imgShow(files) {
-		for (let file of files) {
+	imgShow = (files:FileList) => {
+		for (let file of Object.values(files)) {
 			if (file.type.indexOf('image') > -1) { // 图片展示处理
 				const src = window.URL.createObjectURL(file);
 				// img.onload = ;
@@ -55,68 +60,15 @@ class LeeEditor extends Component {
 		}
 	}
 
-	imgOnload(url) {
+	imgOnload = (url:string) => {
 		window.URL.revokeObjectURL(url);
 	}
 
-	fileUpload(files) {
-		for (let file of files) {
-			if (file.type.indexOf('image') > -1) { // 图片展示处理
-				// TODO 上传图片的具体实现。参考链接 https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications
-				/*var reader = new FileReader();
-				this.ctrl = createThrobber(img);
-				var xhr = new XMLHttpRequest();
-				this.xhr = xhr;
+	fileUpload = (files:FileList) => {
+		FileServer.FileUpload(files)
+	};
 
-				var self = this;
-				this.xhr.upload.addEventListener("progress", function(e) {
-					if (e.lengthComputable) {
-						var percentage = Math.round((e.loaded * 100) / e.total);
-						self.ctrl.update(percentage);
-					}
-				}, false);
-
-				xhr.upload.addEventListener("load", function(e){
-					self.ctrl.update(100);
-					var canvas = self.ctrl.ctx.canvas;
-					canvas.parentNode.removeChild(canvas);
-				}, false);
-				xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
-				xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
-				reader.onload = function(evt) {
-					xhr.send(evt.target.result);
-				};
-				reader.readAsBinaryString(file);*/
-				const fileInfo = {
-					file:{
-						name:file.name,
-						size:file.size,
-						lastModified:file.lastModified,
-					}
-				};
-				console.log(fileInfo);
-				const reader = new FileReader();
-				reader.readAsArrayBuffer(file);
-				reader.onload = (e) => {
-					this.fileFragmentSend(e.target.result)
-				};
-			}
-		}
-	}
-
-	fileFragmentSend(arrayBuffer) {
-		let buffer = new ArrayBuffer(arrayBuffer.byteLength + 4);
-		let data = new DataView(buffer);
-		let origin = new DataView(arrayBuffer);
-		data.setUint16(0,2);
-		data.setUint16(2,64);
-		for (let i = 4; i<data.byteLength;i+=2){
-			data.setUint16(i,origin.getUint16(i - 4));
-		}
-		this.ws.send(data.buffer);
-	}
-
-	textInput(e) {
+	keyDown= (e:React.KeyboardEvent)=> {
 		// this.setState({data:this.state.data+this.state.data});
 		if (e.key.toUpperCase() === 'TAB') {
 			let selection = window.getSelection();
@@ -159,26 +111,44 @@ class LeeEditor extends Component {
 			}
 			e.preventDefault();
 		}
-	}
+	};
 
-	textChange() {
-		this.props.textChange(this.textEditor.current.innerText);
-	}
+	textChange = () => {
+		this.props.textChange({type:1,text:this.textEditor.current.innerText});
+	};
 
-	render() {
+	render = () => {
 
 		let {className,style} = this.props;
 		return (
-			<div className={className} onInput={this.textChange} ref={this.textEditor} style={style} onKeyDown={this.textInput} contentEditable="true" onPaste={this.textPaste}></div>
+			<div className={className} onInput={this.textChange} ref={this.textEditor} style={style} onKeyDown={this.keyDown} contentEditable={true} onPaste={this.textPaste}></div>
 		)
-	}
+	};
 }
-
-LeeEditor.proptype = {
-	textChange:PropTypes.func,
-	className:PropTypes.string,
-	style:PropTypes.object
-};
 
 
 export default LeeEditor;
+
+// editor添加文件后发射的数据
+export interface EditorFile {
+	// 文件名字
+	name:string
+
+	// 文件大小，单位：byte字节
+	size:number
+
+	// 场次修改时间，ms时间戳
+	lastModified:number
+}
+
+// editor的markdown的内容修改或者添加文件后发射的数据
+export interface EditorData {
+	// 1表示数据类型为markdown内容修改。2表示数据类型为添加文件
+	type:number;
+
+	// markdown内容
+	text?:string;
+
+	// 添加的文件信息（数据需要单独接受）
+	file?:EditorFile
+}

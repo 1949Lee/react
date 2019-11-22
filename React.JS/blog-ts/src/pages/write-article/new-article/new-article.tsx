@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-// import LeeEditor from "../../../components/lee-editor/editor";
+import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
+import * as style from './style.scss'
 
 interface State {
 	previewFlag:boolean
@@ -65,9 +66,9 @@ class NewArticle extends Component<Props,State> {
 		}
 	}
 
-	send = (text:string) => {
+	send = (data:EditorData) => {
 		// Web Socket 使用 send() 方法发送数据
-		this.ws.send(JSON.stringify({text: text}));
+		this.ws.send(JSON.stringify(data));
 		// this.ws.send("");
 	};
 
@@ -103,29 +104,29 @@ class NewArticle extends Component<Props,State> {
 
 	render() {
 		return (
-			<div id="new-article">
-				<div className="options-wrapper">
+			<div className={style['new-article']}>
+				<div className={style['options-wrapper']}>
 					{/*<button onClick={this.send}>发送</button>*/}
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag? '取消预览':'预览'
 					}</button>
 				</div>
-				<div className="editor-wrapper">
-					{/*<LeeEditor className="editor" textChange={(text) => {this.send(text)}} style={{opacity: this.state.previewFlag ? 0 : 1}}></LeeEditor>*/}
-					<div className="preview-result" style={
+				<div className={style['editor-wrapper']}>
+					<LeeEditor className={style['editor']} textChange={(data:EditorData) => {this.send(data)}} style={{opacity: this.state.previewFlag ? 0 : 1}}></LeeEditor>
+					<div className={style['preview-result']} style={
 						{
 							opacity: this.state.previewFlag ? 1 : 0,
 							zIndex: this.state.previewFlag ? 1 : -1
 						}} ref={this.previewResult}
 							 dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
 				</div>
-				<div className="divider"></div>
-				<div className="preview-wrapper" onMouseMove={(event) => {
+				<div className={style['divider']}></div>
+				<div className={style['preview-wrapper']} onMouseMove={(event) => {
 					this.moveToPreview(event)
 				}} onMouseLeave={this.hidePreview}>
-					<div className="preview-html" ref={this.preview} dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
+					<div className={style['preview-html']} ref={this.preview} dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
 					</div>
-					<div className="preview-options-area"
+					<div className={style['preview-options-area']}
 							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}></div>
 				</div>
 			</div>
