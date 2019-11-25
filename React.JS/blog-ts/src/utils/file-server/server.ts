@@ -1,4 +1,5 @@
 export function FileUpload(files:FileList) {
+	const fileList = [];
 	for (let file of Object.values(files)) {
 		if (file.type.indexOf('image') > -1) { // 图片展示处理
 			// TODO 上传图片的具体实现。参考链接 https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications
@@ -27,33 +28,32 @@ export function FileUpload(files:FileList) {
               };
               reader.readAsBinaryString(file);*/
 			const fileInfo = {
-				file:{
-					name:file.name,
-					size:file.size,
-					lastModified:file.lastModified,
-				}
+				name:file.name,
+				size:file.size,
+				lastModified:file.lastModified,
 			};
-			// this.props.textChange({type:2,file:fileInfo.file});
-			console.log(fileInfo.file);
-			const reader = new FileReader();
-			reader.readAsArrayBuffer(file);
-			reader.onload = (e) => {
-				FileFragmentSend(e.target.result as ArrayBuffer)
-			};
+			fileList.push(fileInfo);
+			// const reader = new FileReader();
+			// reader.readAsArrayBuffer(file);
+			// reader.onload = (e) => {
+			// 	console.log(fileInfo);
+			// 	FileFragmentSend(e.target.result as ArrayBuffer)
+			// };
 		}
 	}
+
+	return fileList;
 }
 
 
 export function FileFragmentSend(arrayBuffer:ArrayBuffer) {
-	console.log(arrayBuffer);
 	let buffer = new ArrayBuffer(arrayBuffer.byteLength + 4);
 	let data = new DataView(buffer);
 	let origin = new DataView(arrayBuffer);
 	data.setUint16(0,2);
 	data.setUint16(2,64);
-	for (let i = 4; i<data.byteLength;i+=2){
-		data.setUint16(i,origin.getUint16(i - 4));
+	for (let i = 4; i<data.byteLength;i++){
+		data.setUint8(i,origin.getUint8(i - 4));
 	}
 	// this.ws.send(data.buffer);
 }

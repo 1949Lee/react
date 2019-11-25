@@ -176,7 +176,6 @@ class Header extends Component<Props, State> {
 
 	render() {
 		let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
-		console.log(floatTop && this.state.toggle);
 		return (
 			<CSSTransition
 				in={floatTop && this.state.toggle}

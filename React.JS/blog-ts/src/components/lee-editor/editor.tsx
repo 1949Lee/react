@@ -1,13 +1,13 @@
 import React,{Component} from 'react';
-import FileServer from "../../utils/file-server";
 
 
 interface State {
 }
 
 interface Props {
-	// editor的markdown内容改变或者添加文件。返回的数据为EditorData类型
+	// editor的markdown内容改变返回的数据为EditorData类型
 	textChange:(text:EditorData) => void,
+	fileUpload:(file:EditorData) => void,
 	className:string,
 	style:{[key:string]:any};
 }
@@ -58,14 +58,10 @@ class LeeEditor extends Component<Props,State> {
 				document.execCommand("insertText", false, `![请输入图片描述](${src})`);
 			}
 		}
-	}
+	};
 
 	imgOnload = (url:string) => {
 		window.URL.revokeObjectURL(url);
-	}
-
-	fileUpload = (files:FileList) => {
-		FileServer.FileUpload(files)
 	};
 
 	keyDown= (e:React.KeyboardEvent)=> {
@@ -113,15 +109,27 @@ class LeeEditor extends Component<Props,State> {
 		}
 	};
 
+	// markdown内容改变
 	textChange = () => {
 		this.props.textChange({type:1,text:this.textEditor.current.innerText});
+	};
+
+	// 文件添加
+	fileUpload = (files:FileList) => {
+		this.props.fileUpload({type:2,files:files});
 	};
 
 	render = () => {
 
 		let {className,style} = this.props;
 		return (
-			<div className={className} onInput={this.textChange} ref={this.textEditor} style={style} onKeyDown={this.keyDown} contentEditable={true} onPaste={this.textPaste}></div>
+			<div className={className}
+					 onInput={this.textChange}
+					 ref={this.textEditor}
+					 style={style}
+					 onKeyDown={this.keyDown}
+					 contentEditable={true}
+					 onPaste={this.textPaste}></div>
 		)
 	};
 }
@@ -129,17 +137,17 @@ class LeeEditor extends Component<Props,State> {
 
 export default LeeEditor;
 
-// editor添加文件后发射的数据
-export interface EditorFile {
-	// 文件名字
-	name:string
-
-	// 文件大小，单位：byte字节
-	size:number
-
-	// 场次修改时间，ms时间戳
-	lastModified:number
-}
+// // editor添加文件后发射的数据
+// export interface EditorFile {
+// 	// 文件名字
+// 	name:string
+//
+// 	// 文件大小，单位：byte字节
+// 	size:number
+//
+// 	// 场次修改时间，ms时间戳
+// 	lastModified:number
+// }
 
 // editor的markdown的内容修改或者添加文件后发射的数据
 export interface EditorData {
@@ -150,5 +158,5 @@ export interface EditorData {
 	text?:string;
 
 	// 添加的文件信息（数据需要单独接受）
-	file?:EditorFile
+	files?:FileList
 }

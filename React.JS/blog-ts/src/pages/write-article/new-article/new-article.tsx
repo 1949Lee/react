@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import FileServer from "../../../utils/file-server";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import * as style from './style.scss'
 
@@ -76,8 +77,10 @@ class NewArticle extends Component<Props,State> {
 		let result = (JSON.parse(event.data));
 		console.log(result);
 		if (result && +result.code === 0) {
-			if (result.markdown) {
+			if (result.Type === 1 && result.markdown) {
 				this.setState({previewHtml: result.markdown.html})
+			} else if (result.Type === 2 && result.markdown) {
+
 			}
 		}
 	};
@@ -102,6 +105,14 @@ class NewArticle extends Component<Props,State> {
 		this.setState({previewFlag: !this.state.previewFlag})
 	};
 
+	fileUpload = (files:EditorData) => {
+		if (files.type === 2 && files.files && files.files.length >= 1) {
+			const filesList = {type:2,files:[]};
+			filesList.files = FileServer.FileUpload(files.files);
+			this.ws.send(JSON.stringify(filesList));
+		}
+	};
+
 	render() {
 		return (
 			<div className={style['new-article']}>
@@ -112,7 +123,10 @@ class NewArticle extends Component<Props,State> {
 					}</button>
 				</div>
 				<div className={style['editor-wrapper']}>
-					<LeeEditor className={style['editor']} textChange={(data:EditorData) => {this.send(data)}} style={{opacity: this.state.previewFlag ? 0 : 1}}></LeeEditor>
+					<LeeEditor className={style['editor']}
+										 style={{opacity: this.state.previewFlag ? 0 : 1}}
+										 textChange={(data:EditorData) => {this.send(data)}}
+										 fileUpload={(files:EditorData) => {this.fileUpload(files)}}></LeeEditor>
 					<div className={style['preview-result']} style={
 						{
 							opacity: this.state.previewFlag ? 1 : 0,
