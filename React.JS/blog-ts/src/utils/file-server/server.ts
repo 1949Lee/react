@@ -27,8 +27,9 @@ export function FileUpload(files:FileList) {
                   xhr.send(evt.target.result);
               };
               reader.readAsBinaryString(file);*/
+			const nameArray = file.name.match(/(.+)(\.[^.]+$)/);
 			const fileInfo = {
-				name:file.name,
+				name:nameArray[1]+(Math.random() * 1000).toFixed(0)+nameArray[2],
 				size:file.size,
 				lastModified:file.lastModified,
 			};

@@ -14,7 +14,7 @@ module.exports = merge(common,{
 	devServer: {
 		contentBase: resolve('public'),
 		historyApiFallback:true,
-		hot: true
+		hot: true,
 	},
 	plugins:[
 		new webpack.HotModuleReplacementPlugin()

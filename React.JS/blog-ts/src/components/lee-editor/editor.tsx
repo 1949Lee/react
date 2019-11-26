@@ -29,16 +29,14 @@ class LeeEditor extends Component<Props,State> {
 		// clipboardData的getData(fomat) 从剪贴板获取指定格式的数据
 		let clipboardData = e.clipboardData;
 		let dataTypes = clipboardData.types;
-		console.log(dataTypes);
 		if (dataTypes.filter((type) => type === 'Files').length > 0) {
 			this.imgShow(clipboardData.files);
-			// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
 			this.fileUpload(clipboardData.files);
 		} else {
 			dataTypes.map((type) => {
 				switch (type) {
 					case 'text/plain':
-						let text = (e['originalEvent'] || e).clipboardData.getData('text/plain') || prompt('在这里输入文本');
+						let text = (e['originalEvent'] || e).clipboardData.getData('text/plain') || '\`不支持的粘贴内容\`';
 						document.execCommand("insertText", false, text);
 						break;
 					default:
@@ -116,11 +114,11 @@ class LeeEditor extends Component<Props,State> {
 
 	// 文件添加
 	fileUpload = (files:FileList) => {
+		// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
 		this.props.fileUpload({type:2,files:files});
 	};
 
 	render = () => {
-
 		let {className,style} = this.props;
 		return (
 			<div className={className}
