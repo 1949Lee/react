@@ -30,6 +30,7 @@ export function FileUpload(files:FileList) {
 			const nameArray = file.name.match(/(.+)(\.[^.]+$)/);
 			const fileInfo = {
 				name:nameArray[1]+(Math.random() * 1000).toFixed(0)+nameArray[2],
+				extType:nameArray[2].substring(1),
 				size:file.size,
 				lastModified:file.lastModified,
 			};
@@ -48,12 +49,12 @@ export function FileUpload(files:FileList) {
 
 
 export function FileFragmentSend(arrayBuffer:ArrayBuffer) {
-	let buffer = new ArrayBuffer(arrayBuffer.byteLength + 4);
+	let buffer = new ArrayBuffer(arrayBuffer.byteLength + 8);
 	let data = new DataView(buffer);
 	let origin = new DataView(arrayBuffer);
-	data.setUint16(0,2);
-	data.setUint16(2,64);
-	for (let i = 4; i<data.byteLength;i++){
+	data.setUint32(0,2);
+	data.setUint16(2,1);
+	for (let i = 8; i<data.byteLength;i++){
 		data.setUint8(i,origin.getUint8(i - 4));
 	}
 	// this.ws.send(data.buffer);

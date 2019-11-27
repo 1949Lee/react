@@ -22,7 +22,10 @@ class NewArticle extends Component<Props, State> {
 	preview: React.RefObject<HTMLDivElement> = React.createRef();
 	previewResult: React.RefObject<HTMLDivElement> = React.createRef();
 
+	// 当前上传中/上传完成/上传失败的文件
 	files: any[] = [];
+
+	// 每次粘贴后存储的临时文件夹
 	tempFile:any[] = [];
 
 	constructor(props: Props) {
@@ -125,10 +128,10 @@ class NewArticle extends Component<Props, State> {
 			if(tem) {
 				file.id = tem.id;
 				this.files.push(file);
+				// file.status = 0
 			}
 		});
 		this.tempFile = [];
-		console.log(this.files);
 	};
 
 	render() {
