@@ -132,6 +132,19 @@ class NewArticle extends Component<Props, State> {
 			}
 		});
 		this.tempFile = [];
+		this.sendFileFragment();
+	};
+
+	sendFileFragment = () => {
+		this.files.map(async (file) => {
+			let arrayBuffer = await FileServer.GetFileData(file.file);
+			let origin = new DataView(arrayBuffer);
+			let size = 64;
+			for (let i = 0;i < origin.buffer.byteLength;i++) {
+				FileServer.NextFileFragment(file.id,origin,0,false,size)
+				// this.ws.send(data.buffer);
+			}
+		});
 	};
 
 	render() {

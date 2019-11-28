@@ -20,8 +20,6 @@ interface State extends React.ComponentState{
 
 }
 
-console.log();
-
 // type abc = typeof {
 // 	articleList: 1
 // }
