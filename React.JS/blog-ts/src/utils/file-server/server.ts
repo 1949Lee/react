@@ -52,8 +52,14 @@ export function FileFragmentSend(arrayBuffer:ArrayBuffer) {
 	let buffer = new ArrayBuffer(arrayBuffer.byteLength + 8);
 	let data = new DataView(buffer);
 	let origin = new DataView(arrayBuffer);
+	// 文件ID
 	data.setUint32(0,2);
-	data.setUint16(2,1);
+
+	// 文件片段序号
+	data.setUint16(4,1);
+
+	// 文件 是否是最后一个片段 1表示是最后， 0 表示不是最后
+	data.setUint16(6,1);
 	for (let i = 8; i<data.byteLength;i++){
 		data.setUint8(i,origin.getUint8(i - 4));
 	}
