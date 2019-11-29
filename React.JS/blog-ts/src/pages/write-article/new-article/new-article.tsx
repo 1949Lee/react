@@ -135,16 +135,32 @@ class NewArticle extends Component<Props, State> {
 		this.sendFileFragment();
 	};
 
-	sendFileFragment = () => {
-		this.files.map(async (file) => {
-			let arrayBuffer = await FileServer.GetFileData(file.file);
-			let origin = new DataView(arrayBuffer);
-			let size = 64;
-			for (let i = 0;i < origin.buffer.byteLength;i++) {
-				FileServer.NextFileFragment(file.id,origin,0,false,size)
-				// this.ws.send(data.buffer);
+	sendFileFragment = async () => {
+		for (let j = 0;j<this.files.length;j++) {
+			if (this.files[j].file) {
+				let arrayBuffer = await FileServer.GetFileData(this.files[j].file);
+				let origin = new DataView(arrayBuffer);
+				let size = 64;
+				let res, i = 0;
+				console.log(this.files[j]);
+				while (true) {
+					res = FileServer.NextFileFragment(this.files[j].id, origin, i, false, size);
+					if (res.flag === 4) {// 需要分片发完了
+						delete this.files[j].file;
+						this.files[j].status = 'finished';
+						break;
+					}
+					console.log(res.data.byteLength);
+					this.ws.send(res.data.buffer);
+					if (res.flag === 1) {// 不需要分片发完了
+						delete this.files[j].file;
+						this.files[j].status = 'finished';
+						break;
+					}
+					i++;
+				}
 			}
-		});
+		}
 	};
 
 	render() {

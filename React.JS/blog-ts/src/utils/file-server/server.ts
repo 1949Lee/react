@@ -66,7 +66,7 @@ export function GetFileData(file: File): Promise<ArrayBuffer> {
  * @param isEnd boolean类型，true表示是最后，false表示不是最后
  * @param size number类型，文件片段的一段的大小，单位kb。默认值64。
  * */
-export function NextFileFragment(fileID: number, origin: DataView, index: number, isEnd: boolean, size: number = 64):DataView {
+export function NextFileFragment(fileID: number, origin: DataView, index: number, isEnd: boolean, size: number = 64):{data:DataView,flag:boolean} {
 
 	let realSize,buffer,data,flag;
 	if(size * 1024 > origin.buffer.byteLength) { // 不需要分片，只发一次。
@@ -77,10 +77,13 @@ export function NextFileFragment(fileID: number, origin: DataView, index: number
 	} else if(origin.buffer.byteLength - (index+1) * size * 1024 > 0){ // 可以完整的分一页
 		flag = 2;
 		realSize = size * 1024; // 分片的size是文件整体大小。
-	} else { // 不够完整的分一页
+	} else if(origin.buffer.byteLength > index * size * 1024) { // 不够完整的分一页
 		flag = 3;
 		realSize = origin.buffer.byteLength - index * size * 1024; // 分片的size是文件剩余部分的大小。
 		isEnd = true; // 是最后一个文件片段
+	} else { // 已经不需要在分片了
+		flag = 4;
+		return {data:null,flag}
 	}
 	buffer = new ArrayBuffer(realSize + 8);
 	data = new DataView(buffer);
@@ -92,9 +95,12 @@ export function NextFileFragment(fileID: number, origin: DataView, index: number
 
 	// 文件 是否是最后一个片段 1表示是最后， 0 表示不是最后
 	data.setUint16(6, isEnd ? 1 : 0);
+
+	// 每页的起始标志位
+	let offset = index * size*1024;
 	for (let i = 8; i < data.byteLength; i++) {
-		data.setUint8(i, origin.getUint8(i - 8));
+		data.setUint8(i, origin.getUint8(i - 8 + offset));
 	}
 
-	return data;
+	return {data,flag};
 }
