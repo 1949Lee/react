@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import FileServer from "../../../utils/file-server";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
-import * as style from './style.scss'
+import * as style from './style.scss';
+import axios from 'axios';
 
 interface State {
 	previewFlag: boolean
@@ -21,6 +22,7 @@ class NewArticle extends Component<Props, State> {
 
 	preview: React.RefObject<HTMLDivElement> = React.createRef();
 	previewResult: React.RefObject<HTMLDivElement> = React.createRef();
+	fileSelected: React.RefObject<HTMLInputElement> = React.createRef();
 
 	// 当前上传中/上传完成/上传失败的文件
 	files: any[] = [];
@@ -163,6 +165,17 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	uploadSelected = () => {
+		if(this.fileSelected.current.files.length > 0) {
+			console.log(this.fileSelected.current.files);
+			let data:FormData = new FormData();
+			data.append("file",this.fileSelected.current.files[0])
+			// axios.post("http://localhost:1314/")
+		} else {
+			console.log('未选择文件');
+		}
+	};
+
 	render() {
 		return (
 			<div className={style['new-article']}>
@@ -171,6 +184,8 @@ class NewArticle extends Component<Props, State> {
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</button>
+					<input type="file" ref={this.fileSelected}/>
+					<button onClick={this.uploadSelected}>上传</button>
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
