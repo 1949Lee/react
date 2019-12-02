@@ -17,31 +17,6 @@ export function FileUpload(files: FileList) {
 }
 
 function FileUploadBySelect() {
-// TODO 上传图片的具体实现。参考链接 https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications
-	/*var reader = new FileReader();
-          this.ctrl = createThrobber(img);
-          var xhr = new XMLHttpRequest();
-          this.xhr = xhr;
-
-          var self = this;
-          this.xhr.upload.addEventListener("progress", function(e) {
-              if (e.lengthComputable) {
-                  var percentage = Math.round((e.loaded * 100) / e.total);
-                  self.ctrl.update(percentage);
-              }
-          }, false);
-
-          xhr.upload.addEventListener("load", function(e){
-              self.ctrl.update(100);
-              var canvas = self.ctrl.ctx.canvas;
-              canvas.parentNode.removeChild(canvas);
-          }, false);
-          xhr.open("POST", "http://demos.hacks.mozilla.org/paul/demos/resources/webservices/devnull.php");
-          xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
-          reader.onload = function(evt) {
-              xhr.send(evt.target.result);
-          };
-          reader.readAsBinaryString(file);*/
 }
 
 

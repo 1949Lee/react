@@ -114,7 +114,6 @@ class LeeEditor extends Component<Props,State> {
 
 	// 文件添加
 	fileUpload = (files:FileList) => {
-		// TODO 可以做成上传图片到服务器：粘贴后直接弹出询问弹窗，是否上传图片，是，直接上传。显示文件列表。
 		this.props.fileUpload({type:2,files:files});
 	};
 
