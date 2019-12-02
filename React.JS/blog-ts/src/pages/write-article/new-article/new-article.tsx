@@ -167,10 +167,19 @@ class NewArticle extends Component<Props, State> {
 
 	uploadSelected = () => {
 		if(this.fileSelected.current.files.length > 0) {
-			console.log(this.fileSelected.current.files);
 			let data:FormData = new FormData();
-			data.append("file",this.fileSelected.current.files[0])
-			// axios.post("http://localhost:1314/")
+			for (let i = 0;i < this.fileSelected.current.files.length;i++) {
+				data.append("file",this.fileSelected.current.files[i],this.fileSelected.current.files[i].name);
+			}
+
+			axios.post("http://localhost:1314/new-article",data,{
+				onUploadProgress:(e:ProgressEvent)=>{
+					console.log(e);
+				},
+				headers:{
+					"Content-Type":"multipart/form-data"
+				}
+			})
 		} else {
 			console.log('未选择文件');
 		}
@@ -184,7 +193,7 @@ class NewArticle extends Component<Props, State> {
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</button>
-					<input type="file" ref={this.fileSelected}/>
+					<input type="file" ref={this.fileSelected} multiple={true}/>
 					<button onClick={this.uploadSelected}>上传</button>
 				</div>
 				<div className={style['editor-wrapper']}>
