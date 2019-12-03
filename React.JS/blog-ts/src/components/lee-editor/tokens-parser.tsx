@@ -32,27 +32,32 @@ export interface NodeAttr {
 	value: string;
 }
 
-// token转换
+// token转换，lines数组中的每一项都是markdown中的对应行
 export function Parse(lines: Token[][]) {
 	return (<div className="content">
-		{lines.map((_, i) => {
+		{lines.map((_, i) => {// 每一行单独转换
 			return lineToHtml(lines[i])
 		})}
 	</div>);
 }
 
-// 将传入的token数组转化为html
+// 将markdown中的某一行转换为html
 function lineToHtml(tokens: Token[]) {
 	let result = null;
 	let imageIndex = null;
+	// 空行
 	if (tokens[0].tokenType == 'empty-line-br') {
 		result = <div className="block empty-single-line-block" key={UUID()}>
 			{tokensToHtml(tokens)}
 		</div>;
-	} else if (tokens[0].tokenType == 'styled-block') {
+	}
+	// 颜色块儿
+	else if (tokens[0].tokenType == 'styled-block') {
 		tokens[0].class += " block";
 		result = tokensToHtml(tokens);
-	} else if (tokens.findIndex((t, i) => {
+	}
+	// 图片块
+	else if (tokens.findIndex((t, i) => {
 		if (t.tokenType == 'image') {
 			imageIndex = i;
 			return true;
