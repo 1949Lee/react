@@ -1,5 +1,6 @@
 // markdown的节点流
 import React,{Fragment} from "react";
+import {UUID} from "../../utils/uuid";
 
 export interface Token {
 
@@ -10,13 +11,13 @@ export interface Token {
 	tokenType: string;
 
 	// 节点对应HTML标签
-	nodeTagName: string;
+	tagName: string;
 
 	// 节点CSS样式类名
-	nodeClass: string;
+	class: string;
 
 	// 节点属性
-	nodeAttrs: NodeAttr[];
+	attrs: NodeAttr[];
 
 	// 子节点
 	children: Token[];
@@ -35,53 +36,54 @@ export interface NodeAttr {
 export function Parse(lines: Token[][]) {
 	return (<div className="content">
 		{lines.map((_, i) => {
-			return lineToHtml(i,lines[i])
+			return lineToHtml(lines[i])
 		})}
 	</div>);
 }
 
 // 将传入的token数组转化为html
-function lineToHtml(lineNum:number,tokens: Token[]) {
+function lineToHtml(tokens: Token[]) {
 	let result = null;
 	let imageIndex = null;
 	if (tokens[0].tokenType == 'empty-line-br') {
-		result = <div className="block empty-single-line-block" key={lineNum+'empty-single-line-block'}>
+		result = <div className="block empty-single-line-block" key={UUID()}>
 			{tokensToHtml(tokens)}
 		</div>;
 	} else if (tokens[0].tokenType == 'styled-block') {
-		tokens[0].nodeClass += " block";
+		tokens[0].class += " block";
 		result = tokensToHtml(tokens);
 	} else if (tokens.findIndex((t, i) => {
 		if (t.tokenType == 'image') {
 			imageIndex = i;
-			return true
+			return true;
 		}
+		return false;
 	}) > -1) {
 		if (tokens.length === 1) {
-			result = <div className="block image-block"  key={lineNum+'image-block'}>
+			result = <div className="block image-block"  key={UUID()}>
 				{tokensToHtml(tokens)}
 			</div>
 		} else {
-			result = <Fragment>
+			result = <Fragment key={UUID()}>
 				{
 					imageIndex > 0?
-					<div className="block"  key={lineNum+'image-block-before'}>
+					<div className="block">
 					{tokensToHtml(tokens.slice(0,imageIndex))}
 					</div>:null
 				}
-				<div className="block image-list-block" key={lineNum+'image-list-block'}>
+				<div className="block image-list-block">
 					{tokensToHtml([tokens[imageIndex]])}
 				</div>
 				{
 					imageIndex < tokens.length - 1?
-						<div className="block" key={lineNum+'image-block-after'}>
+						<div className="block">
 							{tokensToHtml(tokens.slice(imageIndex + 1))}
 						</div>:null
 				}
 			</Fragment>;
 		}
 	} else {
-		result = <div className="block" key={lineNum+'normal'}>
+		result = <div className="block" key={UUID()}>
 			{tokensToHtml(tokens)}
 		</div>
 	}
@@ -90,71 +92,43 @@ function lineToHtml(lineNum:number,tokens: Token[]) {
 
 // 将token转化为html
 function tokensToHtml(tokens: Token[]): any {
-	// for (let i = 0;i < tokens.length;i++) {
-// 		if tokens[i].TokenType == "empty-line-br" {
-// 			builder.WriteString("<")
-// 			builder.WriteString(tokens[i].NodeTagName)
-// 			builder.WriteString(` class="`)
-// 			builder.WriteString(tokens[i].NodeClass)
-// 			builder.WriteString(`" `)
-// 			if len(tokens[i].NodeAttrs) > 0 {
-// 				for j := range tokens[i].NodeAttrs {
-// 					builder.WriteString(` `)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Key)
-// 					builder.WriteString(`="`)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Value)
-// 					builder.WriteString(`" `)
-// 				}
-// 			}
-// 			builder.WriteString("/>")
-// 		} else if tokens[i].TokenType == "image" { // image的特殊处理
-// 			builder.WriteString(`<div class="image-wrapper">`)
-// 			builder.WriteString("<")
-// 			builder.WriteString(tokens[i].NodeTagName)
-// 			builder.WriteString(` class="`)
-// 			builder.WriteString(tokens[i].NodeClass)
-// 			builder.WriteString(`" `)
-// 			if len(tokens[i].NodeAttrs) > 0 {
-// 				for j := range tokens[i].NodeAttrs {
-// 					builder.WriteString(` `)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Key)
-// 					builder.WriteString(`="`)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Value)
-// 					builder.WriteString(`" `)
-// 				}
-// 			}
-// 			builder.WriteString("/>")
-// 			builder.WriteString(`<div class="image-text-wrapper">`)
-// 			builder.WriteString(tokens[i].Text)
-// 			if len(tokens[i].Children) > 0 {
-// 				builder.WriteString(tokensToHtml(tokens[i].Children))
-// 			}
-// 			builder.WriteString(`</div></div>`)
-// 		} else {
-// 			builder.WriteString("<")
-// 			builder.WriteString(tokens[i].NodeTagName)
-// 			builder.WriteString(` class="`)
-// 			builder.WriteString(tokens[i].NodeClass)
-// 			builder.WriteString(`" `)
-// 			if len(tokens[i].NodeAttrs) > 0 {
-// 				for j := range tokens[i].NodeAttrs {
-// 					builder.WriteString(` `)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Key)
-// 					builder.WriteString(`="`)
-// 					builder.WriteString(tokens[i].NodeAttrs[j].Value)
-// 					builder.WriteString(`" `)
-// 				}
-// 			}
-// 			builder.WriteString(">")
-// 			builder.WriteString(tokens[i].Text)
-// 			if len(tokens[i].Children) > 0 {
-// 				builder.WriteString(tokensToHtml(tokens[i].Children))
-// 			}
-// 			//result += "<"+ l.t.NodeTagName +" class="++" >"
-// 			builder.WriteString("</")
-// 			builder.WriteString(tokens[i].NodeTagName)
-// 			builder.WriteString(">")
-// 		}
-// 	}
-	return 'line'
+	let objs = [];
+	for (let i = 0;i < tokens.length;i++){
+		let obj = {};
+		if(tokens[i]&&tokens[i].attrs) {
+			for (let j = 0;j< tokens[i].attrs.length;j++){
+				obj[tokens[i].attrs[j].key] = tokens[i].attrs[j].value;
+			}
+		}
+		objs.push(obj);
+	}
+	return <Fragment>
+		{
+			tokens.map((token,i) => {
+				let ele = null;
+				if (token.tokenType == "empty-line-br") {
+					ele = React.createElement(
+						token.tagName,
+						{className: token.class,...objs[i],key:UUID()}
+					);
+				} else if (tokens[i].tokenType == "image") { // image的特殊处理
+					ele = <div className="image-wrapper" key={UUID()}>
+						{React.createElement(
+							token.tagName,
+							{className: token.class,...objs[i],key:UUID()}
+						)}
+						<div className="image-text-wrapper" key={UUID()}>{token.text}</div>
+						{token.children&&token.children.length > 0?tokensToHtml(token.children):null}
+					</div>
+				} else {
+					ele = React.createElement(
+						token.tagName,
+						{className: token.class,...objs[i],key:UUID()},
+						[token.text,token.children&&token.children.length > 0?tokensToHtml(token.children):null]
+					);
+				}
+				return ele;
+			})
+		}
+	</Fragment>
 }
