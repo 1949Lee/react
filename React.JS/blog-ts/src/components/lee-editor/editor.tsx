@@ -18,7 +18,6 @@ class LeeEditor extends Component<Props,State> {
 
 	constructor(props){
 		super(props);
-		// TODO 复制粘贴过来的好像多了一行空行
 	}
 
 
@@ -109,7 +108,12 @@ class LeeEditor extends Component<Props,State> {
 
 	// markdown内容改变
 	textChange = () => {
-		this.props.textChange({type:1,text:this.textEditor.current.innerText});
+		let length = this.textEditor.current.innerText.length;
+		let data = this.textEditor.current.innerText;
+		if(length >= 2 && this.textEditor.current.innerText[length - 1] === '\n' && this.textEditor.current.innerText[length - 2] === '\n') {
+			data = data.slice(0,-1);
+		}
+		this.props.textChange({type:1,text:data});
 	};
 
 	// 文件添加
