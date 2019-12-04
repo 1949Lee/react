@@ -107,7 +107,7 @@ function tokensToHtml(tokens: Token[]): any {
 		}
 		objs.push(obj);
 	}
-	return <Fragment>
+	return <Fragment key={UUID()}>
 		{
 			tokens.map((token,i) => {
 				let ele = null;
