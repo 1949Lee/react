@@ -20,6 +20,12 @@ class LeeEditor extends Component<Props,State> {
 		super(props);
 	}
 
+	componentDidMount() {
+	}
+
+	initEditor = () => {
+		// console.log(document.execCommand("defaultParagraphSeparator", false, 'br'));
+	};
 
 	textPaste = (e:React.ClipboardEvent) => {
 		// 阻止默认粘贴
@@ -108,11 +114,8 @@ class LeeEditor extends Component<Props,State> {
 
 	// markdown内容改变
 	textChange = () => {
-		let length = this.textEditor.current.innerText.length;
 		let data = this.textEditor.current.innerText;
-		if(length >= 2 && this.textEditor.current.innerText[length - 1] === '\n' && this.textEditor.current.innerText[length - 2] === '\n') {
-			data = data.slice(0,-1);
-		}
+		data = data.replace(/\n\n/,'\n');
 		this.props.textChange({type:1,text:data});
 	};
 
@@ -125,6 +128,7 @@ class LeeEditor extends Component<Props,State> {
 		let {className,style} = this.props;
 		return (
 			<div className={className}
+					 onFocus={this.initEditor}
 					 onInput={this.textChange}
 					 ref={this.textEditor}
 					 style={style}
