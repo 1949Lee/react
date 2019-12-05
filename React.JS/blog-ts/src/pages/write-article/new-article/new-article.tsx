@@ -136,7 +136,7 @@ class NewArticle extends Component<Props, State> {
 			}
 		});
 		this.tempFile = [];
-		this.sendFileFragment();
+		this.sendFileFragment().then(() => {});
 	};
 
 	sendFileFragment = async () => {
@@ -187,6 +187,8 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+
+
 	render() {
 		return (
 			<div className={style['new-article']}>
@@ -196,6 +198,7 @@ class NewArticle extends Component<Props, State> {
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</button>
 					<input type="file" ref={this.fileSelected} multiple={true}/>
+					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>
 					{Parse([])}
 				</div>

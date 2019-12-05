@@ -1,5 +1,5 @@
 // markdown的节点流
-import React,{Fragment} from "react";
+import React, {FormEvent, Fragment} from "react";
 import {UUID} from "../../utils/uuid";
 
 export interface Token {
@@ -125,6 +125,15 @@ function tokensToHtml(tokens: Token[]): any {
 						<div className="image-text-wrapper" key={UUID()}>{token.text}</div>
 						{token.children&&token.children.length > 0?tokensToHtml(token.children):null}
 					</div>
+				} else if (tokens[i].tokenType == "check-list-checkbox") {
+					objs[i]['checked'] = objs[i]['checked'] == "true";
+					objs[i]['readOnly'] = true;
+					// objs[i]['defaultChecked'] = objs[i]['checked'];
+					// delete objs[i]['checked'];
+					ele = React.createElement(
+						token.tagName,
+						{className: token.class,...objs[i],key:UUID(),}
+					);
 				} else {
 					ele = React.createElement(
 						token.tagName,
