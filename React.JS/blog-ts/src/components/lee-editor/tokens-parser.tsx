@@ -140,6 +140,7 @@ function tokensToHtml(tokens: Token[]): any {
 						{className: token.class,...objs[i],key:UUID()},
 						[token.text,token.children&&token.children.length > 0?tokensToHtml(token.children):null]
 					);
+					console.log(ele);
 				}
 				return ele;
 			})

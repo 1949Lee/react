@@ -106,8 +106,8 @@ class LeeEditor extends Component<Props,State> {
 						parent.childNodes[i].nodeValue = '    ' + parent.childNodes[i].nodeValue;
 					}
 				}
-
 			}
+			this.textChange();
 			e.preventDefault();
 		}
 	};

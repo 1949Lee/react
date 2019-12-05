@@ -80,6 +80,7 @@ class NewArticle extends Component<Props, State> {
 
 	send = (data: EditorData) => {
 		// Web Socket 使用 send() 方法发送数据
+		console.log(data);
 		this.ws.send(JSON.stringify(data));
 	};
 
@@ -200,7 +201,6 @@ class NewArticle extends Component<Props, State> {
 					<input type="file" ref={this.fileSelected} multiple={true}/>
 					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>
-					{Parse([])}
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
