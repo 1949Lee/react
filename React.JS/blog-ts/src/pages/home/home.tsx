@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {Connect} from "../../utils/decorators";
 import * as style from './style.scss'
 
+import {Tooltip} from 'antd';
+
 import {actionCreators} from "./store";
 
 const mapStateToProps = (state:any) => ({
@@ -57,7 +59,11 @@ class Home extends Component<Props,State> {
 					})}
 				</div>
 				<div className={style['recent-article-list']}>
-					<div className={style['recent-article']}>最近更新</div>
+					<div className={style['recent-article']}>
+						<Tooltip title={"大萨达大"}>
+							最近更新
+						</Tooltip>
+					</div>
 				</div>
       </div>
     );

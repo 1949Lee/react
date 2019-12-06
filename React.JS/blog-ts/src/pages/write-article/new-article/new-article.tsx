@@ -197,7 +197,7 @@ class NewArticle extends Component<Props, State> {
 					{/*<button onClick={this.send}>发送</button>*/}
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
-					}</button>
+						}</button>
 					<input type="file" ref={this.fileSelected} multiple={true}/>
 					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>

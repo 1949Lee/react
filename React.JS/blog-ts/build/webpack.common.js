@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {resolve} = require('./utils.js');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const TsImportPluginFactory = require('ts-import-plugin')
 
 module.exports = {
 	context: path.resolve(__dirname, '../'),// 上下文基础目录，绝对路径，用于从配置中解析入口起点。即，这个配置了之后。entry的路径就是相对于context的。
@@ -28,7 +29,11 @@ module.exports = {
 				use: [
 					{
 						loader: 'ts-loader',
-						options: {}
+						options: {
+							getCustomTransformers: () => ({
+								before: [ TsImportPluginFactory({style:true}) ]
+							})
+						}
 					}
 				]
 			},
@@ -60,6 +65,10 @@ module.exports = {
 			{
 				test: /\.css$/,
 				loader: ['style-loader', 'css-loader']
+			},
+			{
+				test: /\.less$/,
+				loader: ['style-loader', 'css-loader', 'less-loader']
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
