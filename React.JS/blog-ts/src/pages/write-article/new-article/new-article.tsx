@@ -1,17 +1,17 @@
+import axios from 'axios';
 import React, {Component} from 'react';
+import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
+import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import FileServer from "../../../utils/file-server";
-import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import * as style from './style.scss';
-import axios from 'axios';
 
 interface State {
 	previewFlag: boolean
-	// previewHtml:'<div class="content"><div class="block"><h3 class="header-h3" ><span class="text" >斜体和粗体和粗斜体</span></h3></div><div class="block"><span class="text" >使用 * 和 ** 和 *** 表示斜体和粗体。</span></div><div class="block"><span class="text" >这是 </span><span class="italic" >斜体</span><span class="text" >，这是 </span><span class="bold" >粗体</span><span class="text" >，这是</span><span class="bold-italic" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >删除线</span></h3></div><div class="block"><span class="text" >使用 ~~ 表示删除线</span></div><div class="block"><span class="text" >这是 </span><span class="deleted-text" >删除线</span><span class="text" >，这是 </span><span class="deleted-text" >删除线+</span><span class="bold-italic deleted-text" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >外链接</span></h3></div><div class="block"><span class="text" >使用 [描述](链接地址) 为文字增加外链接。</span></div><div class="block"><span class="text" >这是一个链接：</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >图像块</span></h3></div><div class="block"><span class="text" >使用![图像描述](图像地址)来添加图像，一个图像一行。</span></div><div class="block image-block"><div class="image-wrapper"><img class="image"  src="./img.jpeg"  alt="" /><div class="image-text-wrapper"><span class="inline-background-strong" ><span class="text" >这里是一个图片，可以使用其他</span><span class="bold-italic" >语法</span></span></div></div></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >行内底色变色强调</span></h3></div><div class="block"><span class="text" >使用`表示行内底色变色强调。</span></div><div class="block"><span class="text" >这是一个</span><span class="inline-background-strong" ><span class="text" >行内底色变色强调。</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></span><span class="text" >。</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >多级标题</span></h3></div><div class="block"><span class="text" >使用一个或多个#然后跟一个空格来表示多级标题</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h1 class="header-h1" ><span class="text" >这是一个一级标题</span></h1></div><div class="block"><h6 class="header-h6" ><span class="text" >这是一个六级标题，标题还可以跟一些简单语法法。</span><span class="inline-background-strong" ><span class="text" >变色强调。</span><span class="bold-italic" >粗斜体</span></span></h6></div></div>',
 	previewHtml: JSX.Element,
 	previewHeight: string,
 	previewPosition: number,
-	files: any[]
+	files: FileTableItem[]
 }
 
 interface Props extends React.ComponentProps<any> {
@@ -26,20 +26,19 @@ class NewArticle extends Component<Props, State> {
 	fileSelected: React.RefObject<HTMLInputElement> = React.createRef();
 
 	// 当前上传中/上传完成/上传失败的文件
-	files: any[] = [];
+	copyFiles: any[] = [];
 
 	// 每次粘贴后存储的临时文件夹
-	tempFile:any[] = [];
+	tempFile: any[] = [];
 
 	constructor(props: Props) {
 		super(props);
 		this.state = {
 			previewFlag: false,
-			// previewHtml:'<div class="content"><div class="block"><h3 class="header-h3" ><span class="text" >斜体和粗体和粗斜体</span></h3></div><div class="block"><span class="text" >使用 * 和 ** 和 *** 表示斜体和粗体。</span></div><div class="block"><span class="text" >这是 </span><span class="italic" >斜体</span><span class="text" >，这是 </span><span class="bold" >粗体</span><span class="text" >，这是</span><span class="bold-italic" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >删除线</span></h3></div><div class="block"><span class="text" >使用 ~~ 表示删除线</span></div><div class="block"><span class="text" >这是 </span><span class="deleted-text" >删除线</span><span class="text" >，这是 </span><span class="deleted-text" >删除线+</span><span class="bold-italic deleted-text" >粗斜体</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >外链接</span></h3></div><div class="block"><span class="text" >使用 [描述](链接地址) 为文字增加外链接。</span></div><div class="block"><span class="text" >这是一个链接：</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >图像块</span></h3></div><div class="block"><span class="text" >使用![图像描述](图像地址)来添加图像，一个图像一行。</span></div><div class="block image-block"><div class="image-wrapper"><img class="image"  src="./img.jpeg"  alt="" /><div class="image-text-wrapper"><span class="inline-background-strong" ><span class="text" >这里是一个图片，可以使用其他</span><span class="bold-italic" >语法</span></span></div></div></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >行内底色变色强调</span></h3></div><div class="block"><span class="text" >使用`表示行内底色变色强调。</span></div><div class="block"><span class="text" >这是一个</span><span class="inline-background-strong" ><span class="text" >行内底色变色强调。</span><a class="inline-web-link"  href="https://www.jiaxuanlee.com" ><span class="text" >李佳轩的个人网站——</span><span class="bold-italic" >镜中之人</span></a></span><span class="text" >。</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h3 class="header-h3" ><span class="text" >多级标题</span></h3></div><div class="block"><span class="text" >使用一个或多个#然后跟一个空格来表示多级标题</span></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block empty-single-line-block"><br class="empty-line-br" /></div><div class="block"><h1 class="header-h1" ><span class="text" >这是一个一级标题</span></h1></div><div class="block"><h6 class="header-h6" ><span class="text" >这是一个六级标题，标题还可以跟一些简单语法法。</span><span class="inline-background-strong" ><span class="text" >变色强调。</span><span class="bold-italic" >粗斜体</span></span></h6></div></div>',
 			previewHtml: null,
 			previewHeight: '100%',
 			previewPosition: 0,
-			files: null
+			files: []
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -121,45 +120,48 @@ class NewArticle extends Component<Props, State> {
 			const filesList = {type: 2, files: []};
 			filesList.files = FileServer.FileUpload(files.files);
 			this.ws.send(JSON.stringify(filesList));
-			for (let [key,file] of Object.entries(filesList.files)) {
-				this.tempFile.push({name:file.name,size:file.size,file:files.files[key]})
+			for (let [key, file] of Object.entries(filesList.files)) {
+				this.tempFile.push({name: file.name, size: file.size, file: files.files[key]})
 			}
 		}
 	};
 
 	handleFileServerPrepare = (files: any[]) => {
-		this.tempFile.map((file:any) => {
-			let tem = files.find((f) => {return file.name === f.name});
-			if(tem) {
+		this.tempFile.map((file: any) => {
+			let tem = files.find((f) => {
+				return file.name === f.name
+			});
+			if (tem) {
 				file.id = tem.id;
-				this.files.push(file);
+				this.copyFiles.push(file);
 				// file.status = 0
 			}
 		});
 		this.tempFile = [];
-		this.sendFileFragment().then(() => {});
+		this.sendFileFragment().then(() => {
+		});
 	};
 
 	sendFileFragment = async () => {
-		for (let j = 0;j<this.files.length;j++) {
-			if (this.files[j].file) {
-				let arrayBuffer = await FileServer.GetFileData(this.files[j].file);
+		for (let j = 0; j < this.copyFiles.length; j++) {
+			if (this.copyFiles[j].file) {
+				let arrayBuffer = await FileServer.GetFileData(this.copyFiles[j].file);
 				let origin = new DataView(arrayBuffer);
 				let size = 64;
 				let res, i = 0;
-				console.log(this.files[j]);
+				console.log(this.copyFiles[j]);
 				while (true) {
-					res = FileServer.NextFileFragment(this.files[j].id, origin, i, false, size);
+					res = FileServer.NextFileFragment(this.copyFiles[j].id, origin, i, false, size);
 					if (res.flag === 4) {// 需要分片发完了
-						delete this.files[j].file;
-						this.files[j].status = 'finished';
+						delete this.copyFiles[j].file;
+						this.copyFiles[j].status = 'finished';
 						break;
 					}
 					console.log(res.data.byteLength);
 					this.ws.send(res.data.buffer);
 					if (res.flag === 1) {// 不需要分片发完了
-						delete this.files[j].file;
-						this.files[j].status = 'finished';
+						delete this.copyFiles[j].file;
+						this.copyFiles[j].status = 'finished';
 						break;
 					}
 					i++;
@@ -169,25 +171,44 @@ class NewArticle extends Component<Props, State> {
 	};
 
 	uploadSelected = () => {
-		if(this.fileSelected.current.files.length > 0) {
-			let data:FormData = new FormData();
-			for (let i = 0;i < this.fileSelected.current.files.length;i++) {
-				data.append("file",this.fileSelected.current.files[i],this.fileSelected.current.files[i].name);
+		if (this.fileSelected.current.files.length > 0) {
+			for (let i = 0; i < this.fileSelected.current.files.length; i++) {
+				let data: FormData = new FormData();
+				data.append("file", this.fileSelected.current.files[i], this.fileSelected.current.files[i].name);
+				let fileInfo: FileTableItem = {
+					name: this.fileSelected.current.files[i].name,
+					size: this.fileSelected.current.files[i].size,
+					status: FileTableItemStatus.Uploading,
+					upload: {
+						loaded: 0,
+						total: this.fileSelected.current.files[i].size
+					}
+				};
+				let index = 0;
+				this.setState((state) =>{
+					console.log(state.files);
+					return {files:[...state.files,fileInfo]}
+				},() => {
+					index = this.state.files.length;
+					axios.post("http://localhost:1314/new-article", data, {
+						onUploadProgress: (e: ProgressEvent) => {
+							console.log(e);
+							this.setState((state) =>{
+								state.files[index - 1].upload.loaded = e.loaded;
+								return {files:state.files}
+							});
+							// this.setState({files:this.state.files.map((file,index) =>{if(index === this.state.files.length - 1)file.upload.loaded = e.loaded;return file})});
+						},
+						headers: {
+							"Content-Type": "multipart/form-data"
+						}
+					})
+				});
 			}
-
-			axios.post("http://localhost:1314/new-article",data,{
-				onUploadProgress:(e:ProgressEvent)=>{
-					console.log(e);
-				},
-				headers:{
-					"Content-Type":"multipart/form-data"
-				}
-			})
 		} else {
 			console.log('未选择文件');
 		}
 	};
-
 
 
 	render() {
@@ -197,10 +218,16 @@ class NewArticle extends Component<Props, State> {
 					{/*<button onClick={this.send}>发送</button>*/}
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
-						}</button>
+					}</button>
 					<input type="file" ref={this.fileSelected} multiple={true}/>
 					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>
+					{
+						this.state.files.length > 0 ?
+							<div style={{width: '400px'}}>
+								<FileTable files={this.state.files}></FileTable>
+							</div> : null
+					}
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
@@ -216,16 +243,16 @@ class NewArticle extends Component<Props, State> {
 							opacity: this.state.previewFlag ? 1 : 0,
 							zIndex: this.state.previewFlag ? 1 : -1
 						}} ref={this.previewResult}
-							 // dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
-					  >{this.state.previewHtml}</div>
+						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
+					>{this.state.previewHtml}</div>
 				</div>
 				<div className={style['divider']}></div>
 				<div className={style['preview-wrapper']} onMouseMove={(event) => {
 					this.moveToPreview(event)
 				}} onMouseLeave={this.hidePreview}>
 					<div className={style['preview-html']} ref={this.preview}
-							 // dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
-						>{this.state.previewHtml}
+						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
+					>{this.state.previewHtml}
 					</div>
 					<div className={style['preview-options-area']}
 							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}></div>
