@@ -10,6 +10,10 @@
 		height: $padding-top;
 		border-bottom: 1px solid $divider-color;
 		box-sizing: border-box;
+		.file-list {
+			width: 60%;
+			display: inline-block;
+		}
 	}
 
 	.editor-wrapper {

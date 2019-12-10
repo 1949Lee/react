@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {diff} from "../../utils/methods";
 import * as style from "./style.scss";
 
 interface State {
@@ -60,14 +61,14 @@ export class FileTable extends Component<Props, State> {
 		}
 		return result;
 	};
+
 	shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
-		console.log(nextProps,nextState);
-		return true;
+		return !diff(nextProps,this.props);
 	}
 
 	render() {
-		return (<div className={style['lee-file-table']}>
-			<table>
+		return (<div className={style['lee-file-table-wrapper']}>
+			<table className={style['lee-file-table']}>
 				<thead>
 				<tr>
 					<th>文件名</th>
@@ -84,7 +85,6 @@ export class FileTable extends Component<Props, State> {
 								<td>{file.name}</td>
 								<td>{this.fileSizeText(file.size)}</td>
 								<td>{this.statusText[file.status]+ ':' + (file.upload.loaded/file.upload.total * 100).toFixed(2) + '%'}</td>
-								<td>操作</td>
 							</tr>
 						)
 					})

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import './styles/leeIcon/style.css'
 import './styles';
 import App from "./app/App";
-import './styles/theme'
+import './styles/theme';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<App/>, document.getElementById('root'));

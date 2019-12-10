@@ -192,7 +192,6 @@ class NewArticle extends Component<Props, State> {
 					index = this.state.files.length;
 					axios.post("http://localhost:1314/new-article", data, {
 						onUploadProgress: (e: ProgressEvent) => {
-							console.log(e);
 							this.setState((state) =>{
 								state.files[index - 1].upload.loaded = e.loaded;
 								return {files:state.files}
@@ -223,9 +222,10 @@ class NewArticle extends Component<Props, State> {
 					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>
 					{
-						this.state.files.length > 0 ?
-							<div style={{width: '400px'}}>
-								<FileTable files={this.state.files}></FileTable>
+						this.state.files.length >= 0 ?
+							<div className={style['file-list']}>
+								{/*<FileTable files={this.state.files}></FileTable>*/}
+								<FileTable files={[]}></FileTable>
 							</div> : null
 					}
 				</div>
