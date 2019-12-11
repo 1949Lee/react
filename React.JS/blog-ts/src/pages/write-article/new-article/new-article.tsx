@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {string} from "prop-types";
 import React, {Component} from 'react';
 import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
@@ -11,7 +12,7 @@ interface State {
 	previewHtml: JSX.Element,
 	previewHeight: string,
 	previewPosition: number,
-	files: FileTableItem[]
+	files: {[key:string]:FileTableItem}
 }
 
 interface Props extends React.ComponentProps<any> {
@@ -38,7 +39,7 @@ class NewArticle extends Component<Props, State> {
 			previewHtml: null,
 			previewHeight: '100%',
 			previewPosition: 0,
-			files: []
+			files: {}
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -184,16 +185,16 @@ class NewArticle extends Component<Props, State> {
 						total: this.fileSelected.current.files[i].size
 					}
 				};
-				let index = 0;
+				let name = fileInfo.name;
 				this.setState((state) =>{
-					console.log(state.files);
-					return {files:[...state.files,fileInfo]}
+					return {files:{...state.files,[name]:fileInfo}}
 				},() => {
-					index = this.state.files.length;
 					axios.post("http://localhost:1314/new-article", data, {
 						onUploadProgress: (e: ProgressEvent) => {
 							this.setState((state) =>{
-								state.files[index - 1].upload.loaded = e.loaded;
+								if(state.files[name]) {
+									state.files[name].upload.loaded = e.loaded;
+								}
 								return {files:state.files}
 							});
 							// this.setState({files:this.state.files.map((file,index) =>{if(index === this.state.files.length - 1)file.upload.loaded = e.loaded;return file})});
@@ -201,7 +202,15 @@ class NewArticle extends Component<Props, State> {
 						headers: {
 							"Content-Type": "multipart/form-data"
 						}
-					})
+					}).then( (res:any) => {
+						if(res.data.type === 4 && res.data.code === 0) {
+							this.setState((state) =>{
+								state.files[name].status = FileTableItemStatus.Success;
+								return {files:state.files}
+							});
+						}
+
+					});
 				});
 			}
 		} else {
@@ -222,10 +231,10 @@ class NewArticle extends Component<Props, State> {
 					{/*<input type="checkbox" onChange={}/>*/}
 					<button onClick={this.uploadSelected}>上传</button>
 					{
-						this.state.files.length >= 0 ?
+						Object.getOwnPropertyNames(this.state.files).length >= 0 ?
 							<div className={style['file-list']}>
-								{/*<FileTable files={this.state.files}></FileTable>*/}
-								<FileTable files={[]}></FileTable>
+								<FileTable files={this.state.files}></FileTable>
+								{/*<FileTable files={[]}></FileTable>*/}
 							</div> : null
 					}
 				</div>
