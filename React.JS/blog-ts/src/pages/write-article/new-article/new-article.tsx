@@ -176,6 +176,7 @@ class NewArticle extends Component<Props, State> {
 			for (let i = 0; i < this.fileSelected.current.files.length; i++) {
 				let data: FormData = new FormData();
 				data.append("file", this.fileSelected.current.files[i], this.fileSelected.current.files[i].name);
+				data.append("articleID",'1234567811111111');
 				let fileInfo: FileTableItem = {
 					name: this.fileSelected.current.files[i].name,
 					size: this.fileSelected.current.files[i].size,
@@ -189,7 +190,7 @@ class NewArticle extends Component<Props, State> {
 				this.setState((state) =>{
 					return {files:{...state.files,[name]:fileInfo}}
 				},() => {
-					axios.post("http://localhost:1314/new-article", data, {
+					axios.post("http://localhost:1314/new-file", data, {
 						onUploadProgress: (e: ProgressEvent) => {
 							this.setState((state) =>{
 								if(state.files[name]) {

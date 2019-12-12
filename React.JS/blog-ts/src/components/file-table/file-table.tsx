@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, {Component, Fragment} from 'react';
 import {diff} from "../../utils/methods";
 import * as style from "./style.scss";
@@ -67,7 +68,16 @@ export class FileTable extends Component<Props, State> {
 	}
 
 	deleteFile = (file: FileTableItem) => {
-
+		axios.post("http://localhost:1314/delete-file", {
+			ArticleID:'1234567811111111',
+			FileName:file.name
+		}, {
+			headers: {
+				"Content-Type": "multipart/form-data"
+			}
+		}).then((res) => {
+			console.log(res);
+		});
 	};
 
 	tdFileStatus = (file: FileTableItem) => {
