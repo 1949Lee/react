@@ -117,7 +117,7 @@ function tokensToHtml(tokens: Token[]): any {
 						token.tagName,
 						{className: token.class, ...objs[i], key: UUID()}
 					);
-				} else if (tokens[i].tokenType == "image") { // image的特殊处理
+				} else if (tokens[i].tokenType === "image") { // image的特殊处理
 					ele = <div className="image-wrapper" key={UUID()}>
 						{React.createElement(
 							token.tagName,
@@ -126,7 +126,7 @@ function tokensToHtml(tokens: Token[]): any {
 						<div className="image-text-wrapper" key={UUID()}>{token.text}</div>
 						{token.children && token.children.length > 0 ? tokensToHtml(token.children) : null}
 					</div>
-				} else if (tokens[i].tokenType == "check-list-checkbox") {
+				} else if (tokens[i].tokenType === "check-list-checkbox") {
 					objs[i]['checked'] = objs[i]['checked'] == "true";
 					objs[i]['readOnly'] = true;
 					// objs[i]['defaultChecked'] = objs[i]['checked'];
@@ -135,6 +135,23 @@ function tokensToHtml(tokens: Token[]): any {
 						token.tagName,
 						{className: token.class, ...objs[i], key: UUID(),}
 					);
+				} else if(tokens[i].tokenType === 'table-block-tbody-tr' || tokens[i].tokenType === 'table-block-tbody-td' || tokens[i].tokenType === 'table-block-thead-th'){
+					if (objs[i]['rowspan'] !== undefined) {
+						objs[i]['rowSpan'] = objs[i]['rowspan'];
+						delete objs[i]['rowspan'];
+					}
+					if (objs[i]['colspan'] !== undefined) {
+						objs[i]['colSpan'] = objs[i]['colspan'];
+						delete objs[i]['colspan'];
+					}
+					if (objs[i].style) {
+						objs[i].style = toStyleObj(objs[i].style);
+					}
+					ele = React.createElement(
+						token.tagName,
+						{className: token.class, ...objs[i], key: UUID(),},
+							[token.text? token.text :null, token.children && token.children.length > 0 ? tokensToHtml(token.children) : null]
+					);
 				} else {
 					if (objs[i].style) {
 						objs[i].style = toStyleObj(objs[i].style);
@@ -142,7 +159,7 @@ function tokensToHtml(tokens: Token[]): any {
 					ele = React.createElement(
 						token.tagName,
 						{className: token.class, ...objs[i], key: UUID()},
-						[token.text, token.children && token.children.length > 0 ? tokensToHtml(token.children) : null]
+						[token.text? token.text :null, token.children && token.children.length > 0 ? tokensToHtml(token.children) : null]
 					);
 				}
 				return ele;
