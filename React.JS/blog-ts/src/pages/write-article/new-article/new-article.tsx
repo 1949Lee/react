@@ -80,7 +80,6 @@ class NewArticle extends Component<Props, State> {
 
 	send = (data: EditorData) => {
 		// Web Socket 使用 send() 方法发送数据
-		console.log(data);
 		this.ws.send(JSON.stringify(data));
 	};
 

@@ -66,3 +66,10 @@ export function diff(x: any, y: any) {
 	// }
 	return true;
 }
+
+// 连字符字符串转换为小驼峰，例如：background-color变为backgroundColor
+export function HyphenToCamelCase(value:string):string{
+	return value.replace(/-([a-z])/g,(substring:string, v:string) => {
+		return v.toUpperCase()
+	});
+}
