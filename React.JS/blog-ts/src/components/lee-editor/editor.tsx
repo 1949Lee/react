@@ -156,6 +156,10 @@ export default LeeEditor;
 
 // editor的markdown的内容修改或者添加文件后发射的数据
 export interface EditorData {
+
+	// 文章ID
+	articleID?:number
+
 	// 1表示数据类型为markdown内容修改。2表示数据类型为添加文件
 	type:number;
 

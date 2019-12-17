@@ -79,6 +79,7 @@ class NewArticle extends Component<Props, State> {
 	}
 
 	send = (data: EditorData) => {
+		data.articleID = 1234567811111111;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
 	};
@@ -117,7 +118,7 @@ class NewArticle extends Component<Props, State> {
 
 	fileUpload = (files: EditorData) => {
 		if (files.type === 2 && files.files && files.files.length >= 1) {
-			const filesList = {type: 2, files: []};
+			const filesList = {type: 2, files: [],articleID:1234567811111111};
 			filesList.files = FileServer.FileUpload(files.files);
 			this.ws.send(JSON.stringify(filesList));
 			for (let [key, file] of Object.entries(filesList.files)) {
