@@ -207,6 +207,11 @@ class NewArticle extends Component<Props, State> {
 						if(res.data.type === 4 && res.data.code === 0) {
 							this.setState((state) =>{
 								state.files[name].status = FileTableItemStatus.Success;
+								res.data.data && res.data.data.map( (file:any) => {
+									if (file.url) {
+										state.files[file.fileName].url = file.url;
+									}
+								});
 								return {files:state.files}
 							});
 						}
@@ -234,7 +239,7 @@ class NewArticle extends Component<Props, State> {
 					{
 						Object.getOwnPropertyNames(this.state.files).length >= 0 ?
 							<div className={style['file-list']}>
-								<FileTable files={this.state.files}></FileTable>
+								<FileTable files={this.state.files}/>
 								{/*<FileTable files={[]}></FileTable>*/}
 							</div> : null
 					}
@@ -247,7 +252,7 @@ class NewArticle extends Component<Props, State> {
 										 }}
 										 fileUpload={(files: EditorData) => {
 											 this.fileUpload(files)
-										 }}></LeeEditor>
+										 }}/>
 					<div className={style['preview-result']} style={
 						{
 							opacity: this.state.previewFlag ? 1 : 0,
@@ -256,7 +261,7 @@ class NewArticle extends Component<Props, State> {
 						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
 					>{this.state.previewHtml}</div>
 				</div>
-				<div className={style['divider']}></div>
+				<div className={style['divider']} />
 				<div className={style['preview-wrapper']} onMouseMove={(event) => {
 					this.moveToPreview(event)
 				}} onMouseLeave={this.hidePreview}>
@@ -265,7 +270,7 @@ class NewArticle extends Component<Props, State> {
 					>{this.state.previewHtml}
 					</div>
 					<div className={style['preview-options-area']}
-							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}></div>
+							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>
 				</div>
 			</div>
 		);

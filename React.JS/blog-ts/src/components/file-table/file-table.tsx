@@ -2,6 +2,7 @@ import axios from "axios";
 import React, {Component, Fragment} from 'react';
 import {diff} from "../../utils/methods";
 import * as style from "./style.scss";
+import {message} from "antd";
 
 interface State {
 
@@ -18,14 +19,17 @@ export enum FileTableItemStatus {
 export interface FileTableItem {
 
 	// 文件名字
-	name: string,
+	name: string;
 
 	// 文件大小，单位字节
-	size: number
+	size: number;
 
-	status: FileTableItemStatus
+	status: FileTableItemStatus;
 
-	upload: { total: number, loaded: number }
+	upload: { total: number, loaded: number };
+
+	// 服务端的图片路径
+	url?:string;
 }
 
 
@@ -67,6 +71,7 @@ export class FileTable extends Component<Props, State> {
 		return !diff(nextProps, this.props);
 	}
 
+	// 删除文件
 	deleteFile = (file: FileTableItem) => {
 		axios.post("http://localhost:1314/delete-file", {
 			ArticleID:'1234567811111111',
@@ -78,6 +83,23 @@ export class FileTable extends Component<Props, State> {
 		}).then((res) => {
 			console.log(res);
 		});
+	};
+
+	// 复制文件markdown
+	copyFileMarkdown = (file: FileTableItem) => {
+		if (file.url) {
+			const tem = document.createElement("input");
+			// tem.type = "hidden";
+			tem.style.opacity = "0";
+			// tem.style.width = "0";
+			// tem.style.height = "0";
+			tem.setAttribute("value", `![请输入图片${file.name}的描述](${file.url})`);
+			document.body.appendChild(tem);
+			tem.select();
+			document.execCommand("copy");
+			document.body.removeChild(tem);
+			message.success('已复制到剪贴板');
+		}
 	};
 
 	tdFileStatus = (file: FileTableItem) => {
@@ -118,6 +140,9 @@ export class FileTable extends Component<Props, State> {
 									<span onClick={() => {
 										this.deleteFile(this.props.files[name])
 									}}>删除</span>
+									<span onClick={() => {
+										this.copyFileMarkdown(this.props.files[name])
+									}}>复制</span>
 								</td>
 							</tr>
 						)
