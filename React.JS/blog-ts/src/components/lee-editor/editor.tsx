@@ -114,8 +114,9 @@ class LeeEditor extends Component<Props,State> {
 			this.textChange();
 			e.preventDefault();
 		} else if (e.key.toUpperCase() === 'ENTER') {
-			// console.log('回车');
-			// e.preventDefault();
+			console.log('回车');
+			document.execCommand('insertText',false,"\n");
+			e.preventDefault();
 		}
 	};
 
