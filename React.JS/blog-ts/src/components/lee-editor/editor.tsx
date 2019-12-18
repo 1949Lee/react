@@ -27,6 +27,7 @@ class LeeEditor extends Component<Props,State> {
 		// console.log(document.execCommand("defaultParagraphSeparator", false, 'br'));
 	};
 
+	// 粘贴时的处理
 	textPaste = (e:React.ClipboardEvent) => {
 		// 阻止默认粘贴
 		e.preventDefault();
@@ -51,6 +52,7 @@ class LeeEditor extends Component<Props,State> {
 		}
 	};
 
+	// 将粘贴时的图片展示。
 	imgShow = (files:FileList) => {
 		for (let file of Object.values(files)) {
 			if (file.type.indexOf('image') > -1) { // 图片展示处理
@@ -63,10 +65,12 @@ class LeeEditor extends Component<Props,State> {
 		}
 	};
 
+	// 粘贴的图片使用了blob，所以需要将blog删除。否则，只能等到关闭网站时才会清除，不清除会占用浏览器性能
 	imgOnload = (url:string) => {
 		window.URL.revokeObjectURL(url);
 	};
 
+	// 键盘按下时的处理，包括tab处理。
 	keyDown= (e:React.KeyboardEvent)=> {
 		// this.setState({data:this.state.data+this.state.data});
 		if (e.key.toUpperCase() === 'TAB') {
@@ -109,6 +113,9 @@ class LeeEditor extends Component<Props,State> {
 			}
 			this.textChange();
 			e.preventDefault();
+		} else if (e.key.toUpperCase() === 'ENTER') {
+			// console.log('回车');
+			// e.preventDefault();
 		}
 	};
 

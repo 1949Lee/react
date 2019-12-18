@@ -78,12 +78,14 @@ class NewArticle extends Component<Props, State> {
 		}
 	}
 
+	// 向server发送websocket的消息
 	send = (data: EditorData) => {
 		data.articleID = 1234567811111111;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
 	};
 
+	// 接受server返回的websocket的消息
 	receive = (event: MessageEvent) => {
 		let result = (JSON.parse(event.data));
 		if (result && +result.code === 0) {
@@ -96,6 +98,7 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	// 将鼠标对应的预览内容，展示到预览区
 	moveToPreview = (event: React.MouseEvent) => {
 		event.persist();
 		let e = event.nativeEvent;
@@ -108,14 +111,17 @@ class NewArticle extends Component<Props, State> {
 		this.previewResult.current.scrollTop = this.state.previewPosition * 5 - 20
 	};
 
+	// 隐藏预览，切换回编辑
 	hidePreview = () => {
 		this.setState({previewFlag: false})
 	};
 
+	// 切换预览与编辑
 	togglePreview = () => {
 		this.setState({previewFlag: !this.state.previewFlag})
 	};
 
+	//
 	fileUpload = (files: EditorData) => {
 		if (files.type === 2 && files.files && files.files.length >= 1) {
 			const filesList = {type: 2, files: [],articleID:1234567811111111};
@@ -127,6 +133,7 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	// 将上传的文件添加到文件列表
 	handleFileServerPrepare = (files: any[]) => {
 		this.tempFile.map((file: any) => {
 			let tem = files.find((f) => {
@@ -143,6 +150,7 @@ class NewArticle extends Component<Props, State> {
 		});
 	};
 
+	//直接粘贴图片后，将图片分片上传
 	sendFileFragment = async () => {
 		for (let j = 0; j < this.copyFiles.length; j++) {
 			if (this.copyFiles[j].file) {
@@ -171,6 +179,7 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	// 选择图片上传
 	uploadSelected = () => {
 		if (this.fileSelected.current.files.length > 0) {
 			for (let i = 0; i < this.fileSelected.current.files.length; i++) {
@@ -225,11 +234,12 @@ class NewArticle extends Component<Props, State> {
 	};
 
 
+
 	render() {
 		return (
 			<div className={style['new-article']}>
 				<div className={style['options-wrapper']}>
-					{/*<button onClick={this.send}>发送</button>*/}
+					{/*<button onClick={}>发送</button>*/}
 					<button onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</button>
