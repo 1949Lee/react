@@ -6,13 +6,17 @@ import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import FileServer from "../../../utils/file-server";
 import * as style from './style.scss';
+import {Button, Modal} from "antd";
 
 interface State {
 	previewFlag: boolean
 	previewHtml: JSX.Element,
 	previewHeight: string,
 	previewPosition: number,
-	files: {[key:string]:FileTableItem}
+	files: {[key:string]:FileTableItem},
+	postingFlag:boolean,
+	postModalFlag:boolean
+
 }
 
 interface Props extends React.ComponentProps<any>,RouteComponentProps {
@@ -39,7 +43,9 @@ class NewArticle extends Component<Props, State> {
 			previewHtml: null,
 			previewHeight: '100%',
 			previewPosition: 0,
-			files: {}
+			files: {},
+			postingFlag:false,
+			postModalFlag:false
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -234,19 +240,49 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	postModalCancel = () => {
+		this.setState({postModalFlag:false})
+	};
+
+	postModalDoPost = () => {
+
+	};
+
+	togglePostModal = (value:boolean) => {
+		this.setState({postModalFlag:value})
+	};
+
 
 
 	render() {
 		return (
 			<div className={style['new-article']}>
+				<Modal
+					visible={this.state.postModalFlag}
+					title="Title"
+					footer={[
+						<Button key="back" onClick={this.postModalCancel}>
+							取消
+						</Button>,
+						<Button key="submit" type="primary" loading={this.state.postingFlag} onClick={this.postModalDoPost}>
+							发布
+						</Button>,
+					]}
+				>
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+					<p>Some contents...</p>
+				</Modal>
 				<div className={style['options-wrapper']}>
-					{/*<button onClick={}>发送</button>*/}
-					<button onClick={this.togglePreview}>{
+					<Button type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
+					<Button type="primary" onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
-					}</button>
+					}</Button>
 					<input type="file" ref={this.fileSelected} multiple={true}/>
 					{/*<input type="checkbox" onChange={}/>*/}
-					<button onClick={this.uploadSelected}>上传</button>
+					<Button type="primary" onClick={this.uploadSelected}>上传</Button>
 					{
 						Object.getOwnPropertyNames(this.state.files).length >= 0 ?
 							<div className={style['file-list']}>
