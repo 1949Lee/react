@@ -1,5 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import {NavLink, RouteComponentProps, withRouter} from "react-router-dom";
+import {Routes} from "../../router";
 import {Connect} from "../../utils/decorators";
 import {actionCreators} from "./store";
 import {Record, List} from "immutable";
@@ -124,10 +125,10 @@ class Header extends Component<Props, State> {
 	};
 
 	handleWriteArticle = () => {
-		if (this.props.history.location.pathname === "/new-article"){
+		if (this.props.history.location.pathname === Routes.newArticle){
 			return
 		}
-		this.props.history.push('new-article');
+		this.props.history.push('new-article/1');
 	};
 
 	toggleFloat = (action?:boolean) => {
