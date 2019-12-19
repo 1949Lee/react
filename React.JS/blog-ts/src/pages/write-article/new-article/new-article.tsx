@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {string} from "prop-types";
 import React, {Component} from 'react';
+import {RouteComponentProps, useParams, withRouter} from "react-router";
 import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
@@ -15,7 +15,7 @@ interface State {
 	files: {[key:string]:FileTableItem}
 }
 
-interface Props extends React.ComponentProps<any> {
+interface Props extends React.ComponentProps<any>,RouteComponentProps {
 }
 
 class NewArticle extends Component<Props, State> {
@@ -65,6 +65,7 @@ class NewArticle extends Component<Props, State> {
 			console.log("连接已关闭...");
 		};
 		// ws.binaryType
+		console.log(this.props);
 
 	}
 
@@ -287,4 +288,4 @@ class NewArticle extends Component<Props, State> {
 	}
 }
 
-export default NewArticle;
+export default withRouter(NewArticle);
