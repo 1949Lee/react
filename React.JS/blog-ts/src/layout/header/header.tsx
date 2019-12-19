@@ -1,3 +1,4 @@
+import {Spin, message} from "antd";
 import React, {Component, Fragment} from 'react';
 import {NavLink, RouteComponentProps, withRouter} from "react-router-dom";
 import {Routes} from "../../router";
@@ -7,6 +8,8 @@ import {Record, List} from "immutable";
 import {HeaderConfig} from "../../config"
 import * as style from "./style.scss";
 import {CSSTransition} from 'react-transition-group';
+import axios from 'axios';
+import ReactDOM from "react-dom";
 
 const mapStateToProps = (state:Record<any>) => {
 	return {
@@ -128,7 +131,18 @@ class Header extends Component<Props, State> {
 		if (this.props.history.location.pathname === Routes.newArticle){
 			return
 		}
-		this.props.history.push('new-article/1');
+		const hide = message.loading('准备中..', 0);
+		// Dismiss manually and asynchronously
+		axios.post("http://localhost:1314/new-article-id",{}).then((res:any) => {
+			if(res.data.code === 0 && res.data.data){
+				this.props.history.push(`new-article/${res.data.data}`);
+				hide();
+			} else {
+				hide();
+			}
+		},() => {
+			hide();
+		});
 	};
 
 	toggleFloat = (action?:boolean) => {
