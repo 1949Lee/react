@@ -112,3 +112,15 @@
 		}
 	}
 }
+.post-modal {
+	//width: 600px;
+	.form-control-field {
+		margin-bottom: 8px;
+		.article-title {
+			width: 100%;
+		}
+		.article-create-time {
+			width: 180px;
+		}
+	}
+}

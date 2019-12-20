@@ -276,9 +276,9 @@ class NewArticle extends Component<Props, State> {
 		this.setState({postModalFlag:false})
 	};
 
-  // 发布弹窗点击发布
-	postModalDoPost = () => {
-
+  // 发布弹窗点击下一步，需要显示最终预览
+	previewBeforePost = () => {
+	//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
 	};
 
 	// 打开或关闭发布弹窗
@@ -335,17 +335,25 @@ class NewArticle extends Component<Props, State> {
 				</Drawer>
 				<Modal
 					visible={this.state.postModalFlag}
-					title="Title"
+					title="文章信息"
+					onCancel={this.postModalCancel}
+					wrapClassName={style['post-modal']}
 					footer={[
 						<Button key="back" onClick={this.postModalCancel}>
 							取消
 						</Button>,
-						<Button key="submit" type="primary" loading={this.state.postingFlag} onClick={this.postModalDoPost}>
-							发布
+						<Button key="submit" type="primary" loading={this.state.postingFlag} onClick={this.previewBeforePost}>
+							下一步
 						</Button>,
 					]}
 				>
-					选择分类和标签，选择日期，输入标题。预览功能和发布弹窗的流程。
+					<div className={`${style['form-control-field']}`}>
+						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-title']}`} type="text" placeholder="文章标题"/>
+					</div>
+					<div className={`${style['form-control-field']}`}>
+						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-create-time']}`} type="text" placeholder="发布时间"/>
+					</div>
+					选择分类和标签。
 				</Modal>
 				<div className={style['options-wrapper']}>
 					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} size={"small"} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>

@@ -1,6 +1,28 @@
+$border-color:#d9d9d9; //默认边框颜色
+$border-active-color:#40a9ff; //激活时边框颜色
+$border-active-shadow-color:rgba(24,144,255,0.2);//激活时边框阴影
+$placeholder-color:#BFBFBF;
 /*
 本文件用来封装组件库lee-ui的样式
 */
+input {
+	&::-moz-placeholder {
+		color: $placeholder-color;
+		opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+	}
+	// Internet Explorer 10+
+	&:-ms-input-placeholder {
+		color: $placeholder-color;
+	}
+	// Safari and Chrome
+	&::-webkit-input-placeholder {
+		color: $placeholder-color;
+	}
+
+	&:placeholder-shown {
+		text-overflow: ellipsis;
+	}
+}
 .lee-btn {
 	display: inline-block;
 	margin-bottom: 0;
@@ -24,4 +46,28 @@
 	&:active, &:focus {
 		outline: 0;
 	}
+}
+
+.lee-input {
+	display: inline-block;
+	box-sizing: border-box;
+	margin: 0;
+	border: 1px solid $border-color;
+	border-radius: 4px;
+	padding: 4px 11px;
+	line-height: 1.5;
+	font-size: 14px;
+	&:active, &:focus {
+		outline: 0;
+		border: 1px solid $border-active-color;
+		box-shadow: 0 0 0 2px $border-active-shadow-color;
+	}
+	&:hover {
+		border: 1px solid $border-active-color;
+	}
+	-webkit-appearance: none;
+}
+
+.lee-input-text {
+	transition: all 0.3s;
 }
