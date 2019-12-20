@@ -347,13 +347,13 @@ class NewArticle extends Component<Props, State> {
 					选择分类和标签，选择日期，输入标题。预览功能和发布弹窗的流程。
 				</Modal>
 				<div className={style['options-wrapper']}>
-					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
-					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" onClick={this.togglePreview}>{
+					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} size={"small"} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
+					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" size={"small"} onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</Button>
-					<Button className={`${style['lee-btn']} ${style['upload']}`} onClick={this.showSysFileSelected}>上传文件</Button>
+					<Button className={`${style['lee-btn']} ${style['upload']}`} size={"small"} onClick={this.showSysFileSelected}>上传文件</Button>
 					<input type="file" ref={this.fileSelected} multiple={true} style={{display:"none"}} onChange={this.confirmUpload}/>
-					<Button className={`${style['lee-btn']} ${style['open-files-table-drawer']}`} onClick={() => {this.FilesTableDrawerToggle(true)}}>文件列表</Button>
+					<Button className={`${style['lee-btn']} ${style['open-files-table-drawer']}`} size={"small"} onClick={() => {this.FilesTableDrawerToggle(true)}}>文件列表</Button>
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
