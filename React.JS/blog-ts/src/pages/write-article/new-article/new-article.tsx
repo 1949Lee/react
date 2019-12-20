@@ -318,12 +318,13 @@ class NewArticle extends Component<Props, State> {
 		return (
 			<div className={style['new-article']}>
 				<Drawer
-					title="Basic Drawer"
+					title="该文章已上传的文件"
 					placement="left"
 					closable={false}
 					onClose={this.FilesTableDrawerClose}
 					visible={this.state.filesTableFlag}
 					width="60%"
+					headerStyle={{height:'60px'}}
 				>
 					{
 						Object.getOwnPropertyNames(this.state.files).length > 0 ?
