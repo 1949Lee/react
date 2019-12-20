@@ -73,3 +73,21 @@ export function HyphenToCamelCase(value:string):string{
 		return v.toUpperCase()
 	});
 }
+
+
+// 传入字节大小，转换为两位小数的大小显示文案：KB、MB、GB等。
+export function FileSizeText(size: number = -1): string{ // 保留两位小数
+	let result = "--";
+	if (size > 0) {
+		if (size < 1024) { // 大小区间：[0,1KB)
+			result = size + "B";
+		} else if (size >= 1024 && size < 1024 * 1024) { // 大小区间：[1KB,1MB)
+			result = (size / 1024).toFixed(2) + "KB";
+		} else if (size >= 1024 * 1024 && size < 1024 * 1024 * 1024) { // 大小区间：[1MB,1GB)
+			result = (size / 1024 / 1024).toFixed(2) + "MB";
+		} else { // 大小区间：[1GB,+∞)
+			result = (size / 1024 / 1024 / 1024).toFixed(2) + "GB";
+		}
+	}
+	return result;
+};

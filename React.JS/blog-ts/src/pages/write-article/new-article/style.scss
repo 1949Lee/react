@@ -1,7 +1,7 @@
 .new-article {
 	$preview-scale: 0.3;
 	$padding-top: 60px;
-	$divider-color:rgba(0, 0, 0, .2);
+	$divider-color: rgba(0, 0, 0, .2);
 	height: 100vh;
 	//overflow-y: hidden;
 
@@ -10,10 +10,32 @@
 		height: $padding-top;
 		border-bottom: 1px solid $divider-color;
 		box-sizing: border-box;
+
 		.file-list {
-			width: 60%;
-			display: inline-block;
-			vertical-align: top;
+			width: 100%;
+			//display: inline-block;
+			//vertical-align: top;
+		}
+
+		.lee-btn {
+			margin-left: 8px;
+			margin-top: 8px;
+
+			&.open-post-modal {
+
+			}
+
+			&.preview {
+
+			}
+
+			&.upload {
+
+			}
+
+			&.open-files-table-drawer{
+
+			}
 		}
 	}
 
@@ -23,6 +45,7 @@
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
 		position: relative;
+
 		.editor {
 			height: 100%;
 			padding: 0 2.5vw 0 2.5vw;
@@ -38,6 +61,7 @@
 
 			box-sizing: border-box;
 		}
+
 		.preview-result {
 			position: absolute;
 			box-sizing: border-box;
@@ -56,7 +80,7 @@
 		background-color: $divider-color;
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
-		box-shadow: -2px 0px 10px rgba(0,0,0,.1);
+		box-shadow: -2px 0px 10px rgba(0, 0, 0, .1);
 	}
 
 	.preview-wrapper {
@@ -67,6 +91,7 @@
 		height: calc(100vh - #{$padding-top});
 		vertical-align: middle;
 		position: relative;
+
 		.preview-html {
 			width: 100vw;
 			height: auto;
@@ -76,6 +101,7 @@
 			top: 0;
 			z-index: 1;
 		}
+
 		.preview-options-area {
 			position: relative;
 			width: 100%;

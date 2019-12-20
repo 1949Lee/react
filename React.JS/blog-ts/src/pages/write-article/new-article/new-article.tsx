@@ -1,12 +1,13 @@
 import axios from 'axios';
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, useParams, withRouter} from "react-router";
 import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import FileServer from "../../../utils/file-server";
+import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
-import {Button, Modal} from "antd";
+import {Button, Drawer, Empty, Modal} from "antd";
 
 interface State {
 	previewFlag: boolean
@@ -14,6 +15,7 @@ interface State {
 	previewHeight: string,
 	previewPosition: number,
 	files: {[key:string]:FileTableItem},
+	filesTableFlag:boolean,
 	postingFlag:boolean,
 	postModalFlag:boolean
 
@@ -44,6 +46,7 @@ class NewArticle extends Component<Props, State> {
 			previewHeight: '100%',
 			previewPosition: 0,
 			files: {},
+			filesTableFlag:false,
 			postingFlag:false,
 			postModalFlag:false
 		};
@@ -186,6 +189,34 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	showSysFileSelected = () => {
+		this.fileSelected.current.click();
+	};
+
+	confirmUpload = () => {
+		if (this.fileSelected.current.files.length > 0) {
+			let me = this;
+			let files = Array(me.fileSelected.current.files.length);
+			files.fill(0);
+			Modal.confirm({
+				title: `确认上传选择的${me.fileSelected.current.files.length}个文件吗？`,
+				content: <Fragment>
+					{files.map((val,i:number) => {
+						return <p key={i}>{me.fileSelected.current.files[i].name}，约{FileSizeText(me.fileSelected.current.files[i].size)}</p>
+					})}
+				</Fragment>,
+				icon:null,
+				maskClosable: false,
+				onOk() {
+					me.uploadSelected();
+				},
+				onCancel() {
+					me.fileSelected.current.value = null;
+				},
+			});
+		}
+	};
+
 	// 选择图片上传
 	uploadSelected = () => {
 		if (this.fileSelected.current.files.length > 0) {
@@ -240,16 +271,45 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
+	// 关闭发布弹窗
 	postModalCancel = () => {
 		this.setState({postModalFlag:false})
 	};
 
+  // 发布弹窗点击发布
 	postModalDoPost = () => {
 
 	};
 
+	// 打开或关闭发布弹窗
 	togglePostModal = (value:boolean) => {
 		this.setState({postModalFlag:value})
+	};
+
+	// 文件列表中文件删除。
+	FileTableFileChange =(name:string,action:string) => {
+		if (name!==null&&name!==undefined) {
+			switch (action) {
+				case 'delete':
+					this.setState((state)=>{
+						delete state.files[name];
+						return state
+					});
+					break;
+				default:
+					break;
+			}
+		}
+	};
+
+	// 文件列表抽屉关闭
+	FilesTableDrawerClose = () => {
+		this.FilesTableDrawerToggle(false);
+	};
+
+	// 文件列表抽屉关闭或显示
+	FilesTableDrawerToggle = (value:boolean) => {
+		this.setState({filesTableFlag:value});
 	};
 
 
@@ -257,6 +317,21 @@ class NewArticle extends Component<Props, State> {
 	render() {
 		return (
 			<div className={style['new-article']}>
+				<Drawer
+					title="Basic Drawer"
+					placement="left"
+					closable={false}
+					onClose={this.FilesTableDrawerClose}
+					visible={this.state.filesTableFlag}
+					width="60%"
+				>
+					{
+						Object.getOwnPropertyNames(this.state.files).length > 0 ?
+							<div className={style['file-list']}>
+								<FileTable files={this.state.files} onFileChange={this.FileTableFileChange}/>
+							</div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="这里什么也没有，上传后再来看看吧" />
+					}
+				</Drawer>
 				<Modal
 					visible={this.state.postModalFlag}
 					title="Title"
@@ -269,27 +344,16 @@ class NewArticle extends Component<Props, State> {
 						</Button>,
 					]}
 				>
-					<p>Some contents...</p>
-					<p>Some contents...</p>
-					<p>Some contents...</p>
-					<p>Some contents...</p>
-					<p>Some contents...</p>
+					选择分类和标签，选择日期，输入标题。预览功能和发布弹窗的流程。
 				</Modal>
 				<div className={style['options-wrapper']}>
-					<Button type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
-					<Button type="primary" onClick={this.togglePreview}>{
+					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
+					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</Button>
-					<input type="file" ref={this.fileSelected} multiple={true}/>
-					{/*<input type="checkbox" onChange={}/>*/}
-					<Button type="primary" onClick={this.uploadSelected}>上传</Button>
-					{
-						Object.getOwnPropertyNames(this.state.files).length >= 0 ?
-							<div className={style['file-list']}>
-								<FileTable files={this.state.files}/>
-								{/*<FileTable files={[]}></FileTable>*/}
-							</div> : null
-					}
+					<Button className={`${style['lee-btn']} ${style['upload']}`} onClick={this.showSysFileSelected}>上传文件</Button>
+					<input type="file" ref={this.fileSelected} multiple={true} style={{display:"none"}} onChange={this.confirmUpload}/>
+					<Button className={`${style['lee-btn']} ${style['open-files-table-drawer']}`} onClick={() => {this.FilesTableDrawerToggle(true)}}>文件列表</Button>
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
