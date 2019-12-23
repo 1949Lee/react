@@ -8,6 +8,7 @@ import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
+import {CategoryWithTags} from "../../../utils/interface";
 
 interface State {
 	previewFlag: boolean
@@ -17,11 +18,12 @@ interface State {
 	files: {[key:string]:FileTableItem},
 	filesTableFlag:boolean,
 	postingFlag:boolean,
-	postModalFlag:boolean
+	postModalFlag:boolean,
+	categoryWithTags:CategoryWithTags[]
 
 }
 
-interface Props extends React.ComponentProps<any>,RouteComponentProps {
+interface Props extends React.ComponentProps<any>,RouteComponentProps<{id:any}> {
 }
 
 class NewArticle extends Component<Props, State> {
@@ -48,7 +50,8 @@ class NewArticle extends Component<Props, State> {
 			files: {},
 			filesTableFlag:false,
 			postingFlag:false,
-			postModalFlag:false
+			postModalFlag:false,
+			categoryWithTags:[]
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -74,8 +77,13 @@ class NewArticle extends Component<Props, State> {
 			console.log("连接已关闭...");
 		};
 		// ws.binaryType
-		console.log(this.props);
-
+		axios.post('http://localhost:1314/categories-with-tags',{}).then((res) => {
+			if(res.data.code === 0) {
+				this.setState({categoryWithTags:res.data.data});
+			}
+		},err => {
+			console.error(err);
+		})
 	}
 
 	componentWillUnmount() {
@@ -90,7 +98,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
-		data.articleID = 1234567811111111;
+		data.articleID = this.props.match.params.id;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
 	};
@@ -134,7 +142,7 @@ class NewArticle extends Component<Props, State> {
 	//
 	fileUpload = (files: EditorData) => {
 		if (files.type === 2 && files.files && files.files.length >= 1) {
-			const filesList = {type: 2, files: [],articleID:1234567811111111};
+			const filesList = {type: 2, files: [],articleID:this.props.match.params.id};
 			filesList.files = FileServer.FileUpload(files.files);
 			this.ws.send(JSON.stringify(filesList));
 			for (let [key, file] of Object.entries(filesList.files)) {
@@ -223,7 +231,7 @@ class NewArticle extends Component<Props, State> {
 			for (let i = 0; i < this.fileSelected.current.files.length; i++) {
 				let data: FormData = new FormData();
 				data.append("file", this.fileSelected.current.files[i], this.fileSelected.current.files[i].name);
-				data.append("articleID",'1234567811111111');
+				data.append("articleID",this.props.match.params.id);
 				let fileInfo: FileTableItem = {
 					name: this.fileSelected.current.files[i].name,
 					size: this.fileSelected.current.files[i].size,
@@ -284,6 +292,9 @@ class NewArticle extends Component<Props, State> {
 	// 打开或关闭发布弹窗
 	togglePostModal = (value:boolean) => {
 		this.setState({postModalFlag:value})
+		if(value) {
+			console.log(this.state.categoryWithTags);
+		}
 	};
 
 	// 文件列表中文件删除。
