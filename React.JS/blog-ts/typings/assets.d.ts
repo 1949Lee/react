@@ -19,9 +19,3 @@ declare module '*.gif' {
 	const content: any;
 	export default content
 }
-
-// for css-module
-declare module '*.scss' {
-	const content: any;
-	export = content
-}

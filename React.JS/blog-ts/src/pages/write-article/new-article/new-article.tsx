@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, {Component, Fragment} from 'react';
-import {RouteComponentProps, useParams, withRouter} from "react-router";
+import {RouteComponentProps, withRouter} from "react-router";
+import CategoriesTags from "../../../components/categories-tags/categories-tags";
 import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
@@ -33,6 +34,7 @@ class NewArticle extends Component<Props, State> {
 	preview: React.RefObject<HTMLDivElement> = React.createRef();
 	previewResult: React.RefObject<HTMLDivElement> = React.createRef();
 	fileSelected: React.RefObject<HTMLInputElement> = React.createRef();
+	test: React.RefObject<CategoriesTags> = React.createRef();
 
 	// 当前上传中/上传完成/上传失败的文件
 	copyFiles: any[] = [];
@@ -287,14 +289,12 @@ class NewArticle extends Component<Props, State> {
   // 发布弹窗点击下一步，需要显示最终预览
 	previewBeforePost = () => {
 	//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
+		console.log(this.test.current.state.categoryID,this.test.current.state.chosenTags)
 	};
 
 	// 打开或关闭发布弹窗
 	togglePostModal = (value:boolean) => {
-		this.setState({postModalFlag:value})
-		if(value) {
-			console.log(this.state.categoryWithTags);
-		}
+		this.setState({postModalFlag:value});
 	};
 
 	// 文件列表中文件删除。
@@ -364,7 +364,9 @@ class NewArticle extends Component<Props, State> {
 					<div className={`${style['form-control-field']}`}>
 						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-create-time']}`} type="text" placeholder="发布时间"/>
 					</div>
-					选择分类和标签。
+					<div className={style['form-control-field']}>
+						<CategoriesTags ref={this.test} categoryWithTags={this.state.categoryWithTags}></CategoriesTags>
+					</div>
 				</Modal>
 				<div className={style['options-wrapper']}>
 					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} size={"small"} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>

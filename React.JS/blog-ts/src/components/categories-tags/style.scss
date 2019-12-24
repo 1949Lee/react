@@ -1,0 +1,44 @@
+@import "../../styles/lee-blog-site";
+.categories-tags-wrapper {
+	//height:44px;
+	.lee-tag {
+
+	}
+	.categories-wrapper {
+		width: 100%;
+		overflow-x: auto;
+		.lee-tag {
+			border: 1px dashed $new-article-primary-color;
+			cursor: pointer;
+			&.checked {
+				border: none;
+			}
+		}
+	}
+	.tags-wrapper {
+		.lee-tag {
+			cursor: pointer;
+			position: relative;
+			margin-bottom: 4px;
+			&:after {
+				content: ' ';
+				position: absolute;
+				width: calc(100% - 6px);
+				display: inline-block;
+				left: 3px;
+				bottom: 0;
+				border-bottom: 2px dashed $new-article-primary-color;
+			}
+			&:hover{
+				&:after{
+					border-bottom: 2px solid $new-article-primary-color;
+				}
+			}
+			&.checked {
+				&:after {
+					content: none;
+				}
+			}
+		}
+	}
+}
