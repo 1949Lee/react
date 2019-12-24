@@ -23,7 +23,7 @@ interface State {
 	newTagInput: boolean
 
 	// 自己新增的标签。用于展示和删除
-	addedTags: Tags[]
+	addedTags: {[key:string]:Tags[]}
 
 	// 自己新增的标签。用于展示和删除
 	addedCategory: CategoryWithTags[]
@@ -51,7 +51,7 @@ class CategoriesTags extends Component<Props, State> {
 			chosenTags: [],
 			newCategoryInput: false,
 			newTagInput: false,
-			addedTags: [],
+			addedTags: {},
 			addedCategory: []
 		}
 	}
@@ -135,18 +135,36 @@ class CategoriesTags extends Component<Props, State> {
 			}).then((res) => {
 				if (res.data.code === 0) {
 					this.setState((state) => {
-						state.addedTags.push({
+						if(!state.addedTags[this.state.categoryID]){
+							state.addedTags[this.state.categoryID] = [];
+						}
+						state.addedTags[this.state.categoryID].push({
 							id:res.data.data.id,
 							name:this.newTagInputRef.current.value,
 							categoryID:this.state.categoryID
 						});
-						return {addedCategory:state.addedCategory};
+						return {addedTags:state.addedTags}
 					});
 				}
 			}, err => {
 				console.error(err);
 			});
 		}
+	};
+	doDeleteAddedTag = (tag:Tags) => {
+		axios.post('http://localhost:1314/delete-tag', {
+			id: tag.id
+		}).then((res) => {
+			if (res.data.code === 0) {
+				this.setState((state) => {
+					let i = state.addedTags[this.state.categoryID].findIndex((t) => t.id === tag.id);
+					state.addedTags[this.state.categoryID].splice(i,1);
+					return {addedTags:state.addedTags}
+				});
+			}
+		}, err => {
+			console.error(err);
+		});
 	};
 
 	render() {
@@ -198,6 +216,18 @@ class CategoriesTags extends Component<Props, State> {
 																			 this.handleTagClick(checked, t)
 																		 }}
 								>{t.name}</CheckableTag>
+							}) : null
+					}
+					{
+						this.state.categoryID !== null && this.state.addedTags[this.state.categoryID] ? this.state.addedTags[this.state.categoryID]
+							.filter((t) => !this.state.searchText || t.name.indexOf(this.state.searchText) !== -1)
+							.map((t) => {
+								return <Tag key={t.id} className={style['lee-tag']}
+														closable={true}
+														onClose={(e) => {
+															this.doDeleteAddedTag(t)
+														}}
+								>{t.name}</Tag>
 							}) : null
 					}
 					<div className={style['new-tag']}>
