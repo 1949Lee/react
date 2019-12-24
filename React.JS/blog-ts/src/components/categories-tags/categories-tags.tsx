@@ -222,12 +222,20 @@ class CategoriesTags extends Component<Props, State> {
 						this.state.categoryID !== null && this.state.addedTags[this.state.categoryID] ? this.state.addedTags[this.state.categoryID]
 							.filter((t) => !this.state.searchText || t.name.indexOf(this.state.searchText) !== -1)
 							.map((t) => {
-								return <Tag key={t.id} className={style['lee-tag']}
-														closable={true}
-														onClose={(e) => {
-															this.doDeleteAddedTag(t)
-														}}
-								>{t.name}</Tag>
+								return <CheckableTag key={t.id}
+																		 className={`${style['lee-tag']} ${this.state.chosenTags.indexOf(t) >= 0 ? `${style['checked']}` : ''}`}
+																		 checked={this.state.chosenTags.indexOf(t) >= 0}
+																		 onChange={checked => {
+																			 this.handleTagClick(checked, t)
+																		 }}
+								>
+									<span>{t.name}</span>
+									<i className={`${style['close-tag']} lee-icon-cross`}
+										 onClick={(e) => {
+											 this.doDeleteAddedTag(t)
+										 }}
+									/>
+								</CheckableTag>
 							}) : null
 					}
 					<div className={style['new-tag']}>
