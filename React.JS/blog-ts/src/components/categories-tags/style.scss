@@ -1,25 +1,64 @@
 @import "../../styles/lee-blog-site";
+
 .categories-tags-wrapper {
 	//height:44px;
 	.lee-tag {
 
 	}
+
 	.categories-wrapper {
 		width: 100%;
 		overflow-x: auto;
+
 		.lee-tag {
 			border: 1px dashed $new-article-primary-color;
 			cursor: pointer;
+			background: transparent;
+
 			&.checked {
 				border: none;
+				background: $new-article-primary-color;
+			}
+		}
+
+		.new-category {
+			display: inline-block;
+			vertical-align: middle;
+			position: relative;
+			width: 76px;
+			height:22px;
+
+			.lee-tag {
+				border: 1px dashed $new-article-default-color;
+				color: $new-article-default-color;
+				position: absolute;
+				z-index: 1;
+				margin-right: 0;
+
+				&:hover {
+					//border: 1px dashed $new-article-primary-color;
+					color: $new-article-default-hover-color;
+					border-color: $new-article-default-hover-color;
+				}
+			}
+
+			.input {
+				position: absolute;
+				z-index: 2;
+				width: 100%;
+				height:100%;
+				font-size: 12px;
+				line-height: 20px;
 			}
 		}
 	}
+
 	.tags-wrapper {
 		.lee-tag {
 			cursor: pointer;
 			position: relative;
 			margin-bottom: 4px;
+
 			&:after {
 				content: ' ';
 				position: absolute;
@@ -29,15 +68,58 @@
 				bottom: 0;
 				border-bottom: 2px dashed $new-article-primary-color;
 			}
-			&:hover{
-				&:after{
+
+			&:hover {
+				&:after {
 					border-bottom: 2px solid $new-article-primary-color;
 				}
 			}
+
 			&.checked {
 				&:after {
 					content: none;
 				}
+			}
+		}
+		.new-tag {
+			//display: inline-block;
+			vertical-align: middle;
+			position: relative;
+			width: 76px;
+			height:22px;
+
+			.lee-tag {
+				border: none;
+				color: $new-article-default-color;
+				position: absolute;
+				z-index: 1;
+				margin-right: 0;
+				background: transparent;
+				&:after {
+					content: ' ';
+					position: absolute;
+					width: calc(100% - 6px);
+					display: inline-block;
+					left: 3px;
+					bottom: 0;
+					border-bottom: 2px dashed $new-article-default-color;
+				}
+
+				&:hover {
+					color: $new-article-default-hover-color;
+					&:after {
+						border-bottom: 2px solid $new-article-default-hover-color;
+					}
+				}
+			}
+
+			.input {
+				position: absolute;
+				z-index: 2;
+				width: 100%;
+				height:100%;
+				font-size: 12px;
+				line-height: 20px;
 			}
 		}
 	}

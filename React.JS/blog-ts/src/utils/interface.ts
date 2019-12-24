@@ -1,7 +1,8 @@
 export interface CategoryWithTags {
 	id:number;
 	name:string;
-	tags:Tags[]|null
+	tags:Tags[]|null;
+	addedTags?:Tags[]
 }
 
 export interface Tags {
