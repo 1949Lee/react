@@ -5,6 +5,7 @@ import CategoriesTags from "../../../components/categories-tags/categories-tags"
 import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
+import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
 import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
@@ -22,6 +23,7 @@ interface State {
 	postModalFlag: boolean,
 	categoryWithTags: CategoryWithTags[]
 	article: ArticleInfo
+	finalPreview: boolean
 }
 
 interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
@@ -55,6 +57,7 @@ class NewArticle extends Component<Props, State> {
 			filesTableFlag: false,
 			postingFlag: false,
 			postModalFlag: false,
+			finalPreview: false,
 			categoryWithTags: [],
 			article: {
 				articleID: -1,
@@ -336,6 +339,7 @@ class NewArticle extends Component<Props, State> {
 	// 发布弹窗点击下一步，需要显示最终预览
 	previewBeforePost = () => {
 		//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
+		this.setState({finalPreview:true});
 		let result = this.getCategoryAndTagsInChild();
 		this.setState((state) => {
 			state.article.category = result.category;
@@ -343,7 +347,7 @@ class NewArticle extends Component<Props, State> {
 			return {
 				article: {...state.article}
 			}
-		});
+		},);
 	};
 
 	// 获取子组件中选择的分类和标签结果
@@ -357,14 +361,14 @@ class NewArticle extends Component<Props, State> {
 			},
 			tags: []
 		};
-		if (ID == null) {
+		if (ID > 1) {
+			let ctg = this.state.categoryWithTags && this.state.categoryWithTags.find((c) => c.id === this.chosenTags.current.state.categoryID);
+			result.category.id = ctg.id;
+			result.category.name = ctg.name;
+		} else {
 			result.category = null;
 			result.tags = null;
 			return result;
-		} else {
-			let ctg = this.state.categoryWithTags && this.state.categoryWithTags.find((c) => c.id === this.chosenTags.current.state.categoryID);
-			result.category.id = ctg.id;
-			result.category.name = ctg.name
 		}
 
 		if (tags && tags.length > 0) {
@@ -394,10 +398,20 @@ class NewArticle extends Component<Props, State> {
 		})
 	};
 
+	// 返回编辑：隐藏预览和文章信息弹窗。
+	continueEditing = () => {
+		this.setState({finalPreview:false,postModalFlag:false});
+	};
+
+	resumePostModal = () => {
+		this.setState({finalPreview:false});
+	};
+
 
 	render() {
 		return (
 			<div className={style['new-article']}>
+				<PreviewFullPage show={this.state.finalPreview} onClose={()=>{this.continueEditing()}} onHide={() => {this.resumePostModal()}}></PreviewFullPage>
 				<Drawer
 					title="该文章已上传的文件"
 					placement="left"

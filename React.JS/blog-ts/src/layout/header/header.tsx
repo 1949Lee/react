@@ -9,7 +9,6 @@ import {HeaderConfig} from "../../config"
 import * as style from "./style.scss";
 import {CSSTransition} from 'react-transition-group';
 import axios from 'axios';
-import ReactDOM from "react-dom";
 
 const mapStateToProps = (state:Record<any>) => {
 	return {
