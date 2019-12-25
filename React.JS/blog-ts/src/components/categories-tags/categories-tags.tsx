@@ -230,7 +230,7 @@ class CategoriesTags extends Component<Props, State> {
 																		 }}
 								>
 									<span>{t.name}</span>
-									<i className={`${style['close-tag']} lee-icon-cross`}
+									<i className={`${style['close-icon']} lee-icon-cross`}
 										 onClick={(e) => {
 											 this.doDeleteAddedTag(t)
 										 }}
