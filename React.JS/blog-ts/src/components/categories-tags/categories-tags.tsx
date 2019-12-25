@@ -118,7 +118,7 @@ class CategoriesTags extends Component<Props, State> {
 							name: this.newCategoryInputRef.current.value,
 							tags: null
 						});
-						return {addedCategory: state.addedCategory};
+						return {addedCategory: state.addedCategory,categoryID:res.data.data.id};
 					},()=>{this.newCategoryInputRef.current.blur();});
 				}
 			}, err => {
@@ -200,7 +200,7 @@ class CategoriesTags extends Component<Props, State> {
 
 	render() {
 		// 选中的分类
-		let ctg = this.props.categoryWithTags.find((c) => c.id === this.state.categoryID);
+		let ctg = this.props.categoryWithTags.find((c) => c.id === this.state.categoryID) || this.state.addedCategory.find((c) => c.id === this.state.categoryID);
 		return (
 			<div className={style['categories-tags-wrapper']}>
 				<div className={style['categories-wrapper']}>
@@ -290,7 +290,7 @@ class CategoriesTags extends Component<Props, State> {
 					}
 					<div className={style['new-tag']}>
 						{
-							this.state.categoryID !== null && ctg ?
+							this.state.categoryID !== null && ctg?
 								(this.state.newTagInput ?
 									<input className={`lee-input lee-input-text ${style['input']}`} type="text" placeholder="新标签"
 												 ref={this.newTagInputRef}
