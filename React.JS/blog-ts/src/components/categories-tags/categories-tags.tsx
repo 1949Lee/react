@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {CategoryWithTags, Tags} from "../../utils/interface";
 import * as style from "./style.scss";
-import {Input, Tag} from 'antd';
+import { message, Tag} from 'antd';
 import axios from 'axios';
 
 const {CheckableTag} = Tag;
@@ -106,9 +106,11 @@ class CategoriesTags extends Component<Props, State> {
 	newCategoryInputKeyDown = (e: React.KeyboardEvent) => {
 		// mac中command键+回车键会触发请求；windows中windows键+回车键会触发请求；然后mac和windows中ctrl键+回车都会触发请求
 		if ((e.metaKey && e.key.toUpperCase() === 'ENTER') || (e.ctrlKey && e.key.toUpperCase() === 'ENTER')) {
+			const hide = message.loading('添加中..', 0);
 			axios.post('http://localhost:1314/new-category', {
 				name: this.newCategoryInputRef.current.value
 			}).then((res) => {
+				hide();
 				if (res.data.code === 0) {
 					this.setState((state) => {
 						state.addedCategory.push({
@@ -120,6 +122,7 @@ class CategoriesTags extends Component<Props, State> {
 					},()=>{this.newCategoryInputRef.current.blur();});
 				}
 			}, err => {
+				hide();
 				console.error(err);
 			});
 		}
@@ -129,10 +132,12 @@ class CategoriesTags extends Component<Props, State> {
 	newTagInputKeyDown = (e: React.KeyboardEvent) => {
 		// mac中command键+回车键会触发请求；windows中windows键+回车键会触发请求；然后mac和windows中ctrl键+回车都会触发请求
 		if ((e.metaKey && e.key.toUpperCase() === 'ENTER') || (e.ctrlKey && e.key.toUpperCase() === 'ENTER')) {
+			const hide = message.loading('添加中..', 0);
 			axios.post('http://localhost:1314/new-tag', {
 				categoryID: this.state.categoryID,
 				name: this.newTagInputRef.current.value
 			}).then((res) => {
+				hide();
 				if (res.data.code === 0) {
 					this.setState((state) => {
 						if(!state.addedTags[this.state.categoryID]){
@@ -148,15 +153,18 @@ class CategoriesTags extends Component<Props, State> {
 				}
 			}, err => {
 				console.error(err);
+				hide();
 			});
 		}
 	};
 
 	// 删除自定义添加的标签
 	doDeleteAddedTag = (tag:Tags) => {
+		const hide = message.loading('删除中..', 0);
 		axios.post('http://localhost:1314/delete-tag', {
 			id: tag.id
 		}).then((res) => {
+			hide();
 			if (res.data.code === 0) {
 				this.setState((state) => {
 					let i = state.addedTags[this.state.categoryID].findIndex((t) => t.id === tag.id);
@@ -165,15 +173,18 @@ class CategoriesTags extends Component<Props, State> {
 				});
 			}
 		}, err => {
+			hide();
 			console.error(err);
 		});
 	};
 
 	// 删除自定义添加的分类
 	doDeleteAddedCategory = (ctg:CategoryWithTags) => {
+		const hide = message.loading('删除中..', 0);
 		axios.post('http://localhost:1314/delete-category', {
 			id: ctg.id
 		}).then((res) => {
+			hide();
 			if (res.data.code === 0) {
 				this.setState((state) => {
 					let i = state.addedCategory.findIndex((t) => t.id === ctg.id);
@@ -182,6 +193,7 @@ class CategoriesTags extends Component<Props, State> {
 				});
 			}
 		}, err => {
+			hide();
 			console.error(err);
 		});
 	};
@@ -216,7 +228,7 @@ class CategoriesTags extends Component<Props, State> {
 								>
 									<span>{c.name}</span>
 									<i className={`${style['close-icon']} lee-icon-cross`}
-										 onClick={(e) => {
+										 onClick={() => {
 											 this.doDeleteAddedCategory(c)
 										 }}
 									/>
@@ -269,7 +281,7 @@ class CategoriesTags extends Component<Props, State> {
 								>
 									<span>{t.name}</span>
 									<i className={`${style['close-icon']} lee-icon-cross`}
-										 onClick={(e) => {
+										 onClick={() => {
 											 this.doDeleteAddedTag(t)
 										 }}
 									/>
