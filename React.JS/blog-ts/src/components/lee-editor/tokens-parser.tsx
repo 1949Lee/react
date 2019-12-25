@@ -1,5 +1,5 @@
 // markdown的节点流
-import React, {FormEvent, Fragment} from "react";
+import React, { Fragment} from "react";
 import {HyphenToCamelCase} from "../../utils/methods";
 import {UUID} from "../../utils/uuid";
 

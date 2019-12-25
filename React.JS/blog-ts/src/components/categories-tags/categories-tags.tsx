@@ -63,11 +63,13 @@ class CategoriesTags extends Component<Props, State> {
 	handleCategoryChange = (checked: boolean, c: CategoryWithTags) => {
 		if (checked) {
 			this.setState({
-				categoryID: c.id
+				categoryID: c.id,
+				chosenTags:[],
 			})
 		} else {
 			this.setState({
-				categoryID: null
+				categoryID: null,
+				chosenTags:[],
 			})
 		}
 	};

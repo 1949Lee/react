@@ -9,22 +9,22 @@ import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
-import {CategoryWithTags} from "../../../utils/interface";
+import {ArticleInfo, CategoryWithTags} from "../../../utils/interface";
 
 interface State {
 	previewFlag: boolean
 	previewHtml: JSX.Element,
 	previewHeight: string,
 	previewPosition: number,
-	files: {[key:string]:FileTableItem},
-	filesTableFlag:boolean,
-	postingFlag:boolean,
-	postModalFlag:boolean,
-	categoryWithTags:CategoryWithTags[]
-
+	files: { [key: string]: FileTableItem },
+	filesTableFlag: boolean,
+	postingFlag: boolean,
+	postModalFlag: boolean,
+	categoryWithTags: CategoryWithTags[]
+	article: ArticleInfo
 }
 
-interface Props extends React.ComponentProps<any>,RouteComponentProps<{id:any}> {
+interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
 }
 
 class NewArticle extends Component<Props, State> {
@@ -34,7 +34,9 @@ class NewArticle extends Component<Props, State> {
 	preview: React.RefObject<HTMLDivElement> = React.createRef();
 	previewResult: React.RefObject<HTMLDivElement> = React.createRef();
 	fileSelected: React.RefObject<HTMLInputElement> = React.createRef();
-	test: React.RefObject<CategoriesTags> = React.createRef();
+	chosenTags: React.RefObject<CategoriesTags> = React.createRef();
+
+	test = "dasdasd";
 
 	// 当前上传中/上传完成/上传失败的文件
 	copyFiles: any[] = [];
@@ -50,10 +52,15 @@ class NewArticle extends Component<Props, State> {
 			previewHeight: '100%',
 			previewPosition: 0,
 			files: {},
-			filesTableFlag:false,
-			postingFlag:false,
-			postModalFlag:false,
-			categoryWithTags:[]
+			filesTableFlag: false,
+			postingFlag: false,
+			postModalFlag: false,
+			categoryWithTags: [],
+			article: {
+				articleID: -1,
+				title: '',
+				createTime: ''
+			}
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -79,12 +86,20 @@ class NewArticle extends Component<Props, State> {
 			console.log("连接已关闭...");
 		};
 		// ws.binaryType
-		axios.post('http://localhost:1314/categories-with-tags',{}).then((res) => {
-			if(res.data.code === 0) {
-				this.setState({categoryWithTags:res.data.data});
+		axios.post('http://localhost:1314/categories-with-tags', {}).then((res) => {
+			if (res.data.code === 0) {
+				this.setState({categoryWithTags: res.data.data});
 			}
-		},err => {
+		}, err => {
 			console.error(err);
+		});
+		this.setState((state, props) => {
+			state.article.articleID = props.match.params.id;
+			return {
+				article: {
+					...state.article
+				}
+			}
 		})
 	}
 
@@ -144,7 +159,7 @@ class NewArticle extends Component<Props, State> {
 	//
 	fileUpload = (files: EditorData) => {
 		if (files.type === 2 && files.files && files.files.length >= 1) {
-			const filesList = {type: 2, files: [],articleID:this.props.match.params.id};
+			const filesList = {type: 2, files: [], articleID: this.props.match.params.id};
 			filesList.files = FileServer.FileUpload(files.files);
 			this.ws.send(JSON.stringify(filesList));
 			for (let [key, file] of Object.entries(filesList.files)) {
@@ -211,11 +226,12 @@ class NewArticle extends Component<Props, State> {
 			Modal.confirm({
 				title: `确认上传选择的${me.fileSelected.current.files.length}个文件吗？`,
 				content: <Fragment>
-					{files.map((val,i:number) => {
-						return <p key={i}>{me.fileSelected.current.files[i].name}，约{FileSizeText(me.fileSelected.current.files[i].size)}</p>
+					{files.map((val, i: number) => {
+						return <p
+							key={i}>{me.fileSelected.current.files[i].name}，约{FileSizeText(me.fileSelected.current.files[i].size)}</p>
 					})}
 				</Fragment>,
-				icon:null,
+				icon: null,
 				maskClosable: false,
 				onOk() {
 					me.uploadSelected();
@@ -233,7 +249,7 @@ class NewArticle extends Component<Props, State> {
 			for (let i = 0; i < this.fileSelected.current.files.length; i++) {
 				let data: FormData = new FormData();
 				data.append("file", this.fileSelected.current.files[i], this.fileSelected.current.files[i].name);
-				data.append("articleID",this.props.match.params.id);
+				data.append("articleID", this.props.match.params.id);
 				let fileInfo: FileTableItem = {
 					name: this.fileSelected.current.files[i].name,
 					size: this.fileSelected.current.files[i].size,
@@ -244,32 +260,32 @@ class NewArticle extends Component<Props, State> {
 					}
 				};
 				let name = fileInfo.name;
-				this.setState((state) =>{
-					return {files:{...state.files,[name]:fileInfo}}
-				},() => {
+				this.setState((state) => {
+					return {files: {...state.files, [name]: fileInfo}}
+				}, () => {
 					axios.post("http://localhost:1314/new-file", data, {
 						onUploadProgress: (e: ProgressEvent) => {
-							this.setState((state) =>{
-								if(state.files[name]) {
+							this.setState((state) => {
+								if (state.files[name]) {
 									state.files[name].upload.loaded = e.loaded;
 								}
-								return {files:state.files}
+								return {files: state.files}
 							});
 							// this.setState({files:this.state.files.map((file,index) =>{if(index === this.state.files.length - 1)file.upload.loaded = e.loaded;return file})});
 						},
 						headers: {
 							"Content-Type": "multipart/form-data"
 						}
-					}).then( (res:any) => {
-						if(res.data.type === 4 && res.data.code === 0) {
-							this.setState((state) =>{
+					}).then((res: any) => {
+						if (res.data.type === 4 && res.data.code === 0) {
+							this.setState((state) => {
 								state.files[name].status = FileTableItemStatus.Success;
-								res.data.data && res.data.data.map( (file:any) => {
+								res.data.data && res.data.data.map((file: any) => {
 									if (file.url) {
 										state.files[file.fileName].url = file.url;
 									}
 								});
-								return {files:state.files}
+								return {files: state.files}
 							});
 						}
 
@@ -281,28 +297,12 @@ class NewArticle extends Component<Props, State> {
 		}
 	};
 
-	// 关闭发布弹窗
-	postModalCancel = () => {
-		this.setState({postModalFlag:false})
-	};
-
-  // 发布弹窗点击下一步，需要显示最终预览
-	previewBeforePost = () => {
-	//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
-		console.log(this.test.current.state.categoryID,this.test.current.state.chosenTags)
-	};
-
-	// 打开或关闭发布弹窗
-	togglePostModal = (value:boolean) => {
-		this.setState({postModalFlag:value});
-	};
-
 	// 文件列表中文件删除。
-	FileTableFileChange =(name:string,action:string) => {
-		if (name!==null&&name!==undefined) {
+	FileTableFileChange = (name: string, action: string) => {
+		if (name !== null && name !== undefined) {
 			switch (action) {
 				case 'delete':
-					this.setState((state)=>{
+					this.setState((state) => {
 						delete state.files[name];
 						return state
 					});
@@ -319,10 +319,80 @@ class NewArticle extends Component<Props, State> {
 	};
 
 	// 文件列表抽屉关闭或显示
-	FilesTableDrawerToggle = (value:boolean) => {
-		this.setState({filesTableFlag:value});
+	FilesTableDrawerToggle = (value: boolean) => {
+		this.setState({filesTableFlag: value});
 	};
 
+	// 打开或关闭发布弹窗
+	togglePostModal = (value: boolean) => {
+		this.setState({postModalFlag: value});
+	};
+
+	// 关闭发布弹窗
+	postModalCancel = () => {
+		this.setState({postModalFlag: false})
+	};
+
+	// 发布弹窗点击下一步，需要显示最终预览
+	previewBeforePost = () => {
+		//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
+		let result = this.getCategoryAndTagsInChild();
+		this.setState((state) => {
+			state.article.category = result.category;
+			state.article.tags = result.tags;
+			return {
+				article: {...state.article}
+			}
+		});
+	};
+
+	// 获取子组件中选择的分类和标签结果
+	getCategoryAndTagsInChild = () => {
+		let ID = this.chosenTags.current.state.categoryID;
+		let tags = this.chosenTags.current.state.chosenTags;
+		let result = {
+			category: {
+				id: null,
+				name: null
+			},
+			tags: []
+		};
+		if (ID == null) {
+			result.category = null;
+			result.tags = null;
+			return result;
+		} else {
+			let ctg = this.state.categoryWithTags && this.state.categoryWithTags.find((c) => c.id === this.chosenTags.current.state.categoryID);
+			result.category.id = ctg.id;
+			result.category.name = ctg.name
+		}
+
+		if (tags && tags.length > 0) {
+			result.tags = [...tags];
+		} else {
+			result.tags = null;
+		}
+
+		return result;
+	};
+
+	// 同步文章title变更
+	handleArticleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.persist();
+		this.setState((state) => {
+			state.article.title = e.target.value;
+			return {article: {...state.article}}
+		})
+	};
+
+	// 同步文章发布日期变更
+	handleCreateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.persist();
+		this.setState((state) => {
+			state.article.createTime = e.target.value;
+			return {article: {...state.article}}
+		})
+	};
 
 
 	render() {
@@ -335,13 +405,13 @@ class NewArticle extends Component<Props, State> {
 					onClose={this.FilesTableDrawerClose}
 					visible={this.state.filesTableFlag}
 					width="60%"
-					headerStyle={{height:'60px'}}
+					headerStyle={{height: '60px'}}
 				>
 					{
 						Object.getOwnPropertyNames(this.state.files).length > 0 ?
 							<div className={style['file-list']}>
 								<FileTable files={this.state.files} onFileChange={this.FileTableFileChange}/>
-							</div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="这里什么也没有，上传后再来看看吧" />
+							</div> : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="这里什么也没有，上传后再来看看吧"/>
 					}
 				</Drawer>
 				<Modal
@@ -359,23 +429,37 @@ class NewArticle extends Component<Props, State> {
 					]}
 				>
 					<div className={`${style['form-control-field']}`}>
-						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-title']}`} type="text" placeholder="文章标题"/>
+						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-title']}`}
+									 type="text" value={this.state.article.title} onChange={(e) => {
+							this.handleArticleTitleChange(e)
+						}} placeholder="文章标题"/>
 					</div>
 					<div className={`${style['form-control-field']}`}>
-						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-create-time']}`} type="text" placeholder="发布时间"/>
+						<input className={`lee-input lee-input-text ${style['form-control-field']} ${style['article-create-time']}`}
+									 type="text" value={this.state.article.createTime} onChange={(e) => {
+							this.handleCreateTimeChange(e)
+						}} placeholder="发布时间"/>
 					</div>
 					<div className={style['form-control-field']}>
-						<CategoriesTags ref={this.test} categoryWithTags={this.state.categoryWithTags}></CategoriesTags>
+						<CategoriesTags ref={this.chosenTags} categoryWithTags={this.state.categoryWithTags}></CategoriesTags>
 					</div>
 				</Modal>
 				<div className={style['options-wrapper']}>
-					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} size={"small"} type="primary" onClick={() => {this.togglePostModal(true)}}>发送</Button>
-					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" size={"small"} onClick={this.togglePreview}>{
+					<Button className={`${style['lee-btn']} ${style['open-post-modal']}`} size={"small"} type="primary"
+									onClick={() => {
+										this.togglePostModal(true)
+									}}>发送</Button>
+					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" size={"small"}
+									onClick={this.togglePreview}>{
 						this.state.previewFlag ? '取消预览' : '预览'
 					}</Button>
-					<Button className={`${style['lee-btn']} ${style['upload']}`} size={"small"} onClick={this.showSysFileSelected}>上传文件</Button>
-					<input type="file" ref={this.fileSelected} multiple={true} style={{display:"none"}} onChange={this.confirmUpload}/>
-					<Button className={`${style['lee-btn']} ${style['open-files-table-drawer']}`} size={"small"} onClick={() => {this.FilesTableDrawerToggle(true)}}>文件列表</Button>
+					<Button className={`${style['lee-btn']} ${style['upload']}`} size={"small"}
+									onClick={this.showSysFileSelected}>上传文件</Button>
+					<input type="file" ref={this.fileSelected} multiple={true} style={{display: "none"}}
+								 onChange={this.confirmUpload}/>
+					<Button className={`${style['lee-btn']} ${style['open-files-table-drawer']}`} size={"small"} onClick={() => {
+						this.FilesTableDrawerToggle(true)
+					}}>文件列表</Button>
 				</div>
 				<div className={style['editor-wrapper']}>
 					<LeeEditor className={style['editor']}
@@ -394,7 +478,7 @@ class NewArticle extends Component<Props, State> {
 						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
 					>{this.state.previewHtml}</div>
 				</div>
-				<div className={style['divider']} />
+				<div className={style['divider']}/>
 				<div className={style['preview-wrapper']} onMouseMove={(event) => {
 					this.moveToPreview(event)
 				}} onMouseLeave={this.hidePreview}>
