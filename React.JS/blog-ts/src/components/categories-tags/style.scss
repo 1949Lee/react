@@ -20,6 +20,12 @@
 			cursor: pointer;
 			background: transparent;
 
+			.close-icon {
+				top: -1px;
+				position: relative;
+				vertical-align: middle;
+			}
+
 			&.checked {
 				border: none;
 				background: $new-article-primary-color;

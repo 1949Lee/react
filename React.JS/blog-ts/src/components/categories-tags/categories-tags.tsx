@@ -117,7 +117,7 @@ class CategoriesTags extends Component<Props, State> {
 							tags: null
 						});
 						return {addedCategory: state.addedCategory};
-					});
+					},()=>{this.newCategoryInputRef.current.blur();});
 				}
 			}, err => {
 				console.error(err);
@@ -144,13 +144,15 @@ class CategoriesTags extends Component<Props, State> {
 							categoryID:this.state.categoryID
 						});
 						return {addedTags:state.addedTags}
-					});
+					},()=>{this.newTagInputRef.current.blur();});
 				}
 			}, err => {
 				console.error(err);
 			});
 		}
 	};
+
+	// 删除自定义添加的标签
 	doDeleteAddedTag = (tag:Tags) => {
 		axios.post('http://localhost:1314/delete-tag', {
 			id: tag.id
@@ -167,6 +169,23 @@ class CategoriesTags extends Component<Props, State> {
 		});
 	};
 
+	// 删除自定义添加的分类
+	doDeleteAddedCategory = (ctg:CategoryWithTags) => {
+		axios.post('http://localhost:1314/delete-category', {
+			id: ctg.id
+		}).then((res) => {
+			if (res.data.code === 0) {
+				this.setState((state) => {
+					let i = state.addedCategory.findIndex((t) => t.id === ctg.id);
+					state.addedCategory.splice(i,1);
+					return {addedCategory:state.addedCategory}
+				});
+			}
+		}, err => {
+			console.error(err);
+		});
+	};
+
 	render() {
 		// 选中的分类
 		let ctg = this.props.categoryWithTags.find((c) => c.id === this.state.categoryID);
@@ -174,7 +193,7 @@ class CategoriesTags extends Component<Props, State> {
 			<div className={style['categories-tags-wrapper']}>
 				<div className={style['categories-wrapper']}>
 					{
-						this.props.categoryWithTags.map((c: CategoryWithTags, index: number) => {
+						this.props.categoryWithTags.map((c: CategoryWithTags) => {
 							return (
 								<CheckableTag key={c.id}
 															className={`${style['lee-tag']} ${this.state.categoryID === c.id ? `${style['checked']}` : ''}`}
@@ -183,6 +202,25 @@ class CategoriesTags extends Component<Props, State> {
 																this.handleCategoryChange(checked, c)
 															}}
 								>{c.name}</CheckableTag>)
+						})
+					}
+					{
+						this.state.addedCategory.map((c: CategoryWithTags) => {
+							return (
+								<CheckableTag key={c.id}
+															className={`${style['lee-tag']} ${this.state.categoryID === c.id ? `${style['checked']}` : ''}`}
+															checked={this.state.categoryID === c.id}
+															onChange={checked => {
+																this.handleCategoryChange(checked, c)
+															}}
+								>
+									<span>{c.name}</span>
+									<i className={`${style['close-icon']} lee-icon-cross`}
+										 onClick={(e) => {
+											 this.doDeleteAddedCategory(c)
+										 }}
+									/>
+								</CheckableTag>)
 						})
 					}
 					<div className={style['new-category']}>
