@@ -3,14 +3,14 @@ import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import CategoriesTags from "../../../components/categories-tags/categories-tags";
 import FileTable,{ FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
-import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
+import LeeEditor from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
 import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
-import {ArticleInfo, CategoryWithTags} from "../../../utils/interface";
+import {ArticleInfo, CategoryWithTags, EditorData} from "../../../utils/interface";
 
 interface State {
 	previewFlag: boolean
