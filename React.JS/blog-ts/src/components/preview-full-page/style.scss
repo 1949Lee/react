@@ -1,4 +1,5 @@
 @import "../../styles/var";
+
 .preview-full-page-wrapper {
 	position: fixed;
 	top: 0;
@@ -16,6 +17,7 @@
 		overflow-y: auto;
 		border-radius: 4px;
 		position: relative;
+
 		.back-btn {
 			position: absolute;
 			display: inline-block;
@@ -26,21 +28,39 @@
 			font-size: 1rem;
 			margin-right: 1.5rem;
 		}
-		.close-btn{
+
+		.close-btn {
 			position: absolute;
 			display: inline-block;
 			right: 0.5rem;
 			top: 0.5rem;
 			cursor: pointer;
 			color: $gray-default-color;
-			&:hover{
+
+			&:hover {
 				color: $gray-highlight-color;
 			}
+
 			.close-btn-icon {
 				font-size: 1rem;
 			}
 		}
-		.content-wrapper{
+
+		.article-info-wrapper {
+			.title {
+
+			}
+
+			.category {
+
+			}
+
+			.tags {
+
+			}
+		}
+
+		.content-wrapper {
 
 		}
 	}

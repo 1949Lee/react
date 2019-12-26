@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import CategoriesTags from "../../../components/categories-tags/categories-tags";
-import {FileTable, FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
+import FileTable,{ FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeEditor, {EditorData} from "../../../components/lee-editor/editor";
 import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
@@ -97,7 +97,7 @@ class NewArticle extends Component<Props, State> {
 			console.error(err);
 		});
 		this.setState((state, props) => {
-			state.article.articleID = props.match.params.id;
+			state.article.articleID = props.match.params.id * 1;
 			return {
 				article: {
 					...state.article
@@ -118,7 +118,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
-		data.articleID = this.props.match.params.id;
+		data.articleID = this.props.match.params.id * 1;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
 	};
@@ -162,7 +162,7 @@ class NewArticle extends Component<Props, State> {
 	//
 	fileUpload = (files: EditorData) => {
 		if (files.type === 2 && files.files && files.files.length >= 1) {
-			const filesList = {type: 2, files: [], articleID: this.props.match.params.id};
+			const filesList = {type: 2, files: [], articleID: this.props.match.params.id * 1};
 			filesList.files = FileServer.FileUpload(files.files);
 			this.ws.send(JSON.stringify(filesList));
 			for (let [key, file] of Object.entries(filesList.files)) {
@@ -339,7 +339,6 @@ class NewArticle extends Component<Props, State> {
 	// 发布弹窗点击下一步，需要显示最终预览
 	previewBeforePost = () => {
 		//	预览自己蒙层+类全屏的预览区域+三个按钮（直接返回修改、返回文章信息填写弹窗、最终发布）
-		this.setState({finalPreview:true});
 		let result = this.getCategoryAndTagsInChild();
 		this.setState((state) => {
 			state.article.category = result.category;
@@ -347,7 +346,7 @@ class NewArticle extends Component<Props, State> {
 			return {
 				article: {...state.article}
 			}
-		},);
+		},() => {this.setState({finalPreview:true});});
 	};
 
 	// 获取子组件中选择的分类和标签结果
@@ -361,7 +360,7 @@ class NewArticle extends Component<Props, State> {
 			},
 			tags: []
 		};
-		if (ID > 1) {
+		if (ID > 0) {
 			let ctg = this.state.categoryWithTags && this.state.categoryWithTags.find((c) => c.id === this.chosenTags.current.state.categoryID);
 			result.category.id = ctg.id;
 			result.category.name = ctg.name;
@@ -411,7 +410,7 @@ class NewArticle extends Component<Props, State> {
 	render() {
 		return (
 			<div className={style['new-article']}>
-				<PreviewFullPage show={this.state.finalPreview} onClose={()=>{this.continueEditing()}} onHide={() => {this.resumePostModal()}}></PreviewFullPage>
+				<PreviewFullPage show={this.state.finalPreview} articleInfo={this.state.article} html={this.state.previewHtml} onClose={()=>{this.continueEditing()}} onHide={() => {this.resumePostModal()}}></PreviewFullPage>
 				<Drawer
 					title="该文章已上传的文件"
 					placement="left"

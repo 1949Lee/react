@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, {Component, Fragment} from 'react';
+import {RouteComponentProps, withRouter} from "react-router";
 import {diff, FileSizeText} from "../../utils/methods";
 import * as style from "./style.scss";
 import {message} from "antd";
@@ -33,7 +34,7 @@ export interface FileTableItem {
 }
 
 
-interface Props {
+interface Props extends React.ComponentProps<any>,RouteComponentProps<{ id: any }>{
 	// 文件列表数据
 	files: { [key: string]: FileTableItem },
 	onFileChange: (name: string, action: string) => void
@@ -41,7 +42,7 @@ interface Props {
 
 
 // 文件列表：显示文件信息、文件上传进度、操作选项、等
-export class FileTable extends Component<Props, State> {
+class FileTable extends Component<Props, State> {
 
 	statusText: any = {
 		[1]: "失败",
@@ -60,7 +61,7 @@ export class FileTable extends Component<Props, State> {
 	// 删除文件
 	deleteFile = (file: FileTableItem,name:string) => {
 		axios.post("http://localhost:1314/delete-file", {
-			ArticleID:'1234567811111111',
+			ArticleID:this.props.match.params.id,
 			FileName:file.name
 		}, {
 			headers: {
@@ -141,3 +142,5 @@ export class FileTable extends Component<Props, State> {
 		</div>)
 	}
 }
+
+export default withRouter(FileTable)
