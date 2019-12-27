@@ -44,14 +44,7 @@ class LeeEditor extends Component<Props,State> {
 				switch (type) {
 					case 'text/plain':
 						let text = (e['originalEvent'] || e).clipboardData.getData('text/plain') || '\`不支持的粘贴内容\`';
-						let texts = text.split('\n');
-						texts.map((t,index) => {
-							document.execCommand("insertText", false, t);
-							if(index !== texts.length - 1) {
-								document.execCommand('insertText',false,"\n");
-							}
-						});
-						// console.log(text,texts);
+						document.execCommand("insertText", false,text);
 						break;
 					default:
 				}
@@ -74,9 +67,6 @@ class LeeEditor extends Component<Props,State> {
 				// // range.selectNode(endNode);
 				// range.setEnd(endNode,endIndex + 4);
 				// range.collapse(false);
-			} else if (e.key.toUpperCase() === 'ENTER') {
-				document.execCommand('insertText',false,"\n");
-				e.preventDefault();
 			} else {
 				let startIndex = null;
 				let endIndex = null;
@@ -130,7 +120,7 @@ class LeeEditor extends Component<Props,State> {
 	// markdown内容改变
 	textChange = () => {
 		let data = this.textEditor.current.innerText;
-		data = data.replace(/\n\n/,'\n');
+		data = data.replace(/\n\n/g,'\n');
 		this.props.textChange({type:1,text:data});
 	};
 
