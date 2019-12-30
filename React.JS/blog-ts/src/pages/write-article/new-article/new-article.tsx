@@ -420,7 +420,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 发布文章
 	doPost = () => {
-		axios.post('http://localhost:1314/save-article', {type:1,info:this.state.article,content:this.state.articleContent}).then((res) => {
+		axios.post('http://localhost:1314/save-article', {type:1,info:this.state.article,content:this.state.articleContent,text:this.preview.current.innerText}).then((res) => {
 			if (res.data.code === 0) {
 				this.setState({finalPreview:false,postModalFlag:false},() => {
 					Modal.confirm({

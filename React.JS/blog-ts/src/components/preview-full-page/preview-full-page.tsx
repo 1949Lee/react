@@ -1,6 +1,6 @@
 import {Button} from "antd";
 import axios from "axios";
-import React, {Component} from 'react';
+import React, {Component, RefObject} from 'react';
 import {ArticleInfo} from "../../utils/interface";
 import * as style from './style.scss'
 
@@ -29,6 +29,8 @@ interface Props extends React.ComponentProps<any> {
 }
 
 class PreviewFullPage extends Component<Props, State> {
+
+	contentRef:RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
 	componentDidMount() {
 		document.body.style.overflow = "hidden";
@@ -86,7 +88,7 @@ class PreviewFullPage extends Component<Props, State> {
 				<div className={style['content-wrapper']}>
 					{this.props.html}
 				</div>
-				<div className={style['options-wrapper']}>
+				<div ref={this.contentRef} className={style['options-wrapper']}>
 					<Button key="submit" type="primary" onClick={this.doConfirm}>
 						下一步
 					</Button>
