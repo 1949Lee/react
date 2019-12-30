@@ -24,6 +24,7 @@ interface State {
 	categoryWithTags: CategoryWithTags[]
 	article: ArticleInfo
 	finalPreview: boolean
+	articleContent:string
 }
 
 interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
@@ -63,7 +64,8 @@ class NewArticle extends Component<Props, State> {
 				articleID: -1,
 				title: '',
 				createTime: ''
-			}
+			},
+			articleContent:""
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -89,6 +91,11 @@ class NewArticle extends Component<Props, State> {
 			console.log("连接已关闭...");
 		};
 		// ws.binaryType
+		this.initData()
+	}
+
+	// 获取数据
+	initData = () => {
 		axios.post('http://localhost:1314/categories-with-tags', {}).then((res) => {
 			if (res.data.code === 0) {
 				this.setState({categoryWithTags: res.data.data});
@@ -104,13 +111,14 @@ class NewArticle extends Component<Props, State> {
 				}
 			}
 		})
-	}
+	};
 
 	componentWillUnmount() {
 		this.ws.close();
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
+		console.log(prevProps);
 		if (prevState.previewHtml !== this.state.previewHtml) {
 			this.setState({previewHeight: this.preview.current.getBoundingClientRect().height + 'px'});
 		}
@@ -121,6 +129,9 @@ class NewArticle extends Component<Props, State> {
 		data.articleID = this.props.match.params.id * 1;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
+		if(data.type && data.type === 1){
+			this.setState({articleContent:data.text})
+		}
 	};
 
 	// 接受server返回的websocket的消息
@@ -397,20 +408,61 @@ class NewArticle extends Component<Props, State> {
 		})
 	};
 
-	// 返回编辑：隐藏预览和文章信息弹窗。
+	// 返回编辑：关闭最终预览和文章信息弹窗。
 	continueEditing = () => {
 		this.setState({finalPreview:false,postModalFlag:false});
 	};
 
+	// 隐藏最终预览并显示文章信息弹窗
 	resumePostModal = () => {
 		this.setState({finalPreview:false});
+	};
+
+	// 发布文章
+	doPost = () => {
+		axios.post('http://localhost:1314/save-article', {type:1,info:this.state.article,content:this.state.articleContent}).then((res) => {
+			if (res.data.code === 0) {
+				this.setState({finalPreview:false,postModalFlag:false},() => {
+					Modal.confirm({
+						title:null,
+						icon:null,
+						content:"接下来去哪看看呢？",
+						okText:"前往首页",
+						onOk:() => {
+							this.props.history.replace("/")
+						},
+						cancelText:"继续添加",
+						onCancel:() => {
+							// Dismiss manually and asynchronously
+							axios.post("http://localhost:1314/new-article-id",{}).then((res:any) => {
+								if(res.data.code === 0 && res.data.data){
+									this.props.history.replace("/");
+									this.props.history.replace(`/new-article/${res.data.data}`);
+								} else {
+									this.props.history.replace("/")
+								}
+							},() => {
+								this.props.history.replace("/",)
+							});
+						}
+					})
+				});
+			}
+		}, err => {
+			console.error(err);
+		});
 	};
 
 
 	render() {
 		return (
 			<div className={style['new-article']}>
-				<PreviewFullPage show={this.state.finalPreview} articleInfo={this.state.article} html={this.state.previewHtml} onClose={()=>{this.continueEditing()}} onHide={() => {this.resumePostModal()}}></PreviewFullPage>
+				<PreviewFullPage show={this.state.finalPreview}
+												 articleInfo={this.state.article}
+												 html={this.state.previewHtml}
+												 onConfirm={() => {this.doPost()}}
+												 onClose={()=>{this.continueEditing()}}
+												 onHide={() => {this.resumePostModal()}}></PreviewFullPage>
 				<Drawer
 					title="该文章已上传的文件"
 					placement="left"

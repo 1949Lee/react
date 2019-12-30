@@ -134,7 +134,7 @@ class Header extends Component<Props, State> {
 		// Dismiss manually and asynchronously
 		axios.post("http://localhost:1314/new-article-id",{}).then((res:any) => {
 			if(res.data.code === 0 && res.data.data){
-				this.props.history.push(`new-article/${res.data.data}`);
+				this.props.history.push(`/new-article/${res.data.data}`);
 				hide();
 			} else {
 				hide();

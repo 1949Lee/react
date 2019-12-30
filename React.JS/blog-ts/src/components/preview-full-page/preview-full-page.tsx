@@ -1,3 +1,5 @@
+import {Button} from "antd";
+import axios from "axios";
 import React, {Component} from 'react';
 import {ArticleInfo} from "../../utils/interface";
 import * as style from './style.scss'
@@ -15,6 +17,9 @@ interface Props extends React.ComponentProps<any> {
 
 	// 隐藏预览
 	onHide: () => void
+
+	// 确认按钮点击
+	onConfirm: () => void
 
 	// 要展示Markdown的HTML
 	html: JSX.Element
@@ -49,6 +54,10 @@ class PreviewFullPage extends Component<Props, State> {
 		this.props.onHide();
 	};
 
+	doConfirm = () => {
+		this.props.onConfirm()
+	};
+
 	render() {
 		return (<div className={style['preview-full-page-wrapper']} onClick={this.overlayClick}
 								 style={{display: !this.props.show ? "none" : "block"}}>
@@ -76,6 +85,11 @@ class PreviewFullPage extends Component<Props, State> {
 				</div>
 				<div className={style['content-wrapper']}>
 					{this.props.html}
+				</div>
+				<div className={style['options-wrapper']}>
+					<Button key="submit" type="primary" onClick={this.doConfirm}>
+						下一步
+					</Button>
 				</div>
 			</div>
 		</div>)
