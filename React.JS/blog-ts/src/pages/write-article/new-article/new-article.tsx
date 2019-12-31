@@ -450,6 +450,15 @@ class NewArticle extends Component<Props, State> {
 						}
 					})
 				});
+			} else {
+				this.setState({finalPreview:false,postModalFlag:false},() => {
+					Modal.warn({
+						title:null,
+						icon:null,
+						content:"发布失败",
+						okText:"请重新发布",
+					})
+				});
 			}
 		}, err => {
 			console.error(err);
