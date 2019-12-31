@@ -118,7 +118,6 @@ class NewArticle extends Component<Props, State> {
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		console.log(prevProps);
 		if (prevState.previewHtml !== this.state.previewHtml) {
 			this.setState({previewHeight: this.preview.current.getBoundingClientRect().height + 'px'});
 		}
@@ -420,7 +419,11 @@ class NewArticle extends Component<Props, State> {
 
 	// 发布文章
 	doPost = () => {
-		axios.post('http://localhost:1314/save-article', {type:1,info:this.state.article,content:this.state.articleContent,text:this.preview.current.innerText}).then((res) => {
+		axios.post('http://localhost:1314/save-article', {
+			type:1,
+			info:this.state.article,
+			content:this.state.articleContent,
+			text:this.preview.current.innerText}).then((res) => {
 			if (res.data.code === 0) {
 				this.setState({finalPreview:false,postModalFlag:false},() => {
 					Modal.confirm({
