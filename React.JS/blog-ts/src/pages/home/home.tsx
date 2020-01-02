@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
+import {ArticleListItem} from "../../utils/api.interface";
 import {Connect} from "../../utils/decorators";
 import * as style from './style.scss'
 
 import {Tooltip} from 'antd';
 
 import {actionCreators} from "./store";
+import {List,Map} from 'immutable';
 
 const mapStateToProps = (state:any) => ({
 	articleList: state.getIn(['home', 'articleList'])
@@ -31,7 +33,7 @@ interface Props extends React.ComponentProps<any>{
 	initData:() => void,
 
 	// 文章列表
-	articleList: any[]
+	articleList: List<ArticleListItem>
 }
 
 @Connect(mapStateToProps,mapDispatchToProps)
@@ -47,13 +49,17 @@ class Home extends Component<Props,State> {
     return (
       <div className={style['home-wrapper']}>
 				<div className={style['article-list']}>
-					{articleList.map((article) => {
+					{articleList.map((article:any) => {
 						return (
 							<div className={style['article']} key={article.get('id')}>
 								<h2 className={style['article-header']}>{article.get('title')}</h2>
-								<div className={style['article-preview']}>{article.get('preview')}</div>
+								<div className={style['article-category-tags']}>{article.get('categoryName')}</div>
+								<div className={style['article-preview']}>{article.get('summary')}</div>
 								<div className={style['article-options']}></div>
-								<div className={style['article-footer']}></div>
+								<div className={style['article-footer']}>
+									发表于：{article.get('createTime')}，
+									更新于：{article.get('updateTime')}
+								</div>
 							</div>
 						)
 					})}

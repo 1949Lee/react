@@ -1,5 +1,6 @@
 import {fromJS} from "immutable";
 import * as React from "react";
+import {ArticleListItem} from "../../../utils/api.interface";
 import {InitArticleList, MoreArticleList} from "./action-type";
 import axios from 'axios'
 
@@ -9,41 +10,42 @@ export interface HomeAction {
 	type:string,
 
 	// Action的list数据
-	list?:any
+	list?:ArticleListItem[]
+
+	// Action的list是否为最后一页
+	isLastPage?:boolean
 }
 
 const resetArticleList = (result:any) => {
 	return <HomeAction>{
 		type:InitArticleList,
-		list:fromJS(result)
+		list:fromJS(result.list),
+		isLastPage:result.isLastPage,
 	}
 };
 const moreArticleList = (result:any) => {
 	return <HomeAction>{
 		type:MoreArticleList,
-		list:fromJS(result)
+		list:fromJS(result.data),
+		isLastPage:result.isLastPage
 	}
 };
 
 export const getArticleList = ({type,data}:any) => {
 	return (dispatch:React.Dispatch<HomeAction>) => {
 		if(type === 'init') {
-			axios.get('/mock/articleList.json').then((r) => {
+			axios.post('http://localhost:1314/article-list',{}).then((r) => {
 				let res = r.data;
-				if (res.code === 0) {
-					dispatch(resetArticleList(res.data.list));
-				} else {
-					dispatch(resetArticleList([]));
-				}
+				dispatch(resetArticleList(res.data));
+			},err => {
+				dispatch(resetArticleList({list:[],isLastPage:false}))
 			});
 		} else {
-			axios.get('/mock/articleList.json').then((r) => {
+			axios.get('http://localhost:1314/article-list').then((r) => {
 				let res = r.data;
-				if (res.code === 0) {
-					dispatch(moreArticleList(res.data.list));
-				} else {
-					dispatch(moreArticleList([]));
-				}
+				dispatch(moreArticleList(res.data));
+			},err => {
+				dispatch(moreArticleList({list:[],isLastPage:false}))
 			});
 		}
 	}
