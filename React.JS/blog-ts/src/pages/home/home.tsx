@@ -53,13 +53,18 @@ class Home extends Component<Props,State> {
 						return (
 							<div className={style['article']} key={article.get('id')}>
 								<h2 className={style['article-header']}>{article.get('title')}</h2>
-								<div className={style['article-category-tags']}>{article.get('categoryName')}</div>
-								<div className={style['article-preview']}>{article.get('summary')}</div>
-								<div className={style['article-options']}></div>
+								<div className={style['article-category-tags']}>
+									分类：{article.get('categoryName')}；
+									标签：{article.get('tags').map((t) => {
+									return t.get('name');
+								}).join('，')}
+								</div>
 								<div className={style['article-footer']}>
 									发表于：{article.get('createTime')}，
 									更新于：{article.get('updateTime')}
 								</div>
+								<div className={style['article-preview']}>{article.get('summary')}</div>
+								<div className={style['article-options']}></div>
 							</div>
 						)
 					})}
