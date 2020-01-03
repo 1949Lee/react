@@ -13,12 +13,17 @@
 			}
 			.article-category-tags {
 				width: 100%;
+				color: $text-strong-color;
 			}
 			.article-preview {
 				width: 100%;
 			}
 			.article-options {
 				width: 100%;
+				.btn{
+					border: 1px solid $text-strong-color;
+					color: $text-strong-color;
+				}
 			}
 			.article-footer {
 				width: 100%;

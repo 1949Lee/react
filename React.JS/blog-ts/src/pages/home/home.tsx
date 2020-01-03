@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {RouteComponentProps, withRouter} from "react-router";
 import {ArticleListItem} from "../../utils/api.interface";
 import {Connect} from "../../utils/decorators";
 import * as style from './style.scss'
@@ -28,7 +29,7 @@ interface State extends React.ComponentState{
 // 	articleList: 1
 // }
 
-interface Props extends React.ComponentProps<any>{
+interface Props extends React.ComponentProps<any>,RouteComponentProps{
 	// 初始化文章列表
 	initData:() => void,
 
@@ -42,6 +43,10 @@ class Home extends Component<Props,State> {
 	constructor(props:Props) {
 		super(props);
 	}
+
+	navArticle = (article:any) => {
+		this.props.history.push('/article/'+article.get('id'),{...article.toJS()});
+	};
 
   render() {
 
@@ -64,7 +69,9 @@ class Home extends Component<Props,State> {
 									更新于：{article.get('updateTime')}
 								</div>
 								<div className={style['article-preview']}>{article.get('summary')}</div>
-								<div className={style['article-options']}></div>
+								<div className={style['article-options']}>
+									<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>
+								</div>
 							</div>
 						)
 					})}
@@ -85,4 +92,4 @@ class Home extends Component<Props,State> {
 	}
 }
 
-export default Home;
+export default withRouter(Home);
