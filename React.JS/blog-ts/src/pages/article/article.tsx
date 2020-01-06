@@ -16,7 +16,7 @@ class Article extends Component<Props,State> {
 	constructor(props:Props) {
 		super(props);
 		this.state = {
-			article: this.props.location.state?this.props.location.state:null,
+			article: null,
 			content:null
 		};
 
@@ -24,7 +24,7 @@ class Article extends Component<Props,State> {
 	componentDidMount(): void {
 		axios.post("http://localhost:1314/show-article",{id:+this.props.match.params.id}).then((res) => {
 			if(res.data.code === 0 && res.data.data.list) {
-				this.setState({content:Parse(res.data.data.list)})
+				this.setState({content:Parse(res.data.data.list),article:res.data.data.article})
 			} else if (res.data.code === 1){
 				this.setState({content:<span className={style['article-not-found']}>内容不存在，点击返回首页</span>})
 			}  else {
