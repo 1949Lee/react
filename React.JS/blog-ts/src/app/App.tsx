@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import {Provider} from "react-redux";
 import {BrowserRouter, match, Route} from "react-router-dom";
 import H from "history";
@@ -6,7 +6,6 @@ import Header from "../layout/header/header";
 import About from "../pages/about/about";
 import Article from "../pages/article/article";
 import Home from "../pages/home/home";
-import NewArticle from "../pages/write-article/new-article/new-article";
 import {Routes} from "../router";
 import SwitchWithLocationChange from "../router/router-guard";
 import store from "../store";
@@ -38,20 +37,22 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 	render() {
 		return (
 			<Provider store={store}>
+				<Suspense fallback={<div></div>}>
 				<div>
 					<BrowserRouter>
 						<Header floatTop={this.state.isWriteArticle} />
 						<SwitchWithLocationChange onChange={this.handleRouterChange}>
 							<Route exact path={Routes.home.path} component={Home}/>
-							<Route exact path={Routes.article.path} component={Article} />
-							<Route exact path={Routes.about.path} component={About}/>
-							<Route exact path={Routes.newArticle.path} component={NewArticle} />
+							<Route exact path={Routes.article.path} component={Routes.article.component} />
+							<Route exact path={Routes.about.path} component={Routes.about.component}/>
+							<Route exact path={Routes.newArticle.path} component={Routes.newArticle.component} />
 							<Route path={Routes.other.path}>
 								404
 							</Route>
 						</SwitchWithLocationChange>
 					</BrowserRouter>
 				</div>
+				</Suspense>
 			</Provider>
 		);
 	}
