@@ -1,12 +1,13 @@
 import React, {Component} from "react";
 import ReactDOM from 'react-dom';
+import {ImagerItem} from "../../utils/interface";
 
 interface State {
 
 }
 
 interface Props extends React.ComponentProps<any>{
-
+	items:ImagerItem[]
 }
 
 class LeeImager extends Component<Props,State> {
@@ -42,7 +43,7 @@ class LeeImager extends Component<Props,State> {
 
 	render() {
 		return ReactDOM.createPortal(
-			this.props.children,
+			<div>{this.props.children}</div>,
 			this.container
 		);
 	}

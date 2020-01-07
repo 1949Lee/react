@@ -3,18 +3,18 @@ import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import CategoriesTags from "../../../components/categories-tags/categories-tags";
 import FileTable,{ FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
+import LeeArticle from "../../../components/lee-article/lee-article";
 import LeeEditor from "../../../components/lee-editor/editor";
-import {Parse, Token} from "../../../components/lee-editor/tokens-parser";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
 import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
-import {ArticleInfo, CategoryWithTags, EditorData} from "../../../utils/interface";
+import {ArticleInfo, CategoryWithTags, EditorData, Token} from "../../../utils/interface";
 
 interface State {
 	previewFlag: boolean
-	previewHtml: JSX.Element,
+	previewHtml: Token[][],
 	previewHeight: string,
 	previewPosition: number,
 	files: { [key: string]: FileTableItem },
@@ -139,7 +139,7 @@ class NewArticle extends Component<Props, State> {
 		if (result && +result.code === 0) {
 			if (result.type === 1 && result.markdown) { // 返回结果是markdown转换结果
 				// this.setState({previewHtml: result.markdown.html})
-				this.setState({previewHtml: Parse(result.markdown.list as Token[][])})
+				this.setState({previewHtml: result.markdown.list as Token[][]})
 			} else if (result.type === 2 && result.files) { // 返回结果是确认收到文件信息并返回文件id
 				this.handleFileServerPrepare(result.files)
 			}
@@ -552,16 +552,17 @@ class NewArticle extends Component<Props, State> {
 							opacity: this.state.previewFlag ? 1 : 0,
 							zIndex: this.state.previewFlag ? 1 : -1
 						}} ref={this.previewResult}
-						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}></div>
-					>{this.state.previewHtml}</div>
+					>
+						<LeeArticle content={this.state.previewHtml}></LeeArticle>
+					</div>
 				</div>
 				<div className={style['divider']}/>
 				<div className={style['preview-wrapper']} onMouseMove={(event) => {
 					this.moveToPreview(event)
 				}} onMouseLeave={this.hidePreview}>
 					<div className={style['preview-html']} ref={this.preview}
-						// dangerouslySetInnerHTML={{__html: this.state.previewHtml}}>
-					>{this.state.previewHtml}
+					>
+						<LeeArticle content={this.state.previewHtml}></LeeArticle>
 					</div>
 					<div className={style['preview-options-area']}
 							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>

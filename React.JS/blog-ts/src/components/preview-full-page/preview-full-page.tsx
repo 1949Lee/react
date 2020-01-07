@@ -1,7 +1,8 @@
 import {Button} from "antd";
 import axios from "axios";
 import React, {Component, RefObject} from 'react';
-import {ArticleInfo} from "../../utils/interface";
+import {ArticleInfo, Token} from "../../utils/interface";
+import LeeArticle from "../lee-article/lee-article";
 import * as style from './style.scss'
 
 interface State {
@@ -22,7 +23,7 @@ interface Props extends React.ComponentProps<any> {
 	onConfirm: () => void
 
 	// 要展示Markdown的HTML
-	html: JSX.Element
+	html: Token[][]
 
 	// 文章相关信息，标题、发布时间、分类、标签。等
 	articleInfo: ArticleInfo
@@ -90,7 +91,7 @@ class PreviewFullPage extends Component<Props, State> {
 					})}</div>
 				</div>
 				<div className={style['content-wrapper']}>
-					{this.props.html}
+					<LeeArticle content={this.props.html}></LeeArticle>
 				</div>
 				<div ref={this.contentRef} className={style['options-wrapper']}>
 					<Button key="submit" type="primary" onClick={this.doConfirm}>

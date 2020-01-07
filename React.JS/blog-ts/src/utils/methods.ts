@@ -91,3 +91,15 @@ export function FileSizeText(size: number = -1): string{ // 保留两位小数
 	}
 	return result;
 };
+
+// 将html原生的style转换为react的style-object。
+export function ToStyleObj(str: string) {
+	let obj = {};
+	let map = str.split(";");
+	for (let i = 0; i < map.length; i++) {
+		let kv = map[i].split(":");
+		kv[0] = HyphenToCamelCase(kv[0]);
+		obj[kv[0]] = kv[1];
+	}
+	return obj;
+}

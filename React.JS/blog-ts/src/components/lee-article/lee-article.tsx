@@ -1,0 +1,179 @@
+import React, {Component, Fragment} from "react";
+import {ImagerItem, Token} from "../../utils/interface";
+import {ToStyleObj} from "../../utils/methods";
+import {UUID} from "../../utils/uuid";
+
+
+
+
+interface Props extends React.ComponentProps<any>{
+	content: Token[][]
+}
+
+interface State {
+	imagerItems:ImagerItem[]
+}
+
+// token转换，lines数组中的每一项都是markdown中的对应行
+class LeeArticle extends Component<Props,State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			imagerItems: null
+		};
+	}
+
+	imagerShow = () => {
+
+	};
+
+	// 将token转化为html
+	tokensToHtml = (tokens: Token[]): any => {
+		let objs = [];
+		for (let i = 0; i < tokens.length; i++) {
+			let obj = {};
+			if (tokens[i] && tokens[i].attrs) {
+				for (let j = 0; j < tokens[i].attrs.length; j++) {
+					obj[tokens[i].attrs[j].key] = tokens[i].attrs[j].value;
+				}
+			}
+			objs.push(obj);
+		}
+		return <Fragment key={UUID()}>
+			{
+				tokens.map((token, i) => {
+					let ele = null;
+					if (token.tokenType == "empty-line-br") {
+						ele = React.createElement(
+							token.tagName,
+							{className: token.class, ...objs[i], key: UUID()}
+						);
+					} else if (tokens[i].tokenType === "image") { // image的特殊处理
+						// this.setState((state) => {
+						// 	return {imagerItems: [...state.imagerItems, {src: objs[i].src, text: null}]}
+						// });
+						ele = <div className="image-wrapper" key={UUID()}>
+							{React.createElement(
+								token.tagName,
+								{
+									className: token.class, ...objs[i], key: UUID(), onClick: () => {
+										this.imagerShow()
+									}
+								}
+							)}
+							<div className="image-text-wrapper" key={UUID()}>{token.text}
+								{token.children && token.children.length > 0 ? this.tokensToHtml(token.children) : null}
+							</div>
+						</div>
+					} else if (tokens[i].tokenType === "check-list-checkbox") {
+						objs[i]['checked'] = objs[i]['checked'] == "true";
+						objs[i]['readOnly'] = true;
+						// objs[i]['defaultChecked'] = objs[i]['checked'];
+						// delete objs[i]['checked'];
+						ele = React.createElement(
+							token.tagName,
+							{className: token.class, ...objs[i], key: UUID(),}
+						);
+					} else if (tokens[i].tokenType === 'table-block-tbody-tr' || tokens[i].tokenType === 'table-block-tbody-td' || tokens[i].tokenType === 'table-block-thead-th') {
+						if (objs[i]['rowspan'] !== undefined) {
+							objs[i]['rowSpan'] = objs[i]['rowspan'];
+							delete objs[i]['rowspan'];
+						}
+						if (objs[i]['colspan'] !== undefined) {
+							objs[i]['colSpan'] = objs[i]['colspan'];
+							delete objs[i]['colspan'];
+						}
+						if (objs[i].style) {
+							objs[i].style = ToStyleObj(objs[i].style);
+						}
+						ele = React.createElement(
+							token.tagName,
+							{className: token.class, ...objs[i], key: UUID(),},
+							[token.text ? token.text : null, token.children && token.children.length > 0 ? this.tokensToHtml(token.children) : null]
+						);
+					} else {
+						if (objs[i].style) {
+							objs[i].style = ToStyleObj(objs[i].style);
+						}
+						ele = React.createElement(
+							token.tagName,
+							{className: token.class, ...objs[i], key: UUID()},
+							[token.text ? token.text : null, token.children && token.children.length > 0 ? this.tokensToHtml(token.children) : null]
+						);
+					}
+					return ele;
+				})
+			}
+		</Fragment>
+	};
+
+	// 将markdown中的某一行转换为html
+	lineToHtml = (tokens: Token[]) => {
+		let result = null;
+		let imageIndex = null;
+		// 空行
+		if (tokens[0].tokenType == 'empty-line-br') {
+			result = <div className="block empty-single-line-block" key={UUID()}>
+				{this.tokensToHtml(tokens)}
+			</div>;
+		}
+		// 颜色块儿
+		else if (tokens[0].tokenType == 'styled-block') {
+			tokens[0].class += " block";
+			result = this.tokensToHtml(tokens);
+		}
+		// 图片块
+		else if (tokens.findIndex((t, i) => {
+			if (t.tokenType == 'image') {
+				imageIndex = i;
+				return true;
+			}
+			return false;
+		}) > -1) {
+			if (tokens.length === 1) {
+				result = <div className="block image-block" key={UUID()}>
+					{this.tokensToHtml(tokens)}
+				</div>
+			} else {
+				result = <Fragment key={UUID()}>
+					{
+						imageIndex > 0 ?
+							<div className="block">
+								{this.tokensToHtml(tokens.slice(0, imageIndex))}
+							</div> : null
+					}
+					<div className="block image-list-block">
+						{this.tokensToHtml([tokens[imageIndex]])}
+					</div>
+					{
+						imageIndex < tokens.length - 1 ?
+							<div className="block">
+								{this.tokensToHtml(tokens.slice(imageIndex + 1))}
+							</div> : null
+					}
+				</Fragment>;
+			}
+		} else {
+			result = <div className="block" key={UUID()}>
+				{this.tokensToHtml(tokens)}
+			</div>
+		}
+		return result
+	};
+
+	shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any) {
+		return true
+	}
+
+	render() {
+		return (<div className="content">
+			{this.props.content ? this.props.content.map((_, i) => {// 每一行单独转换
+				return this.lineToHtml(this.props.content[i])
+			}) : null}
+		</div>);
+	}
+
+}
+
+
+export default LeeArticle
