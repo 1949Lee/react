@@ -1,29 +1,25 @@
 export interface CategoryWithTags {
-	id:number;
-	name:string;
-	tags:Tags[]|null;
+	id: number;
+	name: string;
+	tags: Tag[] | null;
 }
 
-export interface Tags {
-	id:number,
-	name:string,
-	categoryID:number
+export interface Tag {
+	id: number,
+	name: string,
+	categoryID: number
 }
 
 export interface ArticleInfo {
-	articleID:number
-	title?:string;
-	createTime?:string;
-	updateTime?:string;
-	category?:{
-		id:number;
-		name:string;
+	articleID: number
+	title?: string;
+	createTime?: string;
+	updateTime?: string;
+	category?: {
+		id: number;
+		name: string;
 	};
-	tags?:{
-		id:number,
-		name:string,
-		categoryID:number
-	}[]
+	tags?: Tag[]
 }
 
 
@@ -31,14 +27,14 @@ export interface ArticleInfo {
 export interface EditorData {
 
 	// 文章ID
-	articleID?:number
+	articleID?: number
 
 	// 1表示数据类型为markdown内容修改。2表示数据类型为添加文件
-	type:number;
+	type: number;
 
 	// markdown内容
-	text?:string;
+	text?: string;
 
 	// 添加的文件信息（数据需要单独接受）
-	files?:FileList
+	files?: FileList
 }

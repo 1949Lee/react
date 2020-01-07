@@ -1,3 +1,5 @@
+import {Tag} from "./interface";
+
 // 文章列表接口的文章类型
 export interface ArticleListItem {
 	id: number,
@@ -9,5 +11,5 @@ export interface ArticleListItem {
 	createTime: string,
 	updateTime: string,
 	categoryName: string,
-	tags: [] | null
+	tags: Tag[] | null
 }

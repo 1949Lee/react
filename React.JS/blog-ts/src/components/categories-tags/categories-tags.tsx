@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {CategoryWithTags, Tags} from "../../utils/interface";
+import {CategoryWithTags, Tag as T} from "../../utils/interface";
 import * as style from "./style.scss";
 import { message, Tag} from 'antd';
 import axios from 'axios';
@@ -14,7 +14,7 @@ interface State {
 	searchText: string
 
 	// 已选择的标签
-	chosenTags: Tags[],
+	chosenTags: T[],
 
 	// 是否显示新增分类的输入框
 	newCategoryInput: boolean
@@ -23,7 +23,7 @@ interface State {
 	newTagInput: boolean
 
 	// 自己新增的标签。用于展示和删除
-	addedTags: {[key:string]:Tags[]}
+	addedTags: {[key:string]:T[]}
 
 	// 自己新增的标签。用于展示和删除
 	addedCategory: CategoryWithTags[]
@@ -75,7 +75,7 @@ class CategoriesTags extends Component<Props, State> {
 	};
 
 	// 处理文章标签点击
-	handleTagClick = (checked: boolean, t: Tags) => {
+	handleTagClick = (checked: boolean, t: T) => {
 		if (checked) {
 			this.setState((state) => {
 				state.chosenTags.push(t);
@@ -161,7 +161,7 @@ class CategoriesTags extends Component<Props, State> {
 	};
 
 	// 删除自定义添加的标签
-	doDeleteAddedTag = (tag:Tags) => {
+	doDeleteAddedTag = (tag:T) => {
 		const hide = message.loading('删除中..', 0);
 		axios.post('http://localhost:1314/delete-tag', {
 			id: tag.id
