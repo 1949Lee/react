@@ -36,6 +36,10 @@ class PreviewFullPage extends Component<Props, State> {
 		document.body.style.overflow = "hidden";
 	}
 
+	componentWillUnmount(){
+		document.body.style.overflow = null;
+	}
+
 	// componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any){
 	// 	console.log(prevProps,this.props);
 	// }

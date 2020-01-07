@@ -123,8 +123,9 @@ function tokensToHtml(tokens: Token[]): any {
 							token.tagName,
 							{className: token.class, ...objs[i], key: UUID()}
 						)}
-						<div className="image-text-wrapper" key={UUID()}>{token.text}</div>
+						<div className="image-text-wrapper" key={UUID()}>{token.text}
 						{token.children && token.children.length > 0 ? tokensToHtml(token.children) : null}
+						</div>
 					</div>
 				} else if (tokens[i].tokenType === "check-list-checkbox") {
 					objs[i]['checked'] = objs[i]['checked'] == "true";
