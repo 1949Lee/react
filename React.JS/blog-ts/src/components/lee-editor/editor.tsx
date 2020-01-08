@@ -105,7 +105,7 @@ class LeeEditor extends Component<Props,State> {
 			if (file.type.indexOf('image') > -1) { // 图片展示处理
 				const src = window.URL.createObjectURL(file);
 				// img.onload = ;
-				// TODO 行首直接插入，行中换行插入。图片onload事件。
+				// TODO 行首直接插入，行中换行插入。图片粘贴直接按上传文件处理。
 				// document.execCommand("insertText", false, `![${file.name}](${src})`);
 				document.execCommand("insertText", false, `![请输入图片描述](${src})`);
 			}

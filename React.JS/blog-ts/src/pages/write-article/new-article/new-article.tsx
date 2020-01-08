@@ -76,12 +76,26 @@ class NewArticle extends Component<Props, State> {
 	}
 
 	componentDidMount() {
+		this.initWebSocket();
+		document.addEventListener('visibilitychange', () => {
+			if(document.visibilityState === "visible") {
+				if(this.ws.readyState === WebSocket.CLOSED) {
+					this.initWebSocket();
+				}
+			}
+		}, false);
+		this.initData()
+	}
+
+	initWebSocket = (data?:EditorData) => {
 		// 打开一个 web socket
 		this.ws = new WebSocket("ws://localhost:1314/ws/parser");
 
-		// TODO 计算机睡眠后在开启，websocket链接会断开。想办法处理
 		this.ws.onopen = () => {
 			console.log("已连接");
+			if(data !==undefined){
+				this.send(data);
+			}
 		};
 
 		this.ws.onmessage = (evt) => {
@@ -93,8 +107,7 @@ class NewArticle extends Component<Props, State> {
 			console.log("连接已关闭...");
 		};
 		// ws.binaryType
-		this.initData()
-	}
+	};
 
 	// 获取数据
 	initData = () => {
@@ -127,6 +140,10 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
+		if(this.ws.readyState === WebSocket.CLOSED) {
+			this.initWebSocket(data)
+			return;
+		}
 		data.articleID = this.props.match.params.id * 1;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
