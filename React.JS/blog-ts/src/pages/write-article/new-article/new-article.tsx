@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import CategoriesTags from "../../../components/categories-tags/categories-tags";
-import FileTable,{ FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
+import FileTable, {FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeArticle from "../../../components/lee-article/lee-article";
 import LeeEditor from "../../../components/lee-editor/editor";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
@@ -14,6 +14,7 @@ import {ArticleInfo, CategoryWithTags, EditorData, Token} from "../../../utils/i
 
 interface State {
 	previewFlag: boolean
+	previewButtonClickFlag: boolean
 	previewHtml: Token[][],
 	previewHeight: string,
 	previewPosition: number,
@@ -24,7 +25,7 @@ interface State {
 	categoryWithTags: CategoryWithTags[]
 	article: ArticleInfo
 	finalPreview: boolean
-	articleContent:string
+	articleContent: string
 }
 
 interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
@@ -50,6 +51,7 @@ class NewArticle extends Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
+			previewButtonClickFlag: false,
 			previewFlag: false,
 			previewHtml: null,
 			previewHeight: '100%',
@@ -65,7 +67,7 @@ class NewArticle extends Component<Props, State> {
 				title: '',
 				createTime: ''
 			},
-			articleContent:""
+			articleContent: ""
 		};
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
@@ -128,8 +130,8 @@ class NewArticle extends Component<Props, State> {
 		data.articleID = this.props.match.params.id * 1;
 		// Web Socket 使用 send() 方法发送数据
 		this.ws.send(JSON.stringify(data));
-		if(data.type && data.type === 1){
-			this.setState({articleContent:data.text})
+		if (data.type && data.type === 1) {
+			this.setState({articleContent: data.text})
 		}
 	};
 
@@ -167,6 +169,12 @@ class NewArticle extends Component<Props, State> {
 	// 切换预览与编辑
 	togglePreview = () => {
 		this.setState({previewFlag: !this.state.previewFlag})
+	};
+
+	// 预览按钮点击
+	previewButtonClick = () => {
+		this.setState({previewButtonClickFlag: !this.state.previewButtonClickFlag});
+		this.togglePreview();
 	};
 
 	//
@@ -356,7 +364,9 @@ class NewArticle extends Component<Props, State> {
 			return {
 				article: {...state.article}
 			}
-		},() => {this.setState({finalPreview:true});});
+		}, () => {
+			this.setState({finalPreview: true});
+		});
 	};
 
 	// 获取子组件中选择的分类和标签结果
@@ -409,54 +419,55 @@ class NewArticle extends Component<Props, State> {
 
 	// 返回编辑：关闭最终预览和文章信息弹窗。
 	continueEditing = () => {
-		this.setState({finalPreview:false,postModalFlag:false});
+		this.setState({finalPreview: false, postModalFlag: false});
 	};
 
 	// 隐藏最终预览并显示文章信息弹窗
 	resumePostModal = () => {
-		this.setState({finalPreview:false});
+		this.setState({finalPreview: false});
 	};
 
 	// 发布文章
 	doPost = () => {
 		axios.post('http://localhost:1314/save-article', {
-			type:1,
-			info:this.state.article,
-			content:this.state.articleContent,
-			text:this.preview.current.innerText}).then((res) => {
+			type: 1,
+			info: this.state.article,
+			content: this.state.articleContent,
+			text: this.preview.current.innerText
+		}).then((res) => {
 			if (res.data.code === 0) {
-				this.setState({finalPreview:false,postModalFlag:false},() => {
+				this.setState({finalPreview: false, postModalFlag: false}, () => {
 					Modal.confirm({
-						title:null,
-						icon:null,
-						content:"接下来去哪看看呢？",
-						okText:"前往首页",
-						onOk:() => {
+						title: null,
+						icon: null,
+						content: "接下来去哪看看呢？",
+						okText: "前往首页",
+						onOk: () => {
 							this.props.history.replace("/")
 						},
-						cancelText:"继续添加",
-						onCancel:() => {
+						cancelText: "继续添加",
+						onCancel: () => {
 							// Dismiss manually and asynchronously
-							axios.post("http://localhost:1314/new-article-id",{}).then((res:any) => {
-								if(res.data.code === 0 && res.data.data){
+							axios.post("http://localhost:1314/new-article-id", {}).then((res: any) => {
+								if (res.data.code === 0 && res.data.data) {
 									this.props.history.replace("/");
 									this.props.history.replace(`/new-article/${res.data.data}`);
 								} else {
 									this.props.history.replace("/")
 								}
-							},() => {
+							}, () => {
 								this.props.history.replace("/",)
 							});
 						}
 					})
 				});
 			} else {
-				this.setState({finalPreview:false,postModalFlag:false},() => {
+				this.setState({finalPreview: false, postModalFlag: false}, () => {
 					Modal.warn({
-						title:null,
-						icon:null,
-						content:"发布失败",
-						okText:"请重新发布",
+						title: null,
+						icon: null,
+						content: "发布失败",
+						okText: "请重新发布",
 					})
 				});
 			}
@@ -472,9 +483,15 @@ class NewArticle extends Component<Props, State> {
 				<PreviewFullPage show={this.state.finalPreview}
 												 articleInfo={this.state.article}
 												 html={this.state.previewHtml}
-												 onConfirm={() => {this.doPost()}}
-												 onClose={()=>{this.continueEditing()}}
-												 onHide={() => {this.resumePostModal()}}></PreviewFullPage>
+												 onConfirm={() => {
+													 this.doPost()
+												 }}
+												 onClose={() => {
+													 this.continueEditing()
+												 }}
+												 onHide={() => {
+													 this.resumePostModal()
+												 }}></PreviewFullPage>
 				<Drawer
 					title="该文章已上传的文件"
 					placement="left"
@@ -527,8 +544,8 @@ class NewArticle extends Component<Props, State> {
 										this.togglePostModal(true)
 									}}>发送</Button>
 					<Button className={`${style['lee-btn']} ${style['preview']}`} type="primary" size={"small"}
-									onClick={this.togglePreview}>{
-						this.state.previewFlag ? '取消预览' : '预览'
+									onClick={this.previewButtonClick}>{
+						this.state.previewButtonClickFlag ? '取消预览' : '预览'
 					}</Button>
 					<Button className={`${style['lee-btn']} ${style['upload']}`} size={"small"}
 									onClick={this.showSysFileSelected}>上传文件</Button>
@@ -538,7 +555,7 @@ class NewArticle extends Component<Props, State> {
 						this.FilesTableDrawerToggle(true)
 					}}>文件列表</Button>
 				</div>
-				<div className={style['editor-wrapper']}>
+				<div className={style['editor-wrapper']} style={this.state.previewButtonClickFlag ? {width: "100vw"} : null}>
 					<LeeEditor className={style['editor']}
 										 style={{opacity: this.state.previewFlag ? 0 : 1}}
 										 textChange={(data: EditorData) => {
@@ -556,10 +573,12 @@ class NewArticle extends Component<Props, State> {
 						<LeeArticle content={this.state.previewHtml}></LeeArticle>
 					</div>
 				</div>
-				<div className={style['divider']}/>
-				<div className={style['preview-wrapper']} onMouseMove={(event) => {
-					this.moveToPreview(event)
-				}} onMouseLeave={this.hidePreview}>
+				<div className={style['divider']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}/>
+				<div className={style['preview-wrapper']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}
+						 onMouseMove={(event) => {
+							 this.moveToPreview(event)
+						 }}
+						 onMouseLeave={this.hidePreview}>
 					<div className={style['preview-html']} ref={this.preview}
 					>
 						<LeeArticle content={this.state.previewHtml}></LeeArticle>
