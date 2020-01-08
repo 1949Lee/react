@@ -2,6 +2,14 @@
 .article-wrapper {
 	display: flex;
 	flex-direction: column;
+	position: relative;
+	.edit-btn {
+		//color: $text-secondary-color;
+		position: absolute;
+		top: 2rem;
+		right: 2rem;
+		cursor: pointer;
+	}
 	.error-token {
 
 	}

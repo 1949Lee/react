@@ -15,6 +15,11 @@ export let Routes: any = {
 		path: '/new-article/:id',
 		regexp: /^\/new-article($|\/[^/]+$)/
 	},
+	updateArticle: {
+		component: React.lazy(() => import("../pages/write-article/new-article/new-article")),
+		path: '/update-article/:id',
+		regexp: /^\/update-article($|\/[^/]+$)/
+	},
 	article: {
 		component:React.lazy(() => import("../pages/article/article")),
 		path: '/article/:id',

@@ -27,7 +27,9 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 
 
 	handleRouterChange = (location:H.Location,history: H.History<H.History.LocationState>) => {
-		if (Routes.newArticle.regexp.test(history.location.pathname)) {
+		if (
+			Routes.newArticle.regexp.test(history.location.pathname) ||
+			Routes.updateArticle.regexp.test(history.location.pathname) ) {
 			this.setState({isWriteArticle:true});
 		} else {
 			this.setState({isWriteArticle:false});
@@ -46,6 +48,7 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 							<Route exact path={Routes.article.path} component={Routes.article.component} />
 							<Route exact path={Routes.about.path} component={Routes.about.component}/>
 							<Route exact path={Routes.newArticle.path} component={Routes.newArticle.component} />
+							<Route exact path={Routes.updateArticle.path} component={Routes.updateArticle.component} />
 							<Route path={Routes.other.path}>
 								404
 							</Route>

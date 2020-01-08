@@ -6,11 +6,12 @@ import FileTable, {FileTableItem, FileTableItemStatus} from "../../../components
 import LeeArticle from "../../../components/lee-article/lee-article";
 import LeeEditor from "../../../components/lee-editor/editor";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
+import {ArticleListItem} from "../../../utils/api.interface";
 import FileServer from "../../../utils/file-server";
 import {FileSizeText} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
-import {ArticleInfo, CategoryWithTags, EditorData, Token} from "../../../utils/interface";
+import {ArticleInfo, CategoryWithTags, EditorData, Tag, Token} from "../../../utils/interface";
 
 interface State {
 	previewFlag: boolean
@@ -28,7 +29,7 @@ interface State {
 	articleContent: string
 }
 
-interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
+interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }, {}, { article: ArticleListItem, text: string }> {
 }
 
 class NewArticle extends Component<Props, State> {
@@ -40,7 +41,7 @@ class NewArticle extends Component<Props, State> {
 	fileSelected: React.RefObject<HTMLInputElement> = React.createRef();
 	chosenTags: React.RefObject<CategoriesTags> = React.createRef();
 
-	test = "dasdasd";
+	articleType = null;
 
 	// 当前上传中/上传完成/上传失败的文件
 	copyFiles: any[] = [];
@@ -50,25 +51,57 @@ class NewArticle extends Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
-		this.state = {
-			previewButtonClickFlag: false,
-			previewFlag: false,
-			previewHtml: null,
-			previewHeight: '100%',
-			previewPosition: 0,
-			files: {},
-			filesTableFlag: false,
-			postingFlag: false,
-			postModalFlag: false,
-			finalPreview: false,
-			categoryWithTags: [],
-			article: {
-				articleID: -1,
-				title: '',
-				createTime: ''
-			},
-			articleContent: ""
-		};
+		if (this.props.location.state) { // 更新文章
+			let articleInfo = this.props.location.state.article;
+			this.articleType = 'update';
+			// 除了文件信息以外的所有state字段都要确保合理
+			this.state = {
+				previewButtonClickFlag: false,
+				previewFlag: false,
+				previewHtml: null,
+				previewHeight: '100%',
+				previewPosition: 0,
+				files: {},// 写接口获取文章所有文件
+				filesTableFlag: false,
+				postingFlag: false,
+				postModalFlag: false,
+				finalPreview: false,
+				categoryWithTags: [],
+				article: {
+					articleID: articleInfo.id,
+					title: articleInfo.title,
+					createTime: articleInfo.createTime,
+					updateTime: articleInfo.updateTime,
+					category:{
+						id:articleInfo.categoryID,
+						name:articleInfo.categoryName
+					},
+					tags:articleInfo.tags
+				},
+				articleContent: this.props.location.state.text // 确定字段的含义
+			};
+		} else { // 新增文章
+			this.articleType = 'new';
+			this.state = {
+				previewButtonClickFlag: false,
+				previewFlag: false,
+				previewHtml: null,
+				previewHeight: '100%',
+				previewPosition: 0,
+				files: {},
+				filesTableFlag: false,
+				postingFlag: false,
+				postModalFlag: false,
+				finalPreview: false,
+				categoryWithTags: [],
+				article: {
+					articleID: -1,
+					title: '',
+					createTime: ''
+				},
+				articleContent: ""
+			};
+		}
 		this.send = this.send.bind(this);
 		this.moveToPreview = this.moveToPreview.bind(this);
 		this.hidePreview = this.hidePreview.bind(this);
@@ -78,8 +111,8 @@ class NewArticle extends Component<Props, State> {
 	componentDidMount() {
 		this.initWebSocket();
 		document.addEventListener('visibilitychange', () => {
-			if(document.visibilityState === "visible") {
-				if(this.ws.readyState === WebSocket.CLOSED) {
+			if (document.visibilityState === "visible") {
+				if (this.ws.readyState === WebSocket.CLOSED) {
 					this.initWebSocket();
 				}
 			}
@@ -87,13 +120,13 @@ class NewArticle extends Component<Props, State> {
 		this.initData()
 	}
 
-	initWebSocket = (data?:EditorData) => {
+	initWebSocket = (data?: EditorData) => {
 		// 打开一个 web socket
 		this.ws = new WebSocket("ws://localhost:1314/ws/parser");
 
 		this.ws.onopen = () => {
 			console.log("已连接");
-			if(data !==undefined){
+			if (data !== undefined) {
 				this.send(data);
 			}
 		};
@@ -140,7 +173,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
-		if(this.ws.readyState === WebSocket.CLOSED) {
+		if (this.ws.readyState === WebSocket.CLOSED) {
 			this.initWebSocket(data)
 			return;
 		}
