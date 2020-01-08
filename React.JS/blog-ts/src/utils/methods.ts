@@ -1,4 +1,4 @@
-// 比较两个对象是否相等。
+// 比较两个对象是否相等。若相等，则返回true
 export function diff(x: any, y: any) {
 	let o1 = x instanceof Object;
 	let o2 = y instanceof Object;
@@ -38,7 +38,7 @@ export function diff(x: any, y: any) {
 		// if (x.prototype !== y.prototype) {
 		// 	return false;
 		// }
-		if(Object.getOwnPropertyNames(x).length === Object.getOwnPropertyNames(y).length) {
+		if (Object.getOwnPropertyNames(x).length === Object.getOwnPropertyNames(y).length) {
 
 		}
 		return false;
@@ -68,15 +68,15 @@ export function diff(x: any, y: any) {
 }
 
 // 连字符字符串转换为小驼峰，例如：background-color变为backgroundColor
-export function HyphenToCamelCase(value:string):string{
-	return value.replace(/-([a-z])/g,(substring:string, v:string) => {
+export function HyphenToCamelCase(value: string): string {
+	return value.replace(/-([a-z])/g, (substring: string, v: string) => {
 		return v.toUpperCase()
 	});
 }
 
 
 // 传入字节大小，转换为两位小数的大小显示文案：KB、MB、GB等。
-export function FileSizeText(size: number = -1): string{ // 保留两位小数
+export function FileSizeText(size: number = -1): string { // 保留两位小数
 	let result = "--";
 	if (size > 0) {
 		if (size < 1024) { // 大小区间：[0,1KB)
@@ -91,6 +91,32 @@ export function FileSizeText(size: number = -1): string{ // 保留两位小数
 	}
 	return result;
 };
+
+// // 比较两个数组是否相等。
+// export function ArrayDiff(array: any[], keys?: string[]) {
+// 	if (this.length != array.length) {
+// 		return false
+// 	} else {
+// 		if (keys) {
+// 			for (let i = 0; i < this.length; i++) {
+// 				for (let j = 0; j < keys.length; j++) {
+// 					if (!diff(this[i][keys[j]], array[i][keys[j]])) {
+// 						return false
+// 					}
+// 				}
+// 			}
+// 		} else {
+// 			for (let i = 0; i < this.length; i++) {
+// 				if (!diff(this[i], array[i])) {
+// 					return false
+// 				}
+// 			}
+// 		}
+// 		return true
+// 	}
+// }
+
+// Array.prototype['diff'] = ArrayDiff;
 
 // 将html原生的style转换为react的style-object。
 export function ToStyleObj(str: string) {

@@ -1,30 +1,36 @@
 import React, {Component, Fragment} from "react";
 import {ImagerItem, Token} from "../../utils/interface";
-import {ToStyleObj} from "../../utils/methods";
+import {diff, ToStyleObj} from "../../utils/methods";
 import {UUID} from "../../utils/uuid";
+import LeeImager from "../lee-imager/lee-imager";
 
+interface State {
+	imagerItems: ImagerItem[]
+	showImager: boolean
+	currentIndex:number
+}
 
-
-
-interface Props extends React.ComponentProps<any>{
+interface Props extends React.ComponentProps<any> {
 	content: Token[][]
 }
 
-interface State {
-	imagerItems:ImagerItem[]
-}
-
 // token转换，lines数组中的每一项都是markdown中的对应行
-class LeeArticle extends Component<Props,State> {
+class LeeArticle extends Component<Props, State> {
+
+	// 最新的markdown串中存在的图片数据
+	lastedImagerItems: ImagerItem[] = [];
+
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			imagerItems: null
+			imagerItems: null,
+			showImager:false,
+			currentIndex:null
 		};
 	}
 
-	imagerShow = () => {
-
+	imagerShow = (i:number) => {
+		this.setState({showImager:true,currentIndex:i})
 	};
 
 	// 将token转化为html
@@ -49,15 +55,18 @@ class LeeArticle extends Component<Props,State> {
 							{className: token.class, ...objs[i], key: UUID()}
 						);
 					} else if (tokens[i].tokenType === "image") { // image的特殊处理
-						// this.setState((state) => {
-						// 	return {imagerItems: [...state.imagerItems, {src: objs[i].src, text: null}]}
-						// });
+						this.lastedImagerItems.push({
+							src: objs[i].src, text: <div className="image-text-wrapper" key={UUID()}>{token.text}
+								{token.children && token.children.length > 0 ? this.tokensToHtml(token.children) : null}
+							</div>
+						});
+						let index = this.lastedImagerItems.length - 1;
 						ele = <div className="image-wrapper" key={UUID()}>
 							{React.createElement(
 								token.tagName,
 								{
 									className: token.class, ...objs[i], key: UUID(), onClick: () => {
-										this.imagerShow()
+										this.imagerShow(index)
 									}
 								}
 							)}
@@ -162,11 +171,48 @@ class LeeArticle extends Component<Props,State> {
 	};
 
 	shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any) {
+		this.lastedImagerItems = [];
 		return true
 	}
 
+	componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any) {
+		this.shouldUpdateImager();
+	}
+
+	// 是否需要更新图片查看器
+	shouldUpdateImager = () => {
+		if (this.lastedImagerItems.length === 0 || !this.lastedImagerItems) {
+			if (this.state.imagerItems === null) {
+				return
+			}
+		} else {
+			if (this.state.imagerItems && this.state.imagerItems.length === this.lastedImagerItems.length) {
+				let i = 0;
+				for (; i < this.lastedImagerItems.length; i++) {
+					if (this.lastedImagerItems[i].src !== this.state.imagerItems[i].src) {
+						break;
+					}
+					// if (this.lastedImagerItems[i].text.toString() !== this.state.imagerItems[i].text.toString()) {
+					// 	break;
+					// }
+				}
+				if (i === this.lastedImagerItems.length) {
+					return
+				}
+			}
+		}
+		// state中的没有图片数据，但是最新的markdown串中有图片数据。
+		this.setState({imagerItems: this.lastedImagerItems})
+	};
+
+	imagerClose = () => {
+		this.setState({showImager:false})
+	};
+
 	render() {
 		return (<div className="content">
+			{this.state.imagerItems && this.state.imagerItems.length > 0 && this.state.showImager ?
+				<LeeImager items={this.state.imagerItems} currentIndex={this.state.currentIndex} close={this.imagerClose}></LeeImager> : null}
 			{this.props.content ? this.props.content.map((_, i) => {// 每一行单独转换
 				return this.lineToHtml(this.props.content[i])
 			}) : null}
