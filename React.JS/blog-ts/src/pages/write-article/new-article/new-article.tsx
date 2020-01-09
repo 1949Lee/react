@@ -170,7 +170,7 @@ class NewArticle extends Component<Props, State> {
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (prevState.previewHtml !== this.state.previewHtml) {
-			this.setState({previewHeight: this.preview.current.getBoundingClientRect().height + 'px'});
+			// this.setState({previewHeight: this.preview.current.getBoundingClientRect().height + 'px'});
 		}
 	}
 
@@ -627,25 +627,26 @@ class NewArticle extends Component<Props, State> {
 					<div className={style['preview-result']} style={
 						{
 							opacity: this.state.previewFlag ? 1 : 0,
-							zIndex: this.state.previewFlag ? 1 : -1
+							zIndex: this.state.previewFlag ? 1 : -1,
+							display: this.state.previewFlag ? "block" : "none"
 						}} ref={this.previewResult}
 					>
 						<LeeArticle content={this.state.previewHtml}></LeeArticle>
 					</div>
 				</div>
-				<div className={style['divider']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}/>
-				<div className={style['preview-wrapper']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}
-						 onMouseMove={(event) => {
-							 this.moveToPreview(event)
-						 }}
-						 onMouseLeave={this.hidePreview}>
-					<div className={style['preview-html']} ref={this.preview}
-					>
-						<LeeArticle content={this.state.previewHtml}></LeeArticle>
-					</div>
-					<div className={style['preview-options-area']}
-							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>
-				</div>
+				{/*<div className={style['divider']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}/>*/}
+				{/*<div className={style['preview-wrapper']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}*/}
+				{/*		 onMouseMove={(event) => {*/}
+				{/*			 this.moveToPreview(event)*/}
+				{/*		 }}*/}
+				{/*		 onMouseLeave={this.hidePreview}>*/}
+				{/*	<div className={style['preview-html']} ref={this.preview}*/}
+				{/*	>*/}
+				{/*		<LeeArticle content={this.state.previewHtml}></LeeArticle>*/}
+				{/*	</div>*/}
+				{/*	<div className={style['preview-options-area']}*/}
+				{/*			 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>*/}
+				{/*</div>*/}
 			</div>
 		);
 	}
