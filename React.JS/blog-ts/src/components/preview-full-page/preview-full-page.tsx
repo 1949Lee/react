@@ -31,6 +31,11 @@ interface Props extends React.ComponentProps<any> {
 
 class PreviewFullPage extends Component<Props, State> {
 
+	constructor(props:Props) {
+		super(props);
+		console.log(this.props.html)
+	}
+
 	contentRef:RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
 	componentDidMount() {

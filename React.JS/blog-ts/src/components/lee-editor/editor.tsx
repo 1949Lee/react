@@ -24,8 +24,9 @@ class LeeEditor extends Component<Props,State> {
 
 	componentDidMount() {
 		if(this.props.initText){
-			this.textEditor.current.innerHTML = this.props.initText;
-			this.textChange()
+			// this.textEditor.current.innerHTML = this.props.initText;
+			this.textEditor.current.focus();
+			document.execCommand("insertText", false, this.props.initText);
 		}
 	}
 
