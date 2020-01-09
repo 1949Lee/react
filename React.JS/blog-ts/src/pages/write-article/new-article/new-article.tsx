@@ -176,6 +176,9 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
+		if(!this.ws) {
+			return
+		}
 		if (this.ws.readyState === WebSocket.CLOSED) {
 			this.initWebSocket(data)
 			return;
@@ -617,6 +620,7 @@ class NewArticle extends Component<Props, State> {
 										 textChange={(data: EditorData) => {
 											 this.send(data)
 										 }}
+										 initText={this.state.articleContent}
 										 fileUpload={(files: EditorData) => {
 											 this.fileUpload(files)
 										 }}/>

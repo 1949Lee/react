@@ -11,6 +11,7 @@ interface Props {
 	fileUpload:(file:EditorData) => void,
 	className:string,
 	style:{[key:string]:any};
+	initText:string
 }
 
 class LeeEditor extends Component<Props,State> {
@@ -22,6 +23,10 @@ class LeeEditor extends Component<Props,State> {
 	}
 
 	componentDidMount() {
+		if(this.props.initText){
+			this.textEditor.current.innerHTML = this.props.initText;
+			this.textChange()
+		}
 	}
 
 	initEditor = () => {
