@@ -131,6 +131,9 @@ class NewArticle extends Component<Props, State> {
 			if (data !== undefined) {
 				this.send(data);
 			}
+			if(this.articleType === 'update') {
+				this.send({type:1,text:this.state.articleContent})
+			}
 		};
 
 		this.ws.onmessage = (evt) => {
@@ -723,19 +726,19 @@ class NewArticle extends Component<Props, State> {
 						<LeeArticle content={this.state.previewHtml}></LeeArticle>
 					</div>
 				</div>
-				{/*<div className={style['divider']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}/>*/}
-				{/*<div className={style['preview-wrapper']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}*/}
-				{/*		 onMouseMove={(event) => {*/}
-				{/*			 this.moveToPreview(event)*/}
-				{/*		 }}*/}
-				{/*		 onMouseLeave={this.hidePreview}>*/}
-				{/*	<div className={style['preview-html']} ref={this.preview}*/}
-				{/*	>*/}
-				{/*		<LeeArticle content={this.state.previewHtml}></LeeArticle>*/}
-				{/*	</div>*/}
-				{/*	<div className={style['preview-options-area']}*/}
-				{/*			 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>*/}
-				{/*</div>*/}
+				<div className={style['divider']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}/>
+				<div className={style['preview-wrapper']} style={this.state.previewButtonClickFlag ? {display: "none"} : null}
+						 onMouseMove={(event) => {
+							 this.moveToPreview(event)
+						 }}
+						 onMouseLeave={this.hidePreview}>
+					<div className={style['preview-html']} ref={this.preview}
+					>
+						<LeeArticle content={this.state.previewHtml}></LeeArticle>
+					</div>
+					<div className={style['preview-options-area']}
+							 style={{height: this.preview.current ? this.preview.current.getBoundingClientRect().height + 'px' : '100%'}}/>
+				</div>
 			</div>
 		);
 	}
