@@ -110,14 +110,16 @@ class NewArticle extends Component<Props, State> {
 
 	componentDidMount() {
 		this.initWebSocket();
-		document.addEventListener('visibilitychange', () => {
-			if (document.visibilityState === "visible") {
-				if (this.ws.readyState === WebSocket.CLOSED) {
-					this.initWebSocket();
-				}
-			}
-		}, false);
+		document.addEventListener('visibilitychange', this.reConnection, false);
 		this.initData()
+	}
+
+	reConnection = () => {
+		if (document.visibilityState === "visible") {
+			if (this.ws.readyState === WebSocket.CLOSED) {
+				this.initWebSocket();
+			}
+		}
 	}
 
 	initWebSocket = (data?: EditorData) => {
@@ -162,6 +164,7 @@ class NewArticle extends Component<Props, State> {
 	};
 
 	componentWillUnmount() {
+		document.removeEventListener('visibilitychange',this.reConnection);
 		this.ws.close();
 	}
 
@@ -585,7 +588,10 @@ class NewArticle extends Component<Props, State> {
 						}} placeholder="发布时间"/>
 					</div>
 					<div className={style['form-control-field']}>
-						<CategoriesTags ref={this.chosenTags} categoryWithTags={this.state.categoryWithTags}></CategoriesTags>
+						<CategoriesTags ref={this.chosenTags} categoryWithTags={this.state.categoryWithTags}
+														defaultChosen={
+															this.state.article.category?{categoryID:this.state.article.category.id,tags:this.state.article.tags}:null
+														}></CategoriesTags>
 					</div>
 				</Modal>
 				<div className={style['options-wrapper']}>

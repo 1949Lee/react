@@ -30,8 +30,8 @@ interface State {
 }
 
 interface Props extends React.ComponentProps<any> {
-	categoryWithTags: CategoryWithTags[],
-	// defaultChosen:
+	categoryWithTags: CategoryWithTags[];
+	defaultChosen:{categoryID:number,tags:T[]}
 }
 
 class CategoriesTags extends Component<Props, State> {
@@ -45,14 +45,26 @@ class CategoriesTags extends Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
-		this.state = {
-			categoryID: 0,
-			searchText: '',
-			chosenTags: [],
-			newCategoryInput: false,
-			newTagInput: false,
-			addedTags: {},
-			addedCategory: []
+		if(this.props.defaultChosen) {
+			this.state = {
+				categoryID: this.props.defaultChosen.categoryID,
+				searchText: '',
+				chosenTags: this.props.defaultChosen.tags,
+				newCategoryInput: false,
+				newTagInput: false,
+				addedTags: {},
+				addedCategory: []
+			}
+		} else {
+			this.state = {
+				categoryID: 0,
+				searchText: '',
+				chosenTags: [],
+				newCategoryInput: false,
+				newTagInput: false,
+				addedTags: {},
+				addedCategory: []
+			}
 		}
 	}
 
@@ -83,7 +95,7 @@ class CategoriesTags extends Component<Props, State> {
 			})
 		} else {
 			this.setState((state) => {
-				let index = state.chosenTags.indexOf(t);
+				let index = state.chosenTags.findIndex((chosen) => chosen.id === t.id);
 				state.chosenTags.splice(index, 1);
 				return {chosenTags: [...state.chosenTags]}
 			})
@@ -262,8 +274,8 @@ class CategoriesTags extends Component<Props, State> {
 							.filter((t) => !this.state.searchText || t.name.indexOf(this.state.searchText) !== -1)
 							.map((t) => {
 								return <CheckableTag key={t.id}
-																		 className={`${style['lee-tag']} ${this.state.chosenTags.indexOf(t) >= 0 ? `${style['checked']}` : ''}`}
-																		 checked={this.state.chosenTags.indexOf(t) >= 0}
+																		 className={`${style['lee-tag']} ${this.state.chosenTags.findIndex((chosen) => chosen.id === t.id) >= 0 ? `${style['checked']}` : ''}`}
+																		 checked={this.state.chosenTags.findIndex((chosen) => chosen.id === t.id) >= 0}
 																		 onChange={checked => {
 																			 this.handleTagClick(checked, t)
 																		 }}
@@ -275,8 +287,8 @@ class CategoriesTags extends Component<Props, State> {
 							.filter((t) => !this.state.searchText || t.name.indexOf(this.state.searchText) !== -1)
 							.map((t) => {
 								return <CheckableTag key={t.id}
-																		 className={`${style['lee-tag']} ${this.state.chosenTags.indexOf(t) >= 0 ? `${style['checked']}` : ''}`}
-																		 checked={this.state.chosenTags.indexOf(t) >= 0}
+																		 className={`${style['lee-tag']} ${this.state.chosenTags.findIndex((chosen) => chosen.id === t.id) >= 0 ? `${style['checked']}` : ''}`}
+																		 checked={this.state.chosenTags.findIndex((chosen) => chosen.id === t.id) >= 0}
 																		 onChange={checked => {
 																			 this.handleTagClick(checked, t)
 																		 }}
