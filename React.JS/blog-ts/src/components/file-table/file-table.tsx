@@ -25,9 +25,9 @@ export interface FileTableItem {
 	// 文件大小，单位字节
 	size: number;
 
-	status: FileTableItemStatus;
+	status?: FileTableItemStatus;
 
-	upload: { total: number, loaded: number };
+	upload?: { total: number, loaded: number };
 
 	// 服务端的图片路径
 	url?:string;

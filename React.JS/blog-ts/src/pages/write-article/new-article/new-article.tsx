@@ -72,11 +72,11 @@ class NewArticle extends Component<Props, State> {
 					title: articleInfo.title,
 					createTime: articleInfo.createTime,
 					updateTime: articleInfo.updateTime,
-					category:{
-						id:articleInfo.categoryID,
-						name:articleInfo.categoryName
+					category: {
+						id: articleInfo.categoryID,
+						name: articleInfo.categoryName
 					},
-					tags:articleInfo.tags
+					tags: articleInfo.tags
 				},
 				articleContent: this.props.location.state.text // 确定字段的含义
 			};
@@ -146,6 +146,35 @@ class NewArticle extends Component<Props, State> {
 
 	// 获取数据
 	initData = () => {
+		let type = 0;
+		if (this.articleType === 'new') {
+			type = 1
+		} else if (this.articleType === "update") {
+			type = 2;
+		}
+		axios.post('http://localhost:1314/get-article-and-info', {
+			type,
+			articleID: +this.props.match.params.id
+		}).then((res) => {
+			if (res.data.code === 0) {
+				let files = {};
+				for (let [key, val] of Object.entries(res.data.data.fileList)) {
+					files[key] = {
+						// 文件名字
+						name: val['name'],
+						// 文件大小，单位字节
+						size: val['size'],
+						status: 0,
+						upload: {total: val['size'], loaded: val['size']},
+						// 服务端的图片路径
+						url: val['url'],
+					}
+				}
+				this.setState({files: files});
+			}
+		}, err => {
+			console.error(err);
+		});
 		axios.post('http://localhost:1314/categories-with-tags', {}).then((res) => {
 			if (res.data.code === 0) {
 				this.setState({categoryWithTags: res.data.data});
@@ -164,7 +193,7 @@ class NewArticle extends Component<Props, State> {
 	};
 
 	componentWillUnmount() {
-		document.removeEventListener('visibilitychange',this.reConnection);
+		document.removeEventListener('visibilitychange', this.reConnection);
 		this.ws.close();
 	}
 
@@ -176,7 +205,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 向server发送websocket的消息
 	send = (data: EditorData) => {
-		if(!this.ws) {
+		if (!this.ws) {
 			return
 		}
 		if (this.ws.readyState === WebSocket.CLOSED) {
@@ -593,7 +622,10 @@ class NewArticle extends Component<Props, State> {
 					<div className={style['form-control-field']}>
 						<CategoriesTags ref={this.chosenTags} categoryWithTags={this.state.categoryWithTags}
 														defaultChosen={
-															this.state.article.category?{categoryID:this.state.article.category.id,tags:this.state.article.tags}:null
+															this.state.article.category ? {
+																categoryID: this.state.article.category.id,
+																tags: this.state.article.tags
+															} : null
 														}></CategoriesTags>
 					</div>
 				</Modal>
