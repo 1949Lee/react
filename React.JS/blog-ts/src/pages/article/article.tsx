@@ -43,7 +43,7 @@ class Article extends Component<Props, State> {
 	}
 
 	goUpdate = () => {
-		this.props.history.push('/update-article/'+(+this.props.match.params.id),{article:this.state.article,text:this.text});
+		this.props.history.replace('/update-article/'+(+this.props.match.params.id),{article:this.state.article,text:this.text});
 	};
 
 	render() {

@@ -131,8 +131,8 @@ class NewArticle extends Component<Props, State> {
 			if (data !== undefined) {
 				this.send(data);
 			}
-			if(this.articleType === 'update') {
-				this.send({type:1,text:this.state.articleContent})
+			if (this.articleType === 'update') {
+				this.send({type: 1, text: this.state.articleContent})
 			}
 		};
 
@@ -197,7 +197,11 @@ class NewArticle extends Component<Props, State> {
 
 	componentWillUnmount() {
 		document.removeEventListener('visibilitychange', this.reConnection);
-		this.ws.close();
+		if(this.ws.readyState === WebSocket.CONNECTING) {
+			this.ws.onopen =() => {
+				this.ws.close()
+			}
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
@@ -565,58 +569,76 @@ class NewArticle extends Component<Props, State> {
 	};
 
 	updateArticle = () => {
-		axios.post('http://localhost:1314/save-article', {
-			type: 2,
-			info: this.state.article,
-			content: this.state.articleContent,
-			text: this.previewResult.current.innerText
-		}).then((res) => {
-			if (res.data.code === 0) {
-				this.setState({finalPreview: false, postModalFlag: false}, () => {
-					Modal.confirm({
-						title: null,
-						icon: null,
-						content: "接下来去哪看看呢？",
-						okText: "前往首页",
-						onOk: () => {
-							this.props.history.replace("/")
-						},
-						cancelText: "继续添加",
-						onCancel: () => {
-							// Dismiss manually and asynchronously
-							axios.post("http://localhost:1314/new-article-id", {}).then((res: any) => {
-								if (res.data.code === 0 && res.data.data) {
-									this.props.history.replace("/");
-									this.props.history.replace(`/new-article/${res.data.data}`);
-								} else {
-									this.props.history.replace("/")
-								}
-							}, () => {
-								this.props.history.replace("/",)
-							});
-						}
-					})
-				});
-			} else {
-				this.setState({finalPreview: false, postModalFlag: false}, () => {
-					Modal.warn({
-						title: null,
-						icon: null,
-						content: "更新失败",
-						okText: "请重新更新",
-					})
-				});
-			}
-		}, err => {
-			console.error(err);
-		});
+		this.setState({finalPreview: false, postModalFlag: false}, () => {
+			Modal.confirm({
+				title: null,
+				icon: null,
+				content: "接下来去哪看看呢？",
+				okText: "返回阅读",
+				onOk: () => {
+					// this.props.history.goBack()
+					this.props.history.replace("/article/" + this.props.match.params.id)
+				},
+				cancelText: "继续修改",
+				onCancel: () => {
+					// Dismiss manually and asynchronously
+					return
+				}
+			})
+		})
+		// axios.post('http://localhost:1314/save-article', {
+		// 	type: 2,
+		// 	info: this.state.article,
+		// 	content: this.state.articleContent,
+		// 	text: this.previewResult.current.innerText
+		// }).then((res) => {
+		// 	if (res.data.code === 0) {
+		// 		this.setState({finalPreview: false, postModalFlag: false}, () => {
+		// 			Modal.confirm({
+		// 				title: null,
+		// 				icon: null,
+		// 				content: "接下来去哪看看呢？",
+		// 				okText: "返回阅读",
+		// 				onOk: () => {
+		// 					// this.props.history.replace("/article/"+this.props.match.params.id)
+		// 					this.props.history.replace("/article/"+this.props.match.params.id)
+		// 				},
+		// 				cancelText: "继续添加",
+		// 				onCancel: () => {
+		// 					// Dismiss manually and asynchronously
+		// 					axios.post("http://localhost:1314/new-article-id", {}).then((res: any) => {
+		// 						if (res.data.code === 0 && res.data.data) {
+		// 							this.props.history.replace("/");
+		// 							this.props.history.replace(`/new-article/${res.data.data}`);
+		// 						} else {
+		// 							this.props.history.replace("/")
+		// 						}
+		// 					}, () => {
+		// 						this.props.history.replace("/",)
+		// 					});
+		// 				}
+		// 			})
+		// 		});
+		// 	} else {
+		// 		this.setState({finalPreview: false, postModalFlag: false}, () => {
+		// 			Modal.warn({
+		// 				title: null,
+		// 				icon: null,
+		// 				content: "更新失败",
+		// 				okText: "请重新更新",
+		// 			})
+		// 		});
+		// 	}
+		// }, err => {
+		// 	console.error(err);
+		// });
 	};
 
 	// 发布文章
 	doPost = () => {
-		if(this.articleType === "new"){ // 新增文章走新增逻辑
+		if (this.articleType === "new") { // 新增文章走新增逻辑
 			this.newArticle()
-		} else if(this.articleType === "update") { // 更新文章走更新逻辑
+		} else if (this.articleType === "update") { // 更新文章走更新逻辑
 			this.updateArticle()
 		}
 	};

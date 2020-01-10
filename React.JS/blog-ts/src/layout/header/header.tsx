@@ -201,7 +201,7 @@ class Header extends Component<Props, State> {
 							<span className={style['logo']}>镜中之人</span>
 							<div className={style['menu-list']}>
 								<div className={style['menu-wrapper']}>
-									<NavLink exact className={style['nav-link']} to="" activeClassName={style['active']}>
+									<NavLink exact className={style['nav-link']} to="/" activeClassName={style['active']}>
 										<div className={style['menu-item']}>
 											<i className={`${style['menu-icon']} lee-icon-home`}/>
 											<span className={style['text']}>首页</span>
