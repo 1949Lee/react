@@ -1,13 +1,14 @@
 
 /**本地和线上两种环境的URL*/
 let API_URL = {
-	// 'development':'http://localhost:1016',
-	'development':'https://blogserver.jiaxuanlee.com',
+	'development':'http://localhost:1016',
+	// 'development':'https://blogserver.jiaxuanlee.com',
 	'production':'https://blogserver.jiaxuanlee.com'
 };
 
 let WS_URL = {
-	'development':'wss://blogserver.jiaxuanlee.com',
+	'development':'http://localhost:1016',
+	// 'development':'wss://blogserver.jiaxuanlee.com',
 	'production':'wss://blogserver.jiaxuanlee.com'
 };
 
