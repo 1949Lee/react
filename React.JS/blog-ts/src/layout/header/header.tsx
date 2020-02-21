@@ -1,6 +1,7 @@
 import {Spin, message} from "antd";
 import React, {Component, Fragment} from 'react';
 import {NavLink, RouteComponentProps, withRouter} from "react-router-dom";
+import {GetURL} from "../../api";
 import {Routes} from "../../router";
 import {Connect} from "../../utils/decorators";
 import {actionCreators} from "./store";
@@ -132,7 +133,7 @@ class Header extends Component<Props, State> {
 		}
 		const hide = message.loading('准备中..', 0);
 		// Dismiss manually and asynchronously
-		axios.post("http://localhost:1314/new-article-id",{}).then((res:any) => {
+		axios.post(GetURL("/new-article-id"),{}).then((res:any) => {
 			if(res.data.code === 0 && res.data.data){
 				this.props.history.push(`/new-article/${res.data.data}`);
 				hide();

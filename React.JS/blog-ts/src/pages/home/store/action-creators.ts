@@ -1,5 +1,6 @@
 import {fromJS} from "immutable";
 import * as React from "react";
+import {GetURL} from "../../../api";
 import {ArticleListItem} from "../../../utils/api.interface";
 import {InitArticleList, MoreArticleList} from "./action-type";
 import axios from 'axios'
@@ -34,14 +35,14 @@ const moreArticleList = (result:any) => {
 export const getArticleList = ({type,data}:any) => {
 	return (dispatch:React.Dispatch<HomeAction>) => {
 		if(type === 'init') {
-			axios.post('http://localhost:1314/article-list',{}).then((r) => {
+			axios.post(GetURL('/article-list'),{}).then((r) => {
 				let res = r.data;
 				dispatch(resetArticleList(res.data));
 			},err => {
 				dispatch(resetArticleList({list:[],isLastPage:false}))
 			});
 		} else {
-			axios.get('http://localhost:1314/article-list').then((r) => {
+			axios.get(GetURL('/article-list')).then((r) => {
 				let res = r.data;
 				dispatch(moreArticleList(res.data));
 			},err => {

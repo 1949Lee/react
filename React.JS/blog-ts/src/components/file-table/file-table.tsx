@@ -4,6 +4,7 @@ import {RouteComponentProps, withRouter} from "react-router";
 import {diff, FileSizeText} from "../../utils/methods";
 import * as style from "./style.scss";
 import {message} from "antd";
+import {GetURL} from "../../api";
 
 interface State {
 
@@ -60,7 +61,7 @@ class FileTable extends Component<Props, State> {
 
 	// 删除文件
 	deleteFile = (file: FileTableItem,name:string) => {
-		axios.post("http://localhost:1314/delete-file", {
+		axios.post(GetURL("/delete-file"), {
 			ArticleID:this.props.match.params.id,
 			FileName:file.name
 		}, {

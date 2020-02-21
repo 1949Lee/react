@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
+import {GetURL, GetWSURL} from "../../../api";
 import CategoriesTags from "../../../components/categories-tags/categories-tags";
 import FileTable, {FileTableItem, FileTableItemStatus} from "../../../components/file-table/file-table";
 import LeeArticle from "../../../components/lee-article/lee-article";
@@ -124,7 +125,7 @@ class NewArticle extends Component<Props, State> {
 
 	initWebSocket = (data?: EditorData) => {
 		// 打开一个 web socket
-		this.ws = new WebSocket("ws://localhost:1314/ws/parser");
+		this.ws = new WebSocket(GetWSURL("/ws/parser"));
 
 		this.ws.onopen = () => {
 			console.log("已连接");
@@ -155,7 +156,7 @@ class NewArticle extends Component<Props, State> {
 		} else if (this.articleType === "update") {
 			type = 2;
 		}
-		axios.post('http://localhost:1314/get-article-and-info', {
+		axios.post(GetURL('/get-article-and-info'), {
 			type,
 			articleID: +this.props.match.params.id
 		}).then((res) => {
@@ -178,7 +179,7 @@ class NewArticle extends Component<Props, State> {
 		}, err => {
 			console.error(err);
 		});
-		axios.post('http://localhost:1314/categories-with-tags', {}).then((res) => {
+		axios.post(GetURL('/categories-with-tags'), {}).then((res) => {
 			if (res.data.code === 0) {
 				this.setState({categoryWithTags: res.data.data});
 			}
@@ -376,7 +377,7 @@ class NewArticle extends Component<Props, State> {
 				this.setState((state) => {
 					return {files: {...state.files, [name]: fileInfo}}
 				}, () => {
-					axios.post("http://localhost:1314/new-file", data, {
+					axios.post(GetURL("/new-file"), data, {
 						onUploadProgress: (e: ProgressEvent) => {
 							this.setState((state) => {
 								if (state.files[name]) {
@@ -521,7 +522,7 @@ class NewArticle extends Component<Props, State> {
 
 	// 新增文章
 	newArticle = () => {
-		axios.post('http://localhost:1314/save-article', {
+		axios.post(GetURL('/save-article'), {
 			type: 1,
 			info: this.state.article,
 			content: this.state.articleContent,
@@ -540,7 +541,7 @@ class NewArticle extends Component<Props, State> {
 						cancelText: "继续添加",
 						onCancel: () => {
 							// Dismiss manually and asynchronously
-							axios.post("http://localhost:1314/new-article-id", {}).then((res: any) => {
+							axios.post(GetURL("/new-article-id"), {}).then((res: any) => {
 								if (res.data.code === 0 && res.data.data) {
 									this.props.history.replace("/");
 									this.props.history.replace(`/new-article/${res.data.data}`);
@@ -586,7 +587,7 @@ class NewArticle extends Component<Props, State> {
 				}
 			})
 		})
-		// axios.post('http://localhost:1314/save-article', {
+		// axios.post(GetURL('/save-article'), {
 		// 	type: 2,
 		// 	info: this.state.article,
 		// 	content: this.state.articleContent,
@@ -606,7 +607,7 @@ class NewArticle extends Component<Props, State> {
 		// 				cancelText: "继续添加",
 		// 				onCancel: () => {
 		// 					// Dismiss manually and asynchronously
-		// 					axios.post("http://localhost:1314/new-article-id", {}).then((res: any) => {
+		// 					axios.post(GetURL("/new-article-id"), {}).then((res: any) => {
 		// 						if (res.data.code === 0 && res.data.data) {
 		// 							this.props.history.replace("/");
 		// 							this.props.history.replace(`/new-article/${res.data.data}`);

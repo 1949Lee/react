@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {GetURL} from "../../api";
 import {CategoryWithTags, Tag as T} from "../../utils/interface";
 import * as style from "./style.scss";
 import { message, Tag} from 'antd';
@@ -121,7 +122,7 @@ class CategoriesTags extends Component<Props, State> {
 		// mac中command键+回车键会触发请求；windows中windows键+回车键会触发请求；然后mac和windows中ctrl键+回车都会触发请求
 		if ((e.metaKey && e.key.toUpperCase() === 'ENTER') || (e.ctrlKey && e.key.toUpperCase() === 'ENTER')) {
 			const hide = message.loading('添加中..', 0);
-			axios.post('http://localhost:1314/new-category', {
+			axios.post(GetURL('/new-category'), {
 				name: this.newCategoryInputRef.current.value
 			}).then((res) => {
 				hide();
@@ -147,7 +148,7 @@ class CategoriesTags extends Component<Props, State> {
 		// mac中command键+回车键会触发请求；windows中windows键+回车键会触发请求；然后mac和windows中ctrl键+回车都会触发请求
 		if ((e.metaKey && e.key.toUpperCase() === 'ENTER') || (e.ctrlKey && e.key.toUpperCase() === 'ENTER')) {
 			const hide = message.loading('添加中..', 0);
-			axios.post('http://localhost:1314/new-tag', {
+			axios.post(GetURL('/new-tag'), {
 				categoryID: this.state.categoryID,
 				name: this.newTagInputRef.current.value
 			}).then((res) => {
@@ -175,7 +176,7 @@ class CategoriesTags extends Component<Props, State> {
 	// 删除自定义添加的标签
 	doDeleteAddedTag = (tag:T) => {
 		const hide = message.loading('删除中..', 0);
-		axios.post('http://localhost:1314/delete-tag', {
+		axios.post(GetURL('/delete-tag'), {
 			id: tag.id
 		}).then((res) => {
 			hide();
@@ -195,7 +196,7 @@ class CategoriesTags extends Component<Props, State> {
 	// 删除自定义添加的分类
 	doDeleteAddedCategory = (ctg:CategoryWithTags) => {
 		const hide = message.loading('删除中..', 0);
-		axios.post('http://localhost:1314/delete-category', {
+		axios.post(GetURL('/delete-category'), {
 			id: ctg.id
 		}).then((res) => {
 			hide();

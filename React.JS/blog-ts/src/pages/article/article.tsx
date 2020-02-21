@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import axios from 'axios';
+import {GetURL} from "../../api";
 import LeeArticle from "../../components/lee-article/lee-article";
 import {ArticleListItem} from '../../utils/api.interface';
 import {Tag, Token} from "../../utils/interface";
@@ -28,7 +29,7 @@ class Article extends Component<Props, State> {
 	}
 
 	componentDidMount(): void {
-		axios.post("http://localhost:1314/show-article", {id: +this.props.match.params.id}).then((res) => {
+		axios.post(GetURL("/show-article"), {id: +this.props.match.params.id}).then((res) => {
 			if (res.data.code === 0 && res.data.data.list) {
 				this.text = res.data.data.text;
 				this.setState({content: res.data.data.list, article: res.data.data.article})
