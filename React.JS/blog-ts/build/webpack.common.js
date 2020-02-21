@@ -2,7 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {resolve} = require('./utils.js');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const TsImportPluginFactory = require('ts-import-plugin')
+const TsImportPluginFactory = require('ts-import-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
 	context: path.resolve(__dirname, '../'),// 上下文基础目录，绝对路径，用于从配置中解析入口起点。即，这个配置了之后。entry的路径就是相对于context的。
@@ -42,7 +43,7 @@ module.exports = {
 				exclude:[resolve('src/styles'),/\.g\.scss$/],
 				use: [
 					{
-						loader: 'style-loader'
+						loader: MiniCssExtractPlugin.loader
 					},
 					{
 						loader: 'css-loader',
@@ -60,15 +61,15 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				include:[resolve('src/styles'),/\.g\.scss$/],
-				loader: ['style-loader','css-loader','sass-loader'],
+				loader: [MiniCssExtractPlugin.loader,'css-loader','sass-loader'],
 			},
 			{
 				test: /\.css$/,
-				loader: ['style-loader', 'css-loader']
+				loader: [MiniCssExtractPlugin.loader, 'css-loader']
 			},
 			{
 				test: /\.less$/,
-				loader: ['style-loader', 'css-loader', 'less-loader']
+				loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
@@ -76,7 +77,7 @@ module.exports = {
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 10240
+							limit: 1024
 						}
 					}
 				]
@@ -87,7 +88,7 @@ module.exports = {
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 10240
+							limit: 1024
 						}
 					}
 				]
@@ -95,6 +96,10 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new MiniCssExtractPlugin({
+			filename: "[name].css",
+			chunkFilename: "[id].css"
+		}),
 		new HtmlWebpackPlugin({ // 自动将打包出的js、css等资源引入到index.html中
 			template: resolve('public/index.html')
 		})
