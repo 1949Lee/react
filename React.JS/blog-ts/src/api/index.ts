@@ -7,7 +7,7 @@ let API_URL = {
 };
 
 let WS_URL = {
-	'development':'http://localhost:1016',
+	'development':'ws://localhost:1016',
 	// 'development':'wss://blogserver.jiaxuanlee.com',
 	'production':'wss://blogserver.jiaxuanlee.com'
 };
