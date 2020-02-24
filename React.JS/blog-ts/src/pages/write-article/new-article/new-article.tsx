@@ -198,8 +198,8 @@ class NewArticle extends Component<Props, State> {
 
 	componentWillUnmount() {
 		document.removeEventListener('visibilitychange', this.reConnection);
-		if(this.ws.readyState === WebSocket.CONNECTING) {
-			this.ws.onopen =() => {
+		if (this.ws.readyState === WebSocket.CONNECTING) {
+			this.ws.onopen = () => {
 				this.ws.close()
 			}
 		}
@@ -602,7 +602,7 @@ class NewArticle extends Component<Props, State> {
 						okText: "返回阅读",
 						onOk: () => {
 							// this.props.history.replace("/article/"+this.props.match.params.id)
-							this.props.history.replace("/article/"+this.props.match.params.id)
+							this.props.history.replace("/article/" + this.props.match.params.id)
 						},
 						cancelText: "继续修改",
 						onCancel: () => {
@@ -639,18 +639,21 @@ class NewArticle extends Component<Props, State> {
 	render() {
 		return (
 			<div className={style['new-article']}>
-				<PreviewFullPage show={this.state.finalPreview}
-												 articleInfo={this.state.article}
-												 html={this.state.previewHtml}
-												 onConfirm={() => {
-													 this.doPost()
-												 }}
-												 onClose={() => {
-													 this.continueEditing()
-												 }}
-												 onHide={() => {
-													 this.resumePostModal()
-												 }}></PreviewFullPage>
+				{
+					this.state.finalPreview ?
+						<PreviewFullPage show={this.state.finalPreview}
+														 articleInfo={this.state.article}
+														 html={this.state.previewHtml}
+														 onConfirm={() => {
+															 this.doPost()
+														 }}
+														 onClose={() => {
+															 this.continueEditing()
+														 }}
+														 onHide={() => {
+															 this.resumePostModal()
+														 }}></PreviewFullPage> : null
+				}
 				<Drawer
 					title="该文章已上传的文件"
 					placement="left"
