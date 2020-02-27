@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import {ArticleListItem} from "../../utils/api.interface";
 import {Connect} from "../../utils/decorators";
@@ -8,6 +8,7 @@ import {Tooltip} from 'antd';
 
 import {actionCreators} from "./store";
 import {List,Map} from 'immutable';
+import Footer from "../../layout/footer/footer";
 
 const mapStateToProps = (state:any) => ({
 	articleList: state.getIn(['home', 'articleList'])
@@ -52,38 +53,41 @@ class Home extends Component<Props,State> {
 
   	let {articleList} = this.props;
     return (
-      <div className={style['home-wrapper']}>
-				<div className={style['article-list']}>
-					{articleList.map((article:any) => {
-						return (
-							<div className={style['article']} key={article.get('id')}>
-								<h2 className={style['article-header']}>{article.get('title')}</h2>
-								<div className={style['article-category-tags']}>
-									分类：{article.get('categoryName')}；
-									标签：{article.get('tags').map((t) => {
-									return t.get('name');
-								}).join('，')}
+    	<Fragment>
+				<div className={style['home-wrapper']}>
+					<div className={style['article-list']}>
+						{articleList.map((article:any) => {
+							return (
+								<div className={style['article']} key={article.get('id')}>
+									<h2 className={style['article-header']}>{article.get('title')}</h2>
+									<div className={style['article-category-tags']}>
+										分类：{article.get('categoryName')}；
+										标签：{article.get('tags').map((t) => {
+										return t.get('name');
+									}).join('，')}
+									</div>
+									<div className={style['article-footer']}>
+										发表于：{article.get('createTime')}，
+										更新于：{article.get('updateTime')}
+									</div>
+									<div className={style['article-preview']}>{article.get('summary')}</div>
+									<div className={style['article-options']}>
+										<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>
+									</div>
 								</div>
-								<div className={style['article-footer']}>
-									发表于：{article.get('createTime')}，
-									更新于：{article.get('updateTime')}
-								</div>
-								<div className={style['article-preview']}>{article.get('summary')}</div>
-								<div className={style['article-options']}>
-									<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>
-								</div>
-							</div>
-						)
-					})}
-				</div>
-				<div className={style['recent-article-list']}>
-					<div className={style['recent-article']}>
-						<Tooltip title={"大萨达大"}>
-							最近更新
-						</Tooltip>
+							)
+						})}
+					</div>
+					<div className={style['recent-article-list']}>
+						<div className={style['recent-article']}>
+							<Tooltip title={"大萨达大"}>
+								最近更新
+							</Tooltip>
+						</div>
 					</div>
 				</div>
-      </div>
+				<Footer></Footer>
+			</Fragment>
     );
   }
 

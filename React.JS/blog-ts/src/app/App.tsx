@@ -3,8 +3,6 @@ import {Provider} from "react-redux";
 import {BrowserRouter, match, Prompt, Route} from "react-router-dom";
 import H from "history";
 import Header from "../layout/header/header";
-import About from "../pages/about/about";
-import Article from "../pages/article/article";
 import Home from "../pages/home/home";
 import {Routes} from "../router";
 import SwitchWithLocationChange, {AdminRoute} from "../router/router-guard";
