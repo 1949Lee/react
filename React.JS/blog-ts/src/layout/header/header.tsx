@@ -2,7 +2,9 @@ import {Spin, message} from "antd";
 import React, {Component, Fragment} from 'react';
 import {NavLink, RouteComponentProps, withRouter} from "react-router-dom";
 import {GetURL} from "../../api";
+import {initArticleList} from "../../pages/home/store/action-creators";
 import {Routes} from "../../router";
+import {ArticleListParam} from "../../utils/api.interface";
 import {Connect} from "../../utils/decorators";
 import {actionCreators} from "./store";
 import {Record, List} from "immutable";
@@ -36,6 +38,9 @@ const mapDispatchToProps = (dispatch:any) => {
 		},
 		handleSearchOptionsLeave() {
 			dispatch(actionCreators.searchOptionsLeave());
+		},
+		handleSearchConfirm(data:ArticleListParam) {
+			return dispatch(initArticleList(data))
 		}
 	}
 };
@@ -67,6 +72,7 @@ interface ReduxProps {
 	handleSearchInputBlur():void;
 	handleSearchOptionsEnter():void;
 	handleSearchOptionsLeave():void;
+	handleSearchConfirm(data:ArticleListParam):any;
 }
 
 
@@ -189,6 +195,15 @@ class Header extends Component<Props, State> {
 		}
 	};
 
+	// 搜索框回车或者点击搜索图标
+	doSearchConfirm = (e:React.KeyboardEvent) => {
+		if(e.keyCode !== 229 && e.key === 'Enter') {
+			this.props.handleSearchConfirm({searchText:(e.target as HTMLInputElement).value}).then(() => {
+				this.props.handleSearchInputBlur();
+			});
+		}
+	};
+
 	render() {
 		let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
 		return (
@@ -222,6 +237,7 @@ class Header extends Component<Props, State> {
 													className={style['search-input']+(searchBarFocused ? ' '+style['focused'] : '')}
 													placeholder="搜索"
 													onFocus={()=>{handleSearchInputFocus(this.props.searchOptionsTag as List<any>)}}
+													onKeyDown={(e) => {this.doSearchConfirm(e)}}
 													onBlur={handleSearchInputBlur}>
 												</input>
 												<i className={`${style['header-search-icon']} lee-icon-search`}/>
