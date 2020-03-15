@@ -127,10 +127,10 @@ class FileTable extends Component<Props, State> {
 								<td>{FileSizeText(this.props.files[name].size)}</td>
 								<td>{this.tdFileStatus(this.props.files[name])}</td>
 								<td>
-									<span onClick={() => {
+									<span className={style['options']} onClick={() => {
 										this.deleteFile(this.props.files[name],name)
 									}}>删除</span>
-									<span onClick={() => {
+									<span className={style['options']} onClick={() => {
 										this.copyFileMarkdown(this.props.files[name])
 									}}>复制</span>
 								</td>

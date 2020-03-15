@@ -1,6 +1,16 @@
+@import "../../styles/var";
 .lee-file-table-wrapper{
 	width: 100%;
 	.lee-file-table{
 		width: 100%;
+		.options {
+			display: inline-block;
+			border: 1px solid $border-color;
+			padding: .3rem .5rem;
+			color: $border-color;
+			cursor: pointer;
+			margin-right: 1rem;
+			border-radius: .2rem;
+		}
 	}
 }
