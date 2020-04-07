@@ -121,7 +121,7 @@ class NewArticle extends Component<Props, State> {
 				this.initWebSocket();
 			}
 		}
-	}
+	};
 
 	initWebSocket = (data?: EditorData) => {
 		// 打开一个 web socket

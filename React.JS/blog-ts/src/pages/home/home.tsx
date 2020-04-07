@@ -9,6 +9,7 @@ import {Tooltip} from 'antd';
 import {actionCreators} from "./store";
 import {List,Map} from 'immutable';
 import Footer from "../../layout/footer/footer";
+import Login from "../../components/login/login";
 
 const mapStateToProps = (state:any) => ({
 	articleList: state.getIn(['home', 'articleList'])
@@ -55,6 +56,7 @@ class Home extends Component<Props,State> {
     return (
     	<Fragment>
 				<div className={style['home-wrapper']}>
+					<Login/>
 					<div className={style['article-list']}>
 						{articleList.map((article:any) => {
 							return (

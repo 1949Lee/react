@@ -1,0 +1,12 @@
+.login-modal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	:global{
+		.ant-modal{
+			height: auto;
+			top:0;
+			padding-bottom: 0;
+		}
+	}
+}
