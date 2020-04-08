@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import * as style from './style.scss'
 import {GetWSURL} from "../../api";
-import {Modal} from "antd";
+import {Modal, message} from "antd";
 import QRCode from 'qrcode.react'
 
 interface State {
@@ -20,7 +20,7 @@ class Login extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			QRValue: null,
-			show:false
+			show: false
 		}
 	}
 
@@ -48,24 +48,40 @@ class Login extends React.Component<Props, State> {
 	// 接受server返回的websocket的消息
 	receive = (event: MessageEvent) => {
 		let result = JSON.parse(event.data);
-		if (result && +result.code === 0 && result.data.key) {
-			console.log(result);
-			this.setState({
-				QRValue: {key: result.data.key, action: "login"},
-				show: true
-			});
-		} else {
-			this.setState({
-				QRValue: null,
-				show:false
-			});
+		if (result && +result.code === 0) {
+			if (result.data.key) {
+				this.setState({
+					QRValue: {key: result.data.key, action: "login"},
+					show: true
+				});
+				return
+			} else if (result.data.leeToken) {
+
+				localStorage.setItem("leeToken",result.data.leeToken);
+				localStorage.setItem("leeKey",this.state.QRValue.key);
+
+				// 隐藏二维码弹窗
+				this.setState({
+					QRValue: null,
+					show: false
+				});
+
+				// todo 登录成功
+				message.info('登录成功');
+
+				return
+			}
 		}
+		this.setState({
+			QRValue: null,
+			show: false
+		});
 	};
 
 	render() {
 		return <Fragment>
 			<Modal wrapClassName={style['login-modal']} width={'auto'} closable={false} maskClosable={true} onCancel={() => {
-				this.setState({show:false})
+				this.setState({show: false})
 			}} footer={null} title={null} visible={this.state.show}>
 				<QRCode
 					value={JSON.stringify(this.state.QRValue)}/></Modal>
