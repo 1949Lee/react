@@ -7,7 +7,7 @@ import * as style from './style.scss'
 import {Tooltip} from 'antd';
 
 import {actionCreators} from "./store";
-import {List,Map} from 'immutable';
+import {List} from 'immutable';
 import Footer from "../../layout/footer/footer";
 import Login from "../../components/login/login";
 

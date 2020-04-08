@@ -66,7 +66,7 @@ class Login extends React.Component<Props, State> {
 					show: false
 				});
 
-				// todo 登录成功
+				// todo 登录成功 关闭连接
 				message.info('登录成功');
 
 				return
