@@ -5,9 +5,11 @@ import {combineReducers} from "redux-immutable";
 import {LoginAction} from "./action-creators";
 import * as actionType from "./action-type";
 
+let token = localStorage.getItem('leeToken');
+let key = localStorage.getItem('leeKey');
 const defaultState = fromJS({
-	key:null,
-	leeToken:null
+	key:token?key:null,
+	leeToken:token?token:null
 });
 
 const GlobalReducer = (state = defaultState, action:LoginAction) => {

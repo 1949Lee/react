@@ -16,7 +16,7 @@ export interface LoginAction {
 export const setLoginInfo = (result: LoginAction) => {
 	return <LoginAction>{
 		type: SetLoginInfo,
-		list: result.key,
-		isLastPage: result.leeToken,
+		key: result.key,
+		leeToken: result.leeToken,
 	}
 };

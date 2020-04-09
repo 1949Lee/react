@@ -97,14 +97,13 @@ class Login extends React.Component<Props, State> {
 					leeToken: result.data.leeToken
 				});
 
-				// 隐藏二维码弹窗
-				this.setState({
-					QRValue: null,
-					show: false
-				});
+				// // 隐藏二维码弹窗
+				// this.setState({
+				// 	QRValue: null,
+				// 	show: false
+				// });
 
-				// todo 关闭连接
-				message.info('登录成功', 2000);
+				message.info('登录成功', 2);
 				return
 			}
 		}
