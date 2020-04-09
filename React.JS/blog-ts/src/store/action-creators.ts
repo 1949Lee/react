@@ -13,10 +13,10 @@ export interface LoginAction {
 	leeToken?: string
 }
 
-const setLoginInfo = (result: any) => {
+export const setLoginInfo = (result: LoginAction) => {
 	return <LoginAction>{
 		type: SetLoginInfo,
-		list: fromJS(result.list),
-		isLastPage: result.isLastPage,
+		list: result.key,
+		isLastPage: result.leeToken,
 	}
 };

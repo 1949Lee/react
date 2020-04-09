@@ -1,5 +1,4 @@
 import {fromJS} from "immutable";
-import {string} from "prop-types";
 import { reducer as homeReducer} from '../pages/home/store';
 import { reducer as headerReducer} from '../layout/header/store';
 import {combineReducers} from "redux-immutable";
@@ -7,8 +6,8 @@ import {LoginAction} from "./action-creators";
 import * as actionType from "./action-type";
 
 const defaultState = fromJS({
-	key:string,
-	leeToken:string
+	key:null,
+	leeToken:null
 });
 
 const GlobalReducer = (state = defaultState, action:LoginAction) => {

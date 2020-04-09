@@ -2,6 +2,7 @@ import {Spin, message} from "antd";
 import React, {Component, Fragment} from 'react';
 import {NavLink, RouteComponentProps, withRouter} from "react-router-dom";
 import {GetURL} from "../../api";
+import Login from "../../components/login/login";
 import {initArticleList} from "../../pages/home/store/action-creators";
 import {Routes} from "../../router";
 import {ArticleListParam} from "../../utils/api.interface";
@@ -17,8 +18,9 @@ const mapStateToProps = (state:Record<any>) => {
 	return {
 		searchBarFocused: state.getIn(['header', 'searchBarFocused']),
 		searchOptionsActive: state.getIn(['header', 'searchOptionsActive']),
-		searchOptionsTag: state.getIn(['header', 'searchOptionsTag'])
+		searchOptionsTag: state.getIn(['header', 'searchOptionsTag']),
 		// state.get('header').get('searchBarFocused')
+		leeToken: state.getIn(['app', 'leeToken'])
 	}
 };
 
@@ -53,6 +55,9 @@ interface State extends React.ComponentState {
 
 	//是否隐藏导航栏，true表示隐藏导航栏，false表示显示导航栏
 	toggle: boolean;
+
+	// 是否触发了登录二维码
+	showLogin: boolean
 }
 
 // interface PathParamsType {
@@ -62,6 +67,9 @@ interface State extends React.ComponentState {
 
 interface Props extends React.ComponentProps<any>,ReduxProps,RouteComponentProps{
 	floatTop:boolean;
+
+	// 登录Token
+	leeToken?: string
 }
 
 interface ReduxProps {
@@ -85,7 +93,11 @@ class Header extends Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
-		this.state = {page: 1, toggle: true};
+		this.state = {
+			page: 1,
+			toggle: true,
+			showLogin:false
+		};
 	}
 
 	componentDidMount() {
@@ -204,6 +216,19 @@ class Header extends Component<Props, State> {
 		}
 	};
 
+	// 显示登录处理
+	showLogin = (e: React.MouseEvent<HTMLSpanElement>) => {
+		if (e.metaKey && e.shiftKey) {
+			this.setState((state: any) => {
+				return {showLogin: !state.showLogin}
+			});
+			e.preventDefault();
+			e.stopPropagation();
+		} else {
+			return
+		}
+	};
+
 	render() {
 		let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
 		return (
@@ -213,8 +238,12 @@ class Header extends Component<Props, State> {
 				classNames="toggle">
 				<Fragment>
 					<nav className={style['header-container']+(floatTop && this.state.toggle?' '+style['float']:"")} onMouseLeave={this.hide}>
+						{
+							!this.props.leeToken && this.state.showLogin ?
+								<Login/> : null
+						}
 						<div className={style['header-wrapper']}>
-							<span className={style['logo']}>镜中之人</span>
+							<span className={style['logo']} onClick={this.showLogin}>镜中之人</span>
 							<div className={style['menu-list']}>
 								<div className={style['menu-wrapper']}>
 									<NavLink exact className={style['nav-link']} to="/" activeClassName={style['active']}>
@@ -253,7 +282,11 @@ class Header extends Component<Props, State> {
 							</div>
 							<div className={style['header-options']}>
 								<div className={style['button-group']}>
-									<button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>
+									{
+										!!this.props.leeToken?
+											<button className="lee-btn" type="button" onClick={this.handleWriteArticle}>写文章</button>:
+											null
+									}
 									<button className="lee-btn" type="button">我的作品</button>
 								</div>
 							</div>

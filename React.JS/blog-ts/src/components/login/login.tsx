@@ -1,8 +1,20 @@
 import React, {Fragment} from 'react'
+import {LoginAction} from "../../store/action-creators";
+import {Connect} from "../../utils/decorators";
 import * as style from './style.scss'
 import {GetWSURL} from "../../api";
 import {Modal, message} from "antd";
 import QRCode from 'qrcode.react'
+import {actionCreators, actionTypes} from '../../store';
+
+
+const mapDispatchToProps = (dispatch: any) => ({
+
+	// 设置登录信息
+	doSetLoginInfo(data: LoginAction) {
+		dispatch(actionCreators.setLoginInfo(data));
+	}
+});
 
 interface State {
 	QRValue: any;
@@ -10,9 +22,10 @@ interface State {
 }
 
 interface Props extends React.ComponentProps<any> {
-
+	doSetLoginInfo?: (data: LoginAction) => void;
 }
 
+@Connect(null, mapDispatchToProps)
 class Login extends React.Component<Props, State> {
 	ws: WebSocket = null;
 
@@ -27,6 +40,25 @@ class Login extends React.Component<Props, State> {
 	componentDidMount(): void {
 		this.initWebSocket();
 	}
+
+	shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: any): boolean {
+		if (!nextState.show) {
+			this.closeWebSocket();
+		}
+		return true;
+	}
+
+	closeWebSocket = () => {
+		// 关闭长连接
+		if (this.ws && (this.ws.readyState !== WebSocket.CLOSED)) {
+			this.ws.close();
+			this.ws = null;
+		}
+	};
+
+	componentWillUnmount(): void {
+		this.closeWebSocket()
+	};
 
 	initWebSocket = () => {
 		// 打开一个 web socket
@@ -57,8 +89,13 @@ class Login extends React.Component<Props, State> {
 				return
 			} else if (result.data.leeToken) {
 
-				localStorage.setItem("leeToken",result.data.leeToken);
-				localStorage.setItem("leeKey",this.state.QRValue.key);
+				localStorage.setItem("leeToken", result.data.leeToken);
+				localStorage.setItem("leeKey", this.state.QRValue.key);
+				this.props.doSetLoginInfo({
+					type: actionTypes.SetLoginInfo,
+					key: this.state.QRValue.key,
+					leeToken: result.data.leeToken
+				});
 
 				// 隐藏二维码弹窗
 				this.setState({
@@ -66,9 +103,8 @@ class Login extends React.Component<Props, State> {
 					show: false
 				});
 
-				// todo 登录成功 关闭连接
-				message.info('登录成功');
-
+				// todo 关闭连接
+				message.info('登录成功', 2000);
 				return
 			}
 		}
