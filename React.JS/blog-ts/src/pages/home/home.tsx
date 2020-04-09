@@ -56,7 +56,6 @@ class Home extends Component<Props,State> {
     return (
     	<Fragment>
 				<div className={style['home-wrapper']}>
-					<Login/>
 					<div className={style['article-list']}>
 						{articleList.map((article:any) => {
 							return (
