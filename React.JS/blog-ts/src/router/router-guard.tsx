@@ -10,6 +10,7 @@ import {
 	BrowserRouter
 } from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
+import store from "../store";
 import {Routes} from "./index";
 
 interface Props extends SwitchProps{
@@ -17,7 +18,8 @@ interface Props extends SwitchProps{
 }
 
 export const AdminRoute = [
-	Routes.newArticle
+	Routes.newArticle,
+	Routes.updateArticle
 ];
 
 function SwitchWithLocationChange(props:Props) {
@@ -26,20 +28,16 @@ function SwitchWithLocationChange(props:Props) {
 	let match = useRouteMatch();
 	let [prevLocation, setPrevLocation] = useState(null);
 	let {onChange,...passThrough} = props;
-	// let prompt = history.block((location,action) => {
-	// 	if (AdminRoute.find((r) => r.regexp.test(location.pathname))) {
-	// 		if(true) {
-	// 			return false
-	// 		} else {
-	// 			return
-	// 		}
-	// 	}
-	// });
+	// useStateHook测试代码，在Hook中使用useState的hook
 	if(!prevLocation || (location.key !== prevLocation.key)){
-		if (!prevLocation || (location.key !== prevLocation.key)) {
-			// 路由变更之前。
-			setPrevLocation(location)
+		// 路由变更之前。
+		setPrevLocation(location)
+	}
+	if (AdminRoute.find((r) => r.regexp.test(location.pathname))) {
+		if(!store.getState().getIn(["app","leeToken"])) {
+			history.replace({pathname:Routes.home.path});
 		}
+
 	}
 	useEffect(() => {
 		// 路由变更之之后。

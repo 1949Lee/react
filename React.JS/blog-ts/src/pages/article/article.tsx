@@ -1,11 +1,19 @@
+import {Record} from "immutable";
 import React, {Component} from 'react';
 import {RouteComponentProps, withRouter} from "react-router";
 import axios from 'axios';
 import {GetURL} from "../../api";
 import LeeArticle from "../../components/lee-article/lee-article";
 import {ArticleListItem} from '../../utils/api.interface';
+import {Connect} from "../../utils/decorators";
 import {Tag, Token} from "../../utils/interface";
-import * as style from './style.scss'
+import * as style from './style.scss';
+
+const mapStateToProps = (state:Record<any>) => {
+	return {
+		leeToken: state.getIn(['app', 'leeToken'])
+	}
+};
 
 interface State {
 	article: ArticleListItem;
@@ -14,8 +22,11 @@ interface State {
 }
 
 interface Props extends React.ComponentProps<any>, RouteComponentProps<{ id: any }> {
+	// 登录Token
+	leeToken?: string
 }
 
+@Connect(mapStateToProps,null)
 class Article extends Component<Props, State> {
 	text:string = null;
 	constructor(props: Props) {
@@ -50,7 +61,11 @@ class Article extends Component<Props, State> {
 	render() {
 		return (
 			<div className={style['article-wrapper']}>
-				<div className={style['edit-btn']} onClick={this.goUpdate}>编辑</div>
+				{
+					!!this.props.leeToken?
+						<div className={style['edit-btn']} onClick={this.goUpdate}>编辑</div>:
+						null
+				}
 				{this.state.article ?
 					<div className={style['article-header']}>
 						<h1 className={style['title']}>
