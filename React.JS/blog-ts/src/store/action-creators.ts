@@ -13,10 +13,18 @@ export interface LoginAction {
 	leeToken?: string
 }
 
-export const setLoginInfo = (result: LoginAction) => {
-	return <LoginAction>{
-		type: SetLoginInfo,
-		key: result.key,
-		leeToken: result.leeToken,
+export const setLoginInfo = (result?: LoginAction) => {
+	if (result) {
+		return <LoginAction>{
+			type: SetLoginInfo,
+			key: result.key,
+			leeToken: result.leeToken,
+		}
+	} else {
+		return <LoginAction>{
+			type: SetLoginInfo,
+			key: null,
+			leeToken: null,
+		}
 	}
 };

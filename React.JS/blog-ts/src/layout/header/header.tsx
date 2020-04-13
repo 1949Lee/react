@@ -229,6 +229,15 @@ class Header extends Component<Props, State> {
 		}
 	};
 
+	// 登录结果回调
+	loginCallBack = (flag:boolean, result:any) => {
+		if (flag) {
+			this.setState({
+				showLogin:false
+			})
+		}
+	};
+
 	render() {
 		let {searchBarFocused, handleSearchInputFocus, handleSearchInputBlur,floatTop} = this.props;
 		return (
@@ -240,7 +249,7 @@ class Header extends Component<Props, State> {
 					<nav className={style['header-container']+(floatTop && this.state.toggle?' '+style['float']:"")} onMouseLeave={this.hide}>
 						{
 							!this.props.leeToken && this.state.showLogin ?
-								<Login/> : null
+								<Login loginResult={ this.loginCallBack}/> : null
 						}
 						<div className={style['header-wrapper']}>
 							<span className={style['logo']} onClick={this.showLogin}>镜中之人</span>

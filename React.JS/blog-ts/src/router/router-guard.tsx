@@ -10,8 +10,9 @@ import {
 	BrowserRouter
 } from 'react-router-dom';
 import React, {useEffect, useState} from 'react';
-import store from "../store";
+import {actionCreators} from "../store";
 import {Routes} from "./index";
+import {useDispatch} from "react-redux";
 
 interface Props extends SwitchProps{
 	onChange:(location:H.Location<any>,history:H.History<any>) => void;
@@ -26,6 +27,7 @@ function SwitchWithLocationChange(props:Props) {
 	let location = useLocation();
 	let history = useHistory();
 	let match = useRouteMatch();
+	const dispatch = useDispatch();
 	let [prevLocation, setPrevLocation] = useState(null);
 	let {onChange,...passThrough} = props;
 	// useStateHook测试代码，在Hook中使用useState的hook
@@ -34,7 +36,8 @@ function SwitchWithLocationChange(props:Props) {
 		setPrevLocation(location)
 	}
 	if (AdminRoute.find((r) => r.regexp.test(location.pathname))) {
-		if(!store.getState().getIn(["app","leeToken"])) {
+		if(!localStorage.getItem('leeToken')) {
+			dispatch(actionCreators.setLoginInfo());
 			history.replace({pathname:Routes.home.path});
 		}
 

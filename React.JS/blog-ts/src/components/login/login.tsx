@@ -23,6 +23,7 @@ interface State {
 
 interface Props extends React.ComponentProps<any> {
 	doSetLoginInfo?: (data: LoginAction) => void;
+	loginResult?:(boolean,any) => void;
 }
 
 @Connect(null, mapDispatchToProps)
@@ -104,9 +105,13 @@ class Login extends React.Component<Props, State> {
 				// });
 
 				message.info('登录成功', 2);
+				// 登录成功发送结果，通知父组件
+				this.props.loginResult(true,result);
 				return
 			}
 		}
+		// 登录失败发送结果，通知父组件
+		this.props.loginResult(false,result);
 		this.setState({
 			QRValue: null,
 			show: false
