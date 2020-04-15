@@ -101,7 +101,8 @@ module.exports = {
 			chunkFilename: "[id].css"
 		}),
 		new HtmlWebpackPlugin({ // 自动将打包出的js、css等资源引入到index.html中
-			template: resolve('public/index.html')
+			template: resolve('public/index.html'),
+			favicon:resolve('public/favicon.ico')
 		})
 	],
 };
