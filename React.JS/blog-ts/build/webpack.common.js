@@ -19,7 +19,7 @@ module.exports = {
 		]
 	},
 	output: {
-		filename: '[name].[chunkhash].js',
+		filename: '[name].[hash:6].js',
 		path: resolve('dist')
 	},
 	module: {
@@ -72,33 +72,35 @@ module.exports = {
 				loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
 			},
 			{
-				test: /\.(png|svg|jpg|gif)$/,
+				test: /\.(png|jpg|gif)$/,
 				use: [
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 1024
+							limit: 1024,
+							name:"[name].[hash:6].[ext]"
 						}
 					}
 				]
 			},
 			{
-				test: /\.(woff|woff2|eot|ttf|otf)$/,
+				test: /\.(woff|svg|woff2|eot|ttf|otf)$/,
 				use: [
 					{
 						loader: 'url-loader',
 						options: {
-							limit: 1024
+							limit: 1024,
+							name:"[name].[hash:6].[ext]"
 						}
 					}
 				]
-			},
+			}
 		]
 	},
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: "[name].css",
-			chunkFilename: "[id].css"
+			filename: "[name].[hash:6].css",
+			chunkFilename: "[id].[hash:6].css"
 		}),
 		new HtmlWebpackPlugin({ // 自动将打包出的js、css等资源引入到index.html中
 			template: resolve('public/index.html'),
