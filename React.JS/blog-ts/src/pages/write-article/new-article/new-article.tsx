@@ -9,7 +9,7 @@ import LeeEditor from "../../../components/lee-editor/editor";
 import PreviewFullPage from "../../../components/preview-full-page/preview-full-page";
 import {ArticleListItem} from "../../../utils/api.interface";
 import FileServer from "../../../utils/file-server";
-import {FileSizeText} from "../../../utils/methods";
+import {FileSizeText, FormatDate} from "../../../utils/methods";
 import * as style from './style.scss';
 import {Button, Drawer, Empty, Modal} from "antd";
 import {ArticleInfo, CategoryWithTags, EditorData, Tag, Token} from "../../../utils/interface";
@@ -587,42 +587,47 @@ class NewArticle extends Component<Props, State> {
 		// 		}
 		// 	})
 		// })
-		axios.post(GetURL('/save-article'), {
-			type: 2,
-			info: this.state.article,
-			content: this.state.articleContent,
-			text: this.previewResult.current.innerText
-		}).then((res) => {
-			if (res.data.code === 0) {
-				this.setState({finalPreview: false, postModalFlag: false}, () => {
-					Modal.confirm({
-						title: null,
-						icon: null,
-						content: "接下来去哪看看呢？",
-						okText: "返回阅读",
-						onOk: () => {
-							// this.props.history.replace("/article/"+this.props.match.params.id)
-							this.props.history.replace("/article/" + this.props.match.params.id)
-						},
-						cancelText: "继续修改",
-						onCancel: () => {
-							// Dismiss manually and asynchronously
-							return
-						}
-					})
-				});
-			} else {
-				this.setState({finalPreview: false, postModalFlag: false}, () => {
-					Modal.warn({
-						title: null,
-						icon: null,
-						content: "更新失败",
-						okText: "请重新更新",
-					})
-				});
-			}
-		}, err => {
-			console.error(err);
+		this.setState((state) => {
+			state.article.updateTime = FormatDate();
+			return {article: {...state.article}}
+		},() => {
+			axios.post(GetURL('/save-article'), {
+				type: 2,
+				info: this.state.article,
+				content: this.state.articleContent,
+				text: this.previewResult.current.innerText
+			}).then((res) => {
+				if (res.data.code === 0) {
+					this.setState({finalPreview: false, postModalFlag: false}, () => {
+						Modal.confirm({
+							title: null,
+							icon: null,
+							content: "接下来去哪看看呢？",
+							okText: "返回阅读",
+							onOk: () => {
+								// this.props.history.replace("/article/"+this.props.match.params.id)
+								this.props.history.replace("/article/" + this.props.match.params.id)
+							},
+							cancelText: "继续修改",
+							onCancel: () => {
+								// Dismiss manually and asynchronously
+								return
+							}
+						})
+					});
+				} else {
+					this.setState({finalPreview: false, postModalFlag: false}, () => {
+						Modal.warn({
+							title: null,
+							icon: null,
+							content: "更新失败",
+							okText: "请重新更新",
+						})
+					});
+				}
+			}, err => {
+				console.error(err);
+			});
 		});
 	};
 

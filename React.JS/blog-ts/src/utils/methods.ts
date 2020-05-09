@@ -129,3 +129,39 @@ export function ToStyleObj(str: string) {
 	}
 	return obj;
 }
+
+// formatDate用到的内部方法
+function formatNumber(n) {
+	const str = n.toString()
+	return str[1] ? str : `0${str}`
+}
+
+/**将date对象转换为格式化时间
+ * @date Date对象类型
+ * @format 形如yyyy-MM-dd hh:mm:ss*/
+export function FormatDate(date:Date = new Date(), format:string = 'yyyy-MM-dd hh:mm:ss'):string {
+	const yyyy = date.getFullYear(); // 年份
+	const M = date.getMonth() + 1; // 月份
+	const d = date.getDate(); // 日
+
+	const h = date.getHours(); // 小时
+	const m = date.getMinutes(); // 分
+	const s = date.getSeconds(); // 秒
+	const MM = formatNumber(M); // 月份加0， 如5 变为05
+	const dd = formatNumber(d); // 日加0， 如1 变为01
+	const hh = formatNumber(h); // 小时加0， 如4 变为04
+	const mm = formatNumber(m); // 分加0， 如3 变为03
+	const ss = formatNumber(s); // 秒加0， 如9 变为09
+	let templates = [{ reg: 'yyyy', value: yyyy }, { reg: 'MM', value: MM }, { reg: 'M', value: M }, {
+		reg: 'dd',
+		value: dd
+	}, { reg: 'd', value: d }, { reg: 'hh', value: hh }, { reg: 'h', value: h }, { reg: 'mm', value: mm }, {
+		reg: 'm',
+		value: m
+	}, { reg: 'ss', value: ss }, { reg: 's', value: s }];
+	let result:string = format;
+	for (let template of templates) {
+		result = result.replace(template.reg, template.value);
+	}
+	return result;
+}
