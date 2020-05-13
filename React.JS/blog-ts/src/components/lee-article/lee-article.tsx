@@ -3,11 +3,13 @@ import {ImagerItem, Token} from "../../utils/interface";
 import {diff, ToStyleObj} from "../../utils/methods";
 import {UUID} from "../../utils/uuid";
 import LeeImager from "../lee-imager/lee-imager";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { arduinoLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 interface State {
 	imagerItems: ImagerItem[]
 	showImager: boolean
-	currentIndex:number
+	currentIndex: number
 }
 
 interface Props extends React.ComponentProps<any> {
@@ -24,13 +26,13 @@ class LeeArticle extends Component<Props, State> {
 		super(props);
 		this.state = {
 			imagerItems: null,
-			showImager:false,
-			currentIndex:null
+			showImager: false,
+			currentIndex: null
 		};
 	}
 
-	imagerShow = (i:number) => {
-		this.setState({showImager:true,currentIndex:i})
+	imagerShow = (i: number) => {
+		this.setState({showImager: true, currentIndex: i})
 	};
 
 	// 将token转化为html
@@ -130,6 +132,12 @@ class LeeArticle extends Component<Props, State> {
 		else if (tokens[0].tokenType == 'styled-block') {
 			tokens[0].class += " block";
 			result = this.tokensToHtml(tokens);
+		} else if (tokens[0].tokenType == 'code-block') {
+			result = <div className="block code-block" key={UUID()}>
+				<SyntaxHighlighter language="javascript" style={arduinoLight} showLineNumbers={true}>
+					{tokens[0].children[0].text}
+				</SyntaxHighlighter>
+			</div>;
 		}
 		// 图片块
 		else if (tokens.findIndex((t, i) => {
@@ -206,13 +214,14 @@ class LeeArticle extends Component<Props, State> {
 	};
 
 	imagerClose = () => {
-		this.setState({showImager:false})
+		this.setState({showImager: false})
 	};
 
 	render() {
 		return (<div className="content">
 			{this.state.imagerItems && this.state.imagerItems.length > 0 && this.state.showImager ?
-				<LeeImager items={this.state.imagerItems} currentIndex={this.state.currentIndex} close={this.imagerClose}></LeeImager> : null}
+				<LeeImager items={this.state.imagerItems} currentIndex={this.state.currentIndex}
+									 close={this.imagerClose}></LeeImager> : null}
 			{this.props.content ? this.props.content.map((_, i) => {// 每一行单独转换
 				return this.lineToHtml(this.props.content[i])
 			}) : null}
