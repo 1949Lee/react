@@ -134,6 +134,7 @@ class LeeArticle extends Component<Props, State> {
 			result = this.tokensToHtml(tokens);
 		} else if (tokens[0].tokenType == 'code-block') {
 			result = <div className="block code-block" key={UUID()}>
+				{/* Todo 主题色js的还可以，go的并不好看*/}
 				<SyntaxHighlighter language="javascript" style={arduinoLight} showLineNumbers={true}>
 					{tokens[0].children[0].text}
 				</SyntaxHighlighter>
