@@ -37,6 +37,7 @@ export const getArticleList = ({type, data}: { type: string, data?: ArticleListP
 	return (dispatch: React.Dispatch<HomeAction>) => {
 		if (type === 'init') {
 			data.pageIndex = 1;
+			data.pageSize = 200;
 			return new Promise((resolve, reject) => {
 				axios.post(GetURL('/article-list'), data).then((r) => {
 					let res = r.data;
