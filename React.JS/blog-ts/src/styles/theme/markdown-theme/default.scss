@@ -50,12 +50,15 @@
 
 .list {
 	padding-left: 2em;
+
 	&.list-level-1 {
 		padding-left: 0;
 	}
+
 	.list-item {
 		.list-item-text-line-wrapper {
 			padding-left: 2em;
+
 			&.title {
 				padding-left: 0;
 			}
@@ -86,5 +89,36 @@
 	font-size: 14px;
 	background-color: #e0ffff;
 	border-left: 5px solid #afeeee;
-	border-radius: 0px;
+	border-radius: 0;
+}
+
+.table-block {
+	border-bottom: 1px solid #f0f0f0;
+
+	.table-block-thead-tr {
+		border-top: 1px solid #f0f0f0;
+		border-right: 1px solid #f0f0f0;
+		background-color: #fafafa;
+		.table-block-thead-th {
+			padding: 0.5rem 1rem;
+			border-left: 1px solid #f0f0f0;
+		}
+	}
+
+	.table-block-tbody-tr {
+		border-top: 1px solid #f0f0f0;
+		border-right: 1px solid #f0f0f0;
+		&:nth-child(even){
+			background-color: #fafafa;
+		}
+		&:hover, &:focus{
+			.table-block-tbody-td {
+				background-color: #fafafa;
+			}
+		}
+		.table-block-tbody-td {
+			padding: 0.5rem 1rem;
+			border-left: 1px solid #f0f0f0;
+		}
+	}
 }
