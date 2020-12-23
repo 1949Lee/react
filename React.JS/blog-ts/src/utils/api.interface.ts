@@ -31,3 +31,25 @@ export interface ArticleListParam {
 	// 查询关键字
 	searchText?:string;
 }
+
+// 文章所有的分类
+export interface CategoryListItem {
+
+	// 分类id
+	id: number,
+
+	// 分类名称
+	name: string,
+
+	// 分类下的标签数组
+	tags: TagListItem[]
+}
+
+// 目录页的tag项
+export interface TagListItem extends Tag{
+	// 该标签所含的文章id数组
+	article_ids: number[]
+
+	// 是否被选中
+	chosen:boolean
+}

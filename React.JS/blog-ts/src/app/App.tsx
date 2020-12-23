@@ -44,6 +44,7 @@ class App extends React.Component<React.ComponentProps<any>, AppState> {
 							<Header floatTop={this.state.isWriteArticle}/>
 							<SwitchWithLocationChange onChange={this.handleRouterChange}>
 								<Route exact path={Routes.home.path} component={Home}/>
+								<Route exact path={Routes.category.path} component={Routes.category.component}/>
 								<Route exact path={Routes.article.path} component={Routes.article.component}/>
 								<Route exact path={Routes.about.path} component={Routes.about.component}/>
 								<Route exact path={Routes.newArticle.path} component={Routes.newArticle.component}/>

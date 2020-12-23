@@ -39,39 +39,6 @@ module.exports = {
 				]
 			},
 			{
-				test: /\.scss$/,
-				exclude:[resolve('src/styles'),/\.g\.scss$/],
-				use: [
-					{
-						loader: MiniCssExtractPlugin.loader
-					},
-					{
-						loader: 'css-loader',
-						options: {
-							modules: {
-								localIdentName: '[local]--[hash:base64:5]'
-							},
-						}
-					},
-					{
-						loader: 'sass-loader'
-					}
-				]
-			},
-			{
-				test: /\.scss$/,
-				include:[resolve('src/styles'),/\.g\.scss$/],
-				loader: [MiniCssExtractPlugin.loader,'css-loader','sass-loader'],
-			},
-			{
-				test: /\.css$/,
-				loader: [MiniCssExtractPlugin.loader, 'css-loader']
-			},
-			{
-				test: /\.less$/,
-				loader: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
-			},
-			{
 				test: /\.(png|jpg|gif)$/,
 				use: [
 					{
@@ -98,10 +65,6 @@ module.exports = {
 		]
 	},
 	plugins: [
-		new MiniCssExtractPlugin({
-			filename: "[name].[hash:6].css",
-			chunkFilename: "[id].[hash:6].css"
-		}),
 		new HtmlWebpackPlugin({ // 自动将打包出的js、css等资源引入到index.html中
 			template: resolve('public/index.html'),
 			favicon:resolve('public/favicon.ico')

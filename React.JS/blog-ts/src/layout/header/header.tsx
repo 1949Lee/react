@@ -262,7 +262,9 @@ class Header extends Component<Props, State> {
 										</div>
 									</NavLink>
 									<NavLink exact className={style['nav-link']} to="/category" activeClassName={style['active']}>
-										<div className={style['menu-item']}>目录</div>
+										<div className={style['menu-item']}>
+											<span className={style['text']}>目录</span>
+										</div>
 									</NavLink>
 									<div className={style['search-wrapper']}>
 										<CSSTransition

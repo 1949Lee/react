@@ -1,6 +1,7 @@
 import {fromJS} from "immutable";
 import { reducer as homeReducer} from '../pages/home/store';
 import { reducer as headerReducer} from '../layout/header/store';
+import { reducer as categoriesReducer} from '../pages/categories/store';
 import {combineReducers} from "redux-immutable";
 import {LoginAction} from "./action-creators";
 import * as actionType from "./action-type";
@@ -24,6 +25,7 @@ const GlobalReducer = (state = defaultState, action:LoginAction) => {
 
 const reducer =  combineReducers({
 	home:homeReducer,
+	categories:categoriesReducer,
 	header:headerReducer,
 	app:GlobalReducer
 });
