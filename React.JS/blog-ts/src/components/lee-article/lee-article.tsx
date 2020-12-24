@@ -3,8 +3,11 @@ import {ImagerItem, Token} from "../../utils/interface";
 import {diff, ToStyleObj} from "../../utils/methods";
 import {UUID} from "../../utils/uuid";
 import LeeImager from "../lee-imager/lee-imager";
-import SyntaxHighlighter from "react-syntax-highlighter";
+
 import { arduinoLight } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import SyntaxHighlighter from "./hightlight";
+
+
 
 interface State {
 	imagerItems: ImagerItem[]
