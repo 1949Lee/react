@@ -25,7 +25,6 @@ class ArticleList extends Component<Props,State> {
 	}
 
 	navArticle = (article:any,e:React.MouseEvent) => {
-		console.log(e.metaKey);
 		this.props.history.push('/article/'+article.get('id'),{...article.toJS()});
 	};
 
