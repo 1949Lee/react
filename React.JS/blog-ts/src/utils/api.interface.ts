@@ -32,6 +32,22 @@ export interface ArticleListParam {
 	searchText?:string;
 }
 
+// 文章列表接口的请求参数
+export interface ArticleListByIDParam {
+	// 页大小
+	pageSize?:number;
+
+	// 页码从1开始
+	pageIndex?:number;
+
+	//类别id
+	categoryID:number;
+
+	// 文章id字符串，逗号分割
+	articleIDs:string;
+
+}
+
 // 文章所有的分类
 export interface CategoryListItem {
 

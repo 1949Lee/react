@@ -7,17 +7,22 @@ import * as style from './style.scss'
 import {actionCreators} from "./store";
 import {List,Map} from 'immutable';
 import {Badge, Button, Input, Radio, Tag} from 'antd';
+import ArticleList from "../../components/article-list/article-list";
 
 const { CheckableTag } = Tag;
 
 const mapStateToProps = (state:any) => ({
-	categoryList: state.getIn(['categories', 'categoryList'])
+	categoryList: state.getIn(['categories', 'categoryList']),
+	articleList: state.getIn(['categories', 'articleList'])
 });
 
 const mapDispatchToProps = (dispatch:any) => ({
 
 	initData() {
 		return dispatch(actionCreators.initTagWithArticleID());
+	},
+	refreshArticleList(categoryID:number,articleIDs :string = "") {
+		dispatch(actionCreators.initArticleList({categoryID:categoryID,articleIDs:articleIDs}));
 	}
 });
 
@@ -41,8 +46,14 @@ interface Props extends React.ComponentProps<any>,RouteComponentProps{
 	// 获取最新分类及标签
 	initData:() => void,
 
+	// 根据文章ID获取文章列表
+	refreshArticleList:(categoryID:number,articleIDs ?:string) => void
+
 	// 标签列表
 	categoryList: List<CategoryListItem>
+
+	// 文章列表
+	articleList: List<ArticleListItem>
 }
 
 @Connect(mapStateToProps,mapDispatchToProps)
@@ -64,7 +75,9 @@ class Categories extends Component<Props,State> {
 
 	// 切换文章分类
 	changeActiveCategory = (e) => {
-		this.setState({activeCategory:e.target.value})
+		this.setState({activeCategory:e.target.value,chosenTags:[]},() => {
+			this.props.refreshArticleList(this.state.activeCategory);
+		})
 	};
 
 	// 搜索文案显示
@@ -95,6 +108,15 @@ class Categories extends Component<Props,State> {
 		}
 	};
 
+	// 点击查询文章，根据文章ID获取文章列表
+	getArticleList = (chosen: any[]) => {
+		if(chosen&&chosen.length > 0) {
+			this.props.refreshArticleList(this.state.activeCategory,Array.prototype.concat.apply([],chosen.map((t) => t.get('article_ids')?t.get('article_ids').toArray():[])).join(','));
+		} else {
+			this.props.refreshArticleList(this.state.activeCategory);
+		}
+	}
+
   render() {
 
   	let {categoryList} = this.props;
@@ -122,9 +144,6 @@ class Categories extends Component<Props,State> {
 							})
 						}
 					</Radio.Group>
-					{/*<Badge key={category.get('id')} offset={[0, 0]} count={999} overflowCount={999} title={category.get('tags')?`${category.get('name')}分类里共有${category.get('tags').size}个标签`:'该分类下没有标签'}>*/}
-					{/*	<span>{category.get('name')}</span>*/}
-					{/*</Badge>*/}
 					<div className={style['filter-wrapper']}>
 						{temTags&&temTags.size > 0?
 							<div className={style['chosen-tags-wrapper']}>
@@ -138,15 +157,15 @@ class Categories extends Component<Props,State> {
 																					 onChange={checked => {
 																						 this.handleTagClick(checked, t)
 																					 }}
-											>{t.get('name')}</CheckableTag>
-										}):null
+											>{t.get('name')}<span className={style['count']}>({t.get('article_ids')?t.get('article_ids').size:0})</span></CheckableTag>
+										}):'未选择任何标签'
 								}
 							</div> :
 							null
 						}
 						<div className={style['options-wrapper']}>
 							<Input className={style['tag-text-input']} allowClear={true} placeholder="找不到想要选的标签？输入来筛选" value={this.state.tagTextFilter} onChange={this.handleTagTextFilterChange} />
-							<Button className={style['options-button']} type="primary">查看文章</Button>
+							<Button className={style['options-button']} type="primary" onClick={() => {this.getArticleList(chosen)}}>查看文章</Button>
 						</div>
 						<div className={style['tags-wrapper']}>
 							{
@@ -159,7 +178,7 @@ class Categories extends Component<Props,State> {
 																					 onChange={checked => {
 																						 this.handleTagClick(checked, t)
 																					 }}
-											>{t.get('name')}</CheckableTag>
+											>{t.get('name')}<span className={style['count']}>({t.get('article_ids')?t.get('article_ids').size:0})</span></CheckableTag>
 										} else {
 											return null
 										}
@@ -167,29 +186,7 @@ class Categories extends Component<Props,State> {
 							}
 						</div>
 					</div>
-				{/*	<div className={style['article-list']}>*/}
-				{/*		{articleList.map((article:any) => {*/}
-				{/*			return (*/}
-				{/*				<div className={style['article']} key={article.get('id')}>*/}
-				{/*					<h2 className={style['article-header']}>{article.get('title')}</h2>*/}
-				{/*					<div className={style['article-category-tags']}>*/}
-				{/*						分类：{article.get('categoryName')}；*/}
-				{/*						标签：{article.get('tags').map((t) => {*/}
-				{/*						return t.get('name');*/}
-				{/*					}).join('，')}*/}
-				{/*					</div>*/}
-				{/*					<div className={style['article-footer']}>*/}
-				{/*						发表于：{article.get('createTime')}，*/}
-				{/*						更新于：{article.get('updateTime')}*/}
-				{/*					</div>*/}
-				{/*					<div className={style['article-preview']}>{article.get('summary')}</div>*/}
-				{/*					<div className={style['article-options']}>*/}
-				{/*						<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>*/}
-				{/*					</div>*/}
-				{/*				</div>*/}
-				{/*			)*/}
-				{/*		})}*/}
-				{/*	</div>*/}
+					<ArticleList articleList={this.props.articleList}/>
 				</div>
 			</Fragment>
     );

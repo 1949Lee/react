@@ -14,14 +14,24 @@
 	.filter-wrapper {
 		margin-top: 20px;
 		font-size: 16px;
+
 		.tag {
+			margin-right: 15px;
+			margin-bottom: 15px;
 			font-size: 16px;
 			line-height: 1.5;
 			//display: inline-block;
 			cursor: pointer;
+			.count {
+				padding: 0 0 0 3px;
+				//color: $text-secondary-color;
+			}
 		}
 		.chosen-tags-wrapper {
-			padding: 0 8px 20px;
+			padding: 0 8px 15px;
+			.tag {
+				margin-bottom: 0;
+			}
 		}
 		.options-wrapper {
 			.tag-text-input {
