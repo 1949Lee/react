@@ -24,7 +24,8 @@ class ArticleList extends Component<Props,State> {
 		super(props);
 	}
 
-	navArticle = (article:any) => {
+	navArticle = (article:any,e:React.MouseEvent) => {
+		console.log(e.metaKey);
 		this.props.history.push('/article/'+article.get('id'),{...article.toJS()});
 	};
 
@@ -37,7 +38,9 @@ class ArticleList extends Component<Props,State> {
 					{articleList.map((article:any) => {
 						return (
 							<div className={style['article']} key={article.get('id')}>
-								<h2 className={style['article-header']}>{article.get('title')}</h2>
+								<a target={'_blank'} href={`/article/${article.get('id')}`}>
+									<h2 className={style['article-header']}>{article.get('title')}</h2>
+								</a>
 								<div className={style['article-category-tags']}>
 									分类：{article.get('categoryName')}；
 									标签：{article.get('tags').map((t) => {
@@ -50,7 +53,7 @@ class ArticleList extends Component<Props,State> {
 								</div>
 								<div className={style['article-preview']}>{article.get('summary')}</div>
 								<div className={style['article-options']}>
-									<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>
+									<button className={`lee-btn ${style['btn']}`} onClick={(e) => {this.navArticle(article,e)}}>查看</button>
 								</div>
 							</div>
 						)
