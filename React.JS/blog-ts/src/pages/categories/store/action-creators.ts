@@ -7,7 +7,7 @@ import {
 	CategoryListItem,
 	TagListItem
 } from "../../../utils/api.interface";
-import { InitArticleList, InitTags, MoreArticleList} from "./action-type";
+import {EmptyArticleList, InitArticleList, InitTags, MoreArticleList} from "./action-type";
 import axios from 'axios'
 
 export interface CategoriesAction {
@@ -97,4 +97,12 @@ export const initArticleList = (data: ArticleListByIDParam) => {
 // 获取最新分类及标签
 export const initTagWithArticleID = () => {
 	return getTagsWithArticleID();
+}
+
+
+// 清空文章列表
+export  const emptyArticleList = () => {
+	return <CategoriesAction> {
+		type:EmptyArticleList
+	}
 }

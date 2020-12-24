@@ -1,6 +1,7 @@
 import {fromJS} from 'immutable'
 import {CategoriesAction} from "./action-creators";
 import * as actionType from "./action-type";
+import {EmptyArticleList} from "./action-type";
 
 const defaultState = fromJS({
 	articleList:[],
@@ -15,6 +16,8 @@ const reducer = (state = defaultState, action:CategoriesAction) => {
 			return state.set('articleList',fromJS(action.articleList));
 		case actionType.InitTags:
 			return state.set('categoryList',fromJS(action.categoryList));
+		case actionType.EmptyArticleList:
+			return state.set('articleList',fromJS([]));
 		default:
 			return state;
 	}

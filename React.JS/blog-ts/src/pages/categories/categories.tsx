@@ -25,6 +25,9 @@ const mapDispatchToProps = (dispatch:any) => ({
 	},
 	refreshArticleList(categoryID:number,articleIDs :string = "") {
 		dispatch(actionCreators.initArticleList({categoryID:categoryID,articleIDs:articleIDs}));
+	},
+	emptyArticleList() {
+		return dispatch(actionCreators.emptyArticleList())
 	}
 });
 
@@ -50,6 +53,9 @@ interface Props extends React.ComponentProps<any>,RouteComponentProps{
 
 	// 根据文章ID获取文章列表
 	refreshArticleList:(categoryID:number,articleIDs ?:string) => void
+
+	// 清空文章列表
+	emptyArticleList:() => void
 
 	// 标签列表
 	categoryList: List<CategoryListItem>
@@ -206,7 +212,7 @@ class Categories extends Component<Props,State> {
 
 	componentWillUnmount() {
 		if(!Keeper('category-state').set(Routes.article,this.props.history.location,this.state)) {
-
+			this.props.emptyArticleList()
 		}
 		// if (Routes.article.regexp.test(this.props.history.location.pathname)) {
 		// 	sessionStorage.setItem('category-state',JSON.stringify(this.state))
