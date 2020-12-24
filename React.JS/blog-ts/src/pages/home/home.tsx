@@ -9,7 +9,7 @@ import {Tooltip} from 'antd';
 import {actionCreators} from "./store";
 import {List} from 'immutable';
 import Footer from "../../layout/footer/footer";
-import Login from "../../components/login/login";
+import ArticleList from "../../components/article-list/article-list";
 
 const mapStateToProps = (state:any) => ({
 	articleList: state.getIn(['home', 'articleList'])
@@ -46,39 +46,13 @@ class Home extends Component<Props,State> {
 		super(props);
 	}
 
-	navArticle = (article:any) => {
-		this.props.history.push('/article/'+article.get('id'),{...article.toJS()});
-	};
-
   render() {
 
   	let {articleList} = this.props;
     return (
     	<Fragment>
 				<div className={style['home-wrapper']}>
-					<div className={style['article-list']}>
-						{articleList.map((article:any) => {
-							return (
-								<div className={style['article']} key={article.get('id')}>
-									<h2 className={style['article-header']}>{article.get('title')}</h2>
-									<div className={style['article-category-tags']}>
-										分类：{article.get('categoryName')}；
-										标签：{article.get('tags').map((t) => {
-										return t.get('name');
-									}).join('，')}
-									</div>
-									<div className={style['article-footer']}>
-										发表于：{article.get('createTime')}，
-										更新于：{article.get('updateTime')}
-									</div>
-									<div className={style['article-preview']}>{article.get('summary')}</div>
-									<div className={style['article-options']}>
-										<button className={`lee-btn ${style['btn']}`} onClick={() => {this.navArticle(article)}}>查看</button>
-									</div>
-								</div>
-							)
-						})}
-					</div>
+					<ArticleList className={style['article-list']} articleList={articleList} />
 					<div className={style['recent-article-list']}>
 						<div className={style['recent-article']}>
 							<Tooltip title={"大萨达大"}>
@@ -87,7 +61,7 @@ class Home extends Component<Props,State> {
 						</div>
 					</div>
 				</div>
-				<Footer></Footer>
+				<Footer />
 			</Fragment>
     );
   }

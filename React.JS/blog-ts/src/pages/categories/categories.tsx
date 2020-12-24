@@ -6,7 +6,7 @@ import * as style from './style.scss'
 
 import {actionCreators} from "./store";
 import {List,Map} from 'immutable';
-import {Badge, Input, Radio, Tag} from 'antd';
+import {Badge, Button, Input, Radio, Tag} from 'antd';
 
 const { CheckableTag } = Tag;
 
@@ -141,10 +141,13 @@ class Categories extends Component<Props,State> {
 											>{t.get('name')}</CheckableTag>
 										}):null
 								}
-								<Input className={style['tag-text-input']} allowClear={true} placeholder="找不到？输入搜索" value={this.state.tagTextFilter} onChange={this.handleTagTextFilterChange} />
 							</div> :
 							null
 						}
+						<div className={style['options-wrapper']}>
+							<Input className={style['tag-text-input']} allowClear={true} placeholder="找不到想要选的标签？输入来筛选" value={this.state.tagTextFilter} onChange={this.handleTagTextFilterChange} />
+							<Button className={style['options-button']} type="primary">查看文章</Button>
+						</div>
 						<div className={style['tags-wrapper']}>
 							{
 								unChosen&&unChosen.length > 0 ?
