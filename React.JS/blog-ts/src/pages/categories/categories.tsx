@@ -8,6 +8,8 @@ import {actionCreators} from "./store";
 import {List,Map} from 'immutable';
 import {Badge, Button, Input, Radio, Tag} from 'antd';
 import ArticleList from "../../components/article-list/article-list";
+import {Routes} from "../../router";
+import {Keeper} from "../../utils/methods";
 
 const { CheckableTag } = Tag;
 
@@ -61,11 +63,17 @@ class Categories extends Component<Props,State> {
 
 	constructor(props:Props) {
 		super(props);
-		this.state = {
-			activeCategory:1,
-			chosenTags:[],
-			tagTextFilter:''
+		let tem = Keeper('category-state').get()
+		if(tem) {
+			this.state = tem;
+		} else {
+			this.state = {
+				activeCategory:1,
+				chosenTags:[],
+				tagTextFilter:''
+			}
 		}
+
 	}
 
 	// 导航到展示文章页面
@@ -194,6 +202,17 @@ class Categories extends Component<Props,State> {
 
 	componentDidMount() {
 		this.props.initData();
+	}
+
+	componentWillUnmount() {
+		if(!Keeper('category-state').set(Routes.article,this.props.history.location,this.state)) {
+
+		}
+		// if (Routes.article.regexp.test(this.props.history.location.pathname)) {
+		// 	sessionStorage.setItem('category-state',JSON.stringify(this.state))
+		// } else {
+		// 	sessionStorage.removeItem('category-state')
+		// }
 	}
 }
 

@@ -30,6 +30,9 @@ function SwitchWithLocationChange(props:Props) {
 	const dispatch = useDispatch();
 	let [prevLocation, setPrevLocation] = useState(null);
 	let {onChange,...passThrough} = props;
+	if(prevLocation === null) {
+		sessionStorage.clear();
+	}
 	// useStateHook测试代码，在Hook中使用useState的hook
 	if(!prevLocation || (location.key !== prevLocation.key)){
 		// 路由变更之前。

@@ -1,4 +1,7 @@
 // 比较两个对象是否相等。若相等，则返回true
+import {Routes} from "../router";
+import {Location} from "history";
+
 export function diff(x: any, y: any) {
 	let o1 = x instanceof Object;
 	let o2 = y instanceof Object;
@@ -165,3 +168,25 @@ export function FormatDate(date:Date = new Date(), format:string = 'yyyy-MM-dd h
 	}
 	return result;
 }
+
+// 保存器，用于路由切换时保存组件的state,参数key表示存储的键值，尽量和组件名字相关
+export const Keeper = (key:string) => ({
+	// 第一个是路由配置项，表示从组件跳向这个路由时，才会保存，否则会清空之前的缓存。
+	set:(route:{regexp:RegExp}, location:Location<any>, data:any) => {
+		if (route.regexp.test(location.pathname)) {
+			sessionStorage.setItem(key,JSON.stringify(data))
+			return true
+		} else {
+			sessionStorage.removeItem(key)
+			return false
+		}
+	},
+	get:() => {
+		if(sessionStorage.getItem(key) !==null) {
+			try {
+				return JSON.parse(sessionStorage.getItem(key))
+			} catch (e) {}
+		}
+		return false
+	}
+})
