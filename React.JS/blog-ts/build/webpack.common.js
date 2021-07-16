@@ -4,6 +4,7 @@ const {resolve} = require('./utils.js');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const TsImportPluginFactory = require('ts-import-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack')
 
 module.exports = {
 	context: path.resolve(__dirname, '../'),// 上下文基础目录，绝对路径，用于从配置中解析入口起点。即，这个配置了之后。entry的路径就是相对于context的。
@@ -65,6 +66,9 @@ module.exports = {
 		]
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			'process.env.API_ENV': JSON.stringify(process.env.API_ENV)
+		}),
 		new HtmlWebpackPlugin({ // 自动将打包出的js、css等资源引入到index.html中
 			template: resolve('public/index.html'),
 			favicon:resolve('public/favicon.ico')
